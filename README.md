@@ -1,2 +1,2 @@
-# Data_Science-Foundations_using_R_Specialization
-This Specialization covers foundational data science tools and techniques, including getting, cleaning, and exploring data, programming in R, and conducting reproducible research. 
+# Data_Science_Specialization
+This Specialization covers the concepts and tools you'll need throughout the entire data science pipeline, from asking the right kinds of questions to making inferences and publishing results.
