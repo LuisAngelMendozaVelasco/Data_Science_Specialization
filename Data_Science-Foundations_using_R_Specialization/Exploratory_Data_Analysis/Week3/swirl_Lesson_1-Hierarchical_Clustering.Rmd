@@ -1,0 +1,398 @@
+---
+title: "swirl Lesson 1: Hierarchical Clustering"
+output: html_notebook
+---
+
+"Hierarchical_Clustering. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/hierarchicalClustering.)"
+
+In this lesson we'll learn about hierarchical clustering, a simple way of quickly examining and displaying multi-dimensional data. This technique is usually most useful in the early stages of analysis when you're trying to get an understanding of the data, e.g., finding some pattern or relationship between different factors or variables. As the name suggests hierarchical clustering creates a hierarchy of clusters.
+
+Clustering organizes data points that are close into groups. So obvious questions are "How do we define close?", "How do we group things?", and "How do we interpret the grouping?" Cluster analysis is a very important topic in data analysis.
+
+To give you an idea of what we're talking about, consider these random points we generated. We'll use them to demonstrate hierarchical clustering in this lesson. We'll do this in several steps, but first we have to clarify our terms and concepts.
+
+```{r}
+set.seed(1234);
+x <- rnorm(12, mean=rep(1:3,each=4), sd=0.2)
+y <- rnorm(12, mean=rep(c(1, 2, 1), each=4), sd=0.2)
+par(mar=c(0, 0, 0, 0))
+plot(x, y, col="blue", pch=19, cex=2, asp=1)
+text(x+0.05, y+0.05, labels=as.character(1:12))
+```
+
+Hierarchical clustering is an agglomerative, or bottom-up, approach. From Wikipedia  (http://en.wikipedia.org/wiki/Hierarchical_clustering), we learn that in this method, "each observation starts in its own cluster, and pairs of clusters are merged as one moves up the hierarchy." This means that we'll find the closest two points and put them together in one cluster, then find the next closest pair in the updated picture, and so forth. We'll repeat this process until we reach a reasonable stopping place.
+
+Note the word "reasonable". There's a lot of flexibility in this field and how you perform your analysis depends on your problem. Again, Wikipedia tells us, "one can decide to stop clustering either when the clusters are too far apart to be merged (distance criterion) or when there is a sufficiently small number of clusters (number criterion)."
+
+First, how do we define close? This is the most important step and there are several possibilities depending on the questions you're trying to answer and the data you have. Distance or similarity are usually the metrics used. 
+
+In the given plot which pair points would you first cluster? Use distance as the metric.
+
+```{r}
+"5 and 6"
+```
+
+It's pretty obvious that out of the 4 choices, the pair 5 and 6 were the closest together. However, there are several ways to measure distance or similarity. Euclidean distance and correlation similarity are continuous measures, while Manhattan distance is a binary measure. In this lesson we'll just briefly discuss the first and last of these. It's important that you use a measure of distance that fits your problem.
+
+Euclidean distance is what you learned about in high school algebra. Given two points on a plane, (x1,y1) and (x2,y2), the Euclidean distance is the square root of the sums of the squares of the distances between the two x-coordinates (x1-x2) and the two y-coordinates (y1-y2). You probably recognize this as an application of the Pythagorean theorem which yields the length of the hypotenuse of a right triangle.
+
+```{r}
+pathtofile <- function(fileName){
+    mypath <- file.path(fileName)
+}
+```
+
+
+```{r}
+library("jpeg")
+fname <- pathtofile("./data/euclid2.jpeg")
+try(dev.off(), silent=TRUE)
+plot.new()
+plotArea = par('fig')
+rasterImage(readJPEG(fname), plotArea[1], plotArea[3], plotArea[2], plotArea[4], interpolate=FALSE)
+```
+
+It shouldn't be hard to believe that this generalizes to more than two dimensions as shown in the formula at the bottom of the picture shown here. 
+
+Euclidean distance is distance "as the crow flies". Many applications, however,  can't realistically use crow-flying distance. Cars, for instance, have to follow roads. 
+
+In this case, we can use Manhattan or city block distance (also known as a taxicab metric). This picture, copied from http://en.wikipedia.org/wiki/Taxicab_geometry, shows what this means.
+
+```{r}
+fname <- pathtofile("./data/taxi.jpeg")
+try(dev.off(), silent=TRUE)
+plot.new()
+plotArea = par('fig')
+rasterImage(readJPEG(fname), plotArea[1], plotArea[3], plotArea[2], plotArea[4], interpolate=FALSE)
+```
+
+You want to travel from the point at the lower left to the one on the top right. The shortest distance is the Euclidean (the green line), but you're limited to the grid, so you have to follow a path similar to those shown in red, blue, or yellow. These all have the same length (12) which is the number of small gray segments covered by their paths.
+
+More formally, Manhattan distance is the sum of the absolute values of the distances between each coordinate, so the distance between the points (x1,y1) and (x2,y2) is |x1-x2|+|y1-y2|. As with Euclidean distance, this too generalizes to more than 2 dimensions.
+
+Now we'll go back to our random points. You might have noticed that these points don't really look randomly positioned, and in fact, they're not. They were actually generated as 3 distinct clusters. We've put the coordinates of these points in a data frame for you, called dataFrame. 
+
+```{r}
+par(mar=c(0, 0, 0, 0))
+plot(x, y, col="blue", pch=19, cex=2, asp=1)
+text(x+0.05, y+0.05, labels=as.character(1:12))
+```
+
+We'll use this dataFrame to demonstrate an agglomerative (bottom-up) technique of hierarchical clustering and create a dendrogram. This is an abstract picture (or graph) which shows how the 12 points in our dataset cluster together. Two clusters (initially, these are points) that are close are connected with a line, We'll use Euclidean distance as our metric of closeness.
+
+Run the R command dist with the argument dataFrame to compute the distances between all pairs of these points. By default dist uses Euclidean distance as its metric, but other metrics such as Manhattan, are available. Just use the default.
+
+```{r}
+dataFrame <- data.frame(x=x, y=y)
+```
+
+
+```{r}
+dist(dataFrame)
+```
+
+You see that the output is a lower triangular matrix with rows numbered from 2 to 12 and columns numbered from 1 to 11. Entry (i,j) indicates the distance between points i and j. Clearly you need only a lower triangular matrix since the distance between points i and j equals that between j and i.
+
+```{r}
+"0.0815"
+```
+
+So 0.0815 (units are unspecified) between points 5 and 6 is the shortest distance. We can put these points in a single cluster and look for another close pair of points. 
+
+```{r}
+library(fields)
+dataFrame <- data.frame(x=x, y=y)
+rdistxy <- rdist(dataFrame)
+diag(rdistxy) <- diag(rdistxy) + 1e5
+try(dev.off(), silent=TRUE)
+#plot.new()
+# Find the index of the points with minimum distance
+ind <- which(rdistxy == min(rdistxy), arr.ind=TRUE)
+par(mar=rep(0.2, 4))
+# Plot the points with the minimum overlayed
+plot(x, y, col="blue", pch=19, cex=2, asp=1)
+text(x+0.05, y+0.05, labels=as.character(1:12))
+points(x[ind[1,]], y[ind[1,]], col="orange", pch=19, cex=2)
+points(mean(x[ind[1,]]), mean(y[ind[1,]]), col="black", cex=3, lwd=3, pch=3)
+points(mean(x[ind[1,]]), mean(y[ind[1,]]), col="orange", cex=5, lwd=3, pch=1)
+```
+
+Looking at the picture, what would be another good pair of points to put in another cluster given that 5 and 6 are already clustered?
+
+```{r}
+"10 and 11"
+```
+
+So 10 and 11 are another pair of points that would be in a second cluster. We'll start creating our dendrogram now. Here're the original plot and two beginning pieces of the dendrogram. 
+
+```{r}
+dataFrame <- data.frame(x=x, y=y)
+rdistxy <- rdist(dataFrame)
+diag(rdistxy) <- diag(rdistxy) + 1e5
+
+# Find the index of the points with minimum distance
+ind <- which(rdistxy == rdistxy[order(rdistxy)][3], arr.ind=TRUE)
+par(mfrow=c(1, 3), mar=rep(0.2, 4))
+# Plot the points with the minimum overlayed
+plot(x, y, col="blue", pch=19, cex=2)
+text(x+0.05, y+0.05, labels=as.character(1:12))
+points(x[c(5,6)], y[c(5,6)], col="orange", pch=19,cex=2)
+points(x[ind[1,]], y[ind[1,]], col="red", pch=19,cex=2)
+
+# Make dendogram plots
+distxy <- dist(dataFrame)
+hcluster <- hclust(distxy)
+dendro <- as.dendrogram(hcluster)
+cutDendro <- cut(dendro, h=(hcluster$height[2]))
+plot(cutDendro$lower[[10]], yaxt="n")
+plot(cutDendro$lower[[5]], yaxt="n")
+```
+
+We can keep going like this in the obvious way and pair up individual points, but as luck would have it, R provides a simple function which you can call which creates a dendrogram for you. It's called hclust() and takes as an argument the pairwise distance matrix which we looked at before. We've stored this matrix for you in a variable called distxy. Run hclust now with distxy as its argument and put the result in the variable hc.
+
+```{r}
+hc <- hclust(distxy)
+```
+
+You're probably curious and want to see hc.
+
+Call the R function plot with one argument, hc.
+
+```{r}
+plot(hc)
+```
+
+Nice plot, right? R's plot conveniently labeled everything for you. The points we saw are the leaves at the bottom of the graph, 5 and 6 are connected, as are 10 and 11. Moreover, we see that the original 3 groupings of points are closest together as leaves on the picture. That's reassuring.  Now call plot again, this time with the argument as.dendrogram(hc). 
+
+```{r}
+plot(as.dendrogram(hc))
+```
+
+The essentials are the same, but the labels are missing and the leaves (original points) are all printed at the same level. Notice that the vertical heights of the lines and labeling of the scale on the left edge give some indication of distance. Use the R command abline to draw a horizontal blue line at 1.5 on this plot. Recall that this requires 2 arguments, h=1.5 and col="blue".  
+
+```{r}
+plot(as.dendrogram(hc))
+abline(h=1.5, col="blue")
+```
+
+We see that this blue line intersects 3 vertical lines and this tells us that using the distance 1.5 (unspecified units) gives us 3 clusters (1 through 4), (9 through 12), and (5 through 8). We call this a "cut" of our dendrogram. Now cut the dendrogam by drawing a red horizontal line at .4. 
+
+```{r}
+plot(as.dendrogram(hc))
+abline(h=1.5, col="blue")
+abline(h=.4, col="red")
+```
+
+How many clusters are there with a cut at this distance?
+
+```{r}
+"5"
+```
+
+We see that by cutting at .4 we have 5 clusters, indicating that this distance is small enough to break up our original grouping of points. If we drew a horizontal line at .05, how many clusters would we get
+
+```{r}
+"12"
+```
+
+Try it now (draw a horizontal line at .05) and make the line green.
+
+```{r}
+plot(as.dendrogram(hc))
+abline(h=1.5, col="blue")
+abline(h=.4, col="red")
+abline(h=.05, col="green")
+```
+
+So the number of clusters in your data depends on where you draw the line! (We said there's a lot of flexibility here.) Now that we've seen the practice, let's go back to some "theory". Notice that the two original groupings, 5 through 8, and 9 through 12, are connected with a horizontal line near the top of the display. You're probably wondering how distances between clusters of points are measured. 
+
+There are several ways to do this. We'll just mention two. The first is called complete linkage and it says that if you're trying to measure a distance between two clusters, take the greatest distance between the pairs of points in those two clusters. Obviously such pairs contain one point from each cluster.
+
+So if we were measuring the distance between the two clusters of points (1 through 4) and (5 through 8), using complete linkage as the metric we would use the distance between points 4 and 8 as the measure since this is the largest distance between the pairs of those groups. 
+
+```{r}
+par(mar=rep(0.1, 4))
+plot(x, y, col="blue", pch=19, cex=2, asp=1)
+text(x+0.05, y+0.05, labels=as.character(1:12))
+points(x[8], y[8], col="orange", pch=3, lwd=3, cex=3)
+points(x[4], y[4], col="orange", pch=3, lwd=3, cex=3)
+segments(x[8], y[8], x[4], y[4], lwd=3, col="orange")
+```
+
+The distance between the two clusters of points (9 through 12) and (5 through 8), using complete linkage as the metric, is the distance between points 11 and 8 since this is the largest distance between the pairs of those groups. 
+
+```{r}
+par(mar=rep(0.1, 4))
+plot(x, y, col="blue", pch=19, cex=2, asp=1)
+text(x+0.05, y+0.05, labels=as.character(1:12))
+points(x[8], y[8], col="orange", pch=3, lwd=3, cex=3)
+points(x[4], y[4], col="orange", pch=3, lwd=3, cex=3)
+segments(x[8], y[8], x[4], y[4], lwd=3, col="orange")
+points(x[11], y[11], col="orange", pch=3, lwd=3, cex=3)
+segments(x[8], y[8], x[11], y[11], lwd=3, col="orange")
+```
+
+We've created the dataframe dFsm for you containing these 3 points, 4, 8, and 11. Run dist on dFsm to see what the smallest distance between these 3 points is.
+
+```{r}
+xsm <- c(x[4], x[8], x[11])
+ysm <- c(y[4], y[8], y[11])
+dFsm <- data.frame(x=xsm, y=ysm)
+```
+
+
+```{r}
+dist(dFsm)
+```
+
+We see that the smallest distance is between points 2 and 3 in this reduced set, (these are actually points 8 and 11 in the original set), indicating that the two clusters these points represent ((5 through 8) and (9 through 12) respectively) would be joined (at a distance of 1.869) before being connected with the third cluster (1 through 4). This is consistent with the dendrogram we plotted.
+
+```{r}
+try(dev.off(), silent=TRUE)
+#plot.new()
+plot(as.dendrogram(hc))
+```
+
+The second way to measure a distance between two clusters that we'll just mention is called average linkage. First you compute an "average" point in each cluster (think of it as the cluster's center of gravity). You do this by computing the mean (average) x and y coordinates of the points in the cluster. 
+
+```{r}
+par(mar=rep(0.1, 4))
+plot(x, y, col="blue", pch=19, cex=2)
+points(mean(x[1:4]), mean(y[1:4]), col="orange", pch=3, lwd=3, cex=3)
+points(mean(x[5:8]), mean(y[5:8]), col="orange", pch=3, lwd=3, cex=3)
+points(mean(x[9:12]), mean(y[9:12]), col="orange", pch=3, lwd=3, cex=3)
+```
+
+Then you compute the distances between each cluster average to compute the intercluster distance.
+
+```{r}
+par(mar=rep(0.1, 4))
+plot(x, y, col="blue", pch=19, cex=2)
+points(mean(x[1:4]), mean(y[1:4]), col="orange", pch=3, lwd=3, cex=3)
+points(mean(x[5:8]), mean(y[5:8]), col="orange", pch=3, lwd=3, cex=3)
+points(mean(x[9:12]), mean(y[9:12]), col="orange", pch=3, lwd=3, cex=3)
+segments(mean(x[1:4]), mean(y[1:4]), mean(x[5:8]), mean(y[5:8]), lwd=3, col="orange")
+segments(mean(x[5:8]), mean(y[5:8]), mean(x[9:12]), mean(y[9:12]), lwd=3, col="orange")
+segments(mean(x[1:4]), mean(y[1:4]), mean(x[9:12]), mean(y[9:12]), lwd=3, col="orange")
+```
+
+Now look at the hierarchical cluster we created before, hc.
+
+```{r}
+hc
+```
+
+Which type of linkage did hclust() use to agglomerate clusters?
+
+```{r}
+"complete"
+```
+
+In our simple set of data, the average and complete linkages aren't that different, but in more complicated datasets the type of linkage  you use could affect how your data clusters. It is a good idea to experiment with different methods of linkage to see the varying ways your data groups. This will help you determine the best way to continue with your analysis.
+
+The last method of visualizing data we'll mention in this lesson concerns heat maps. Wikipedia (http://en.wikipedia.org/wiki/Heat_map) tells us a heat map is "a graphical representation of data where the individual values contained in a matrix are represented as colors. ... Heat maps originated in 2D displays of the values in a data matrix. Larger values were represented by small dark gray or black squares (pixels) and smaller values by lighter squares." 
+
+You've probably seen many examples of heat maps, for instance weather radar and displays of ocean salinity. From Wikipedia (http://en.wikipedia.org/wiki/Heat_map) we learn that heat maps are often used in molecular biology "to represent the level of expression of many genes across a number of comparable samples  (e.g. cells in different states, samples from different patients) as they are obtained from DNA microarrays."
+
+We won't say too much on this topic, but a very nice concise tutorial on creating heatmaps in R exists at  http://sebastianraschka.com/Articles/heatmaps_in_r.html#clustering. Here's an image from the tutorial to start you thinking about the topic. It shows a sample heat map with a dendrogram on the left edge mapping the relationship between the rows. The legend at the top shows how colors relate to values. 
+
+```{r}
+fname <- pathtofile("./data/heatmap.jpeg")
+try(dev.off(), silent=TRUE)
+plot.new()
+plotArea = par('fig')
+rasterImage(readJPEG(fname), plotArea[1], plotArea[3], plotArea[2], plotArea[4], interpolate=FALSE)
+```
+
+R provides a handy function to produce heat maps. It's called heatmap. We've put the point data we've been using throughout this lesson in a matrix. Call heatmap now with 2 arguments. The first is dataMatrix and the second is col set equal to cm.colors(25). This last is optional, but we like the colors better than the default ones.
+
+```{r}
+dataMatrix <- as.matrix(dataFrame)
+```
+
+
+```{r}
+heatmap(dataMatrix, col=cm.colors(25))
+```
+
+We see an interesting display of sorts. This is a very simple heat map - simple because the data isn't very complex. The rows and columns are grouped together as shown by colors. The top rows (labeled 5, 6, and 7) seem to be in the same group (same colors) while 8 is next to them but colored differently. This matches the dendrogram shown on the left edge. Similarly, 9, 12, 11, and 10 are grouped together (row-wise) along with 3 and 2. These are followed by 1 and 4 which are in a separate group. Column data is treated independently of rows but is also grouped.
+
+We've subsetted some vehicle data from mtcars, the Motor Trend Car Road Tests which is part of the package datasets. The data is in the matrix mt and contains 6 factors of 11 cars. Run heatmap now with mt as its only argument.
+
+```{r}
+mt <- as.matrix(mtcars)
+mt <- mt[22:32, 1:6]
+```
+
+
+```{r}
+heatmap(mt)
+```
+
+This looks slightly more interesting than the heatmap for the point data. It shows a little better how the rows and columns are treated (clustered and colored) independently of one another. To understand the disparity in color (between the left 4 columns and the right 2) look at mt now.
+
+```{r}
+mt
+```
+
+See how four of the columns are all relatively small numbers and only two (disp and hp) are large? That explains the big difference in color columns. Now to understand the grouping of the rows call plot with one argument, the dendrogram object denmt we've created for you.
+
+```{r}
+distmt <- dist(mt)
+denmt <- as.dendrogram(hclust(distmt))
+```
+
+ 
+```{r}
+plot(denmt)
+```
+
+We see that this dendrogram is the one displayed at the side of the heat map. How was this created? Recall that we generalized the distance formula for more than 2 dimensions. We've created a distance matrix for you, distmt. Look at it now.
+
+```{r}
+distmt
+```
+
+See how these distances match those in the dendrogram?  So hclust really works! Let's review now.
+
+What is the purpose of hierarchical clustering?
+
+```{r}
+"Give an idea of the relationships between variables or observations"
+```
+
+True or False? When you're doing hierarchical clustering there are strict rules that you MUST follow.
+
+```{r}
+"False"
+```
+
+True or False? There's only one way to measure distance.
+
+```{r}
+"False"
+```
+
+True or False? Complete linkage is a method of computing distances between clusters.
+
+```{r}
+"True"
+```
+
+True or False? Average linkage uses the maximum distance between points of two clusters as the distance between those clusters.
+
+```{r}
+"False"
+```
+
+True or False? The number of clusters you derive from your data depends on the distance at which you choose to cut it.
+
+```{r}
+"True"
+```
+
+True or False? Once you decide basics, such as defining a distance metric and linkage method, hierarchical clustering is deterministic.
+
+```{r}
+"True"
+```
