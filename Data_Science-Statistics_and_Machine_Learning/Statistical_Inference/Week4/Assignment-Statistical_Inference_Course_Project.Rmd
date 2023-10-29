@@ -1,0 +1,180 @@
+---
+title: "Assignment: Statistical Inference Course Project"
+output: html_notebook
+---
+
+# Part 1: Simulation Exercise
+
+In this project you will investigate the exponential distribution in R and compare it with the Central Limit Theorem. The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. Set lambda = 0.2 for all of the simulations. You will investigate the distribution of averages of 40 exponentials. Note that you will need to do a thousand simulations.
+
+Illustrate via simulation and associated explanatory text the properties of the distribution of the mean of 40 exponentials. You should
+
+* Show the sample mean and compare it to the theoretical mean of the distribution.
+* Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+* Show that the distribution is approximately normal. Focus on the difference between the distribution of a large collection of random exponentials and the distribution of a large collection of averages of 40 exponentials.
+
+# Part 2: Basic Inferential Data Analysis Instructions
+
+Now in the second portion of the project, we're going to analyze the ToothGrowth data in the R datasets package.
+
+* Load the ToothGrowth data and perform some basic exploratory data analyses
+* Provide a basic summary of the data.
+* Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
+* State your conclusions and the assumptions needed for your conclusions.
+
+# Part 1
+
+## Simulation
+
+### Sample exponential distribution
+
+```{r}
+set.seed(2021) # for reproducability
+nosim <- 1000 # no of simulations
+n <- 40 # no of exponentials
+lambda <- 0.2 # rate parameter 
+
+simdata <- matrix(rexp(nosim * n, rate=lambda), nosim)
+sim_mean <- rowMeans(simdata) # row means
+
+# Calculate mean, sd and variance of sample exp dist
+simdata_mean <- mean(sim_mean)
+simdata_sd <- sd(sim_mean)
+simdata_var <- var(sim_mean)
+```
+
+### Theoretical exponential distribution
+
+```{r}
+# calculate mean, df and variance of theoretical exp dist
+t_mean = 1/lambda
+t_sd = (1/lambda) * (1/sqrt(n))
+t_var = t_sd^2
+```
+
+## Histogram of sample exponential distribution vs Averages of simulated exponentials.
+
+```{r}
+par(mfrow = c(1, 2))
+hist(simdata,
+     col = "steelblue",
+     main = "Simulated exponential distribution",
+     xlab = "40 random exponentials")
+hist(sim_mean,
+     col = "red3",
+     main = "Averages of Simulated Exponentials",
+     xlab = "Average of 40 exponentials")
+abline(v = t_mean, col = "green", lwd = 2) # theoretical mean
+```
+
+## Comparison between sample and theoretical statistics
+
+```{r}
+Sample_stats <- c(simdata_mean, simdata_sd, simdata_var)
+Theoretical_stats <- c(t_mean, t_sd, t_var)
+diff <- c(abs(t_mean - simdata_mean), abs(t_sd - simdata_sd), t_var - simdata_var)
+names <- c("Mean", "Std", "Variance")
+data.frame(Sample_stats, Theoretical_stats, diff, row.names =  c("Mean", "Std", "Variance"))
+```
+
+## Distribution
+
+### Histogram and Density plot
+
+```{r}
+library(ggplot2)
+simdata_mean <- data.frame(sim_mean)
+ggplot(simdata_mean, aes(sim_mean)) + geom_histogram(binwidth = .3,
+                                                    fill = "steelblue",
+                                                    color = "black",
+                                                    aes(y = ..density..)) +
+    geom_density(color = "blue", lwd = 1) + labs(title = "Distribution of Random Exponential Values with 1000 simulations", x = "Average of 40 Exponentials", y = "Density") + stat_function( fun = dnorm,
+                                                                                args = list(mean = t_mean, sd = t_sd),
+                                                                                color = "red",
+                                                                                lwd = 1 ) + theme_bw()
+```
+
+### Q-Q plot
+
+```{r}
+qqnorm(sim_mean, col="black") # sample distribution
+qqline(sim_mean, col="red", lwd=3) #theoretical
+```
+
+# Part 2
+
+## Load data
+
+```{r}
+data("ToothGrowth")
+dt <- ToothGrowth
+```
+
+## Basic exploratory Data Analyses
+
+```{r}
+str(dt)
+```
+
+```{r}
+unique(dt$dose)
+```
+
+```{r}
+dt$dose <- factor(dt$dose)
+str(dt)
+```
+
+```{r}
+summary(dt)
+```
+
+```{r}
+library(ggplot2)
+ggplot(dt, aes(x = dose, y = len, fill = supp)) + geom_boxplot() + ggtitle("Length of tooth growth based on supplement type and dose") + theme_classic()
+```
+
+```{r}
+library(dplyr)
+library(tidyr)
+
+dt %>%
+group_by(supp, dose) %>%
+summarize(mean = mean(len), .groups='drop') %>%
+spread(supp, mean) %>%
+mutate(diff = abs(VC - OJ))
+```
+
+## t.test Hypothesis Testing
+
+```{r}
+dose_half <- filter(dt, dose == 0.5)
+dose_one <- filter(dt, dose == 1)
+dose_two <- filter(dt, dose == 2)
+```
+
+### t-test for 0.5 mg/day dose
+
+```{r}
+t.test(len ~ supp, dose_half)
+```
+
+###  t-test for 1 mg/day dose
+
+```{r}
+t.test(len ~ supp, dose_one)
+```
+
+###  t-test for 2 mg/day dose
+
+```{r}
+t.test(len ~ supp, dose_two)
+```
+
+```{r}
+dose <- c(0.5, 1.0, 2.0)
+p_value <- c(0.0064, 0.0010, 0.9639)
+conf.int <- c("1.72, 8.78", "2.80, 9.06", "-3.80, 3.64")
+decision <- c("Reject null", "Reject null", "Do not reject null")
+data.frame(dose, conf.int, p_value, decision)
+```
