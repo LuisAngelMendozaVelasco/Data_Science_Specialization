@@ -1,0 +1,155 @@
+---
+title: "swirl Lesson 2: Probability1"
+output: html_notebook
+---
+
+"Probability. (Slides for this and other Data Science courses may be found at github <https://github.com/DataScienceSpecialization/courses>. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to Statistical_Inference/Probability.)"
+
+In this lesson, we'll review basic ideas of probability, the study of quantifying the likelihood of particular events occurring. Note the similarity between the words probability and probably. Every time you use the latter word you're implying that an event is more likely than not to occur.
+
+The first step in understanding probability is to see if you understand what outcomes of an experiment are possible. For instance, if you were rolling a single, fair die once, how many outcomes are possible?
+
+```{r}
+"6"
+```
+
+The probability of a particular outcome of an experiment is the ratio of the number of ways that outcome can occur to all possible outcomes of the experiment. Since there are 6 possible outcomes to the experiment of rolling a die, and we assume the die is fair, each outcome is equally likely. So what is the probability of rolling a 2?
+
+```{r}
+"1/6"
+```
+
+What is the probability of rolling an even number?
+
+```{r}
+"1/2"
+```
+
+Since the probability of a particular outcome or event E is the ratio of ways that E could occur to the number of all possible outcomes or events, the probability of E, denoted P(E), is always between 0 and 1. Impossible events have a probability of 0 (since they can't occur) and events that are certain to occur have a probability of 1.
+
+If you're doing an experiment with n possible outcomes, say e1, e2, ..., en, then the sum of the probabilities of all the outcomes is 1. If all the outcomes are equally likely, as in the case of a fair die, then the probability of each is 1/n.
+
+If A and B are two independent events then the probability of them both occurring is the product of the probabilities. P(A&B) = P(A) \* P(B)
+
+Suppose you rolled the fair die twice in succession. What is the probability of rolling two 4's?
+
+```{r}
+"1/36"
+```
+
+Suppose you rolled the fair die twice. What is the probability of rolling the same number two times in a row?
+
+```{r}
+"1/6"
+```
+
+Now consider the experiment of rolling 2 dice, one red and one green. Assume the dice are fair and not loaded. How many distinct outcomes are possible?
+
+```{r}
+"36"
+```
+
+If an event E can occur in more than one way and these ways are disjoint (mutually exclusive) then P(E) is the sum of the probabilities of each of the ways in which it can occur.
+
+```{r}
+"3/36"
+```
+
+What sum is the most likely when rolling these two dice?
+
+```{r}
+"7"
+```
+
+The probability of at least one of two events, A and B, occurring is the sum of their individual probabilities minus the probability of their intersection. P(A U B) = P(A) + P(B) - P(A&B).
+
+It's easy to see why this is. Calculating P(A) and P(B) counts outcomes that are in both A and B twice, so they're overcounted. The probability of the intersection of the two events, denoted as A&B, must be subtracted from the sum.
+
+Back to rolling two dice. Which expression represents the probability of rolling an even number or a number greater than 8?
+
+```{r}
+"(18+10-4)/36"
+```
+
+It follows that if A and B are disjoint or mutually exclusive, i.e. only one of them can occur, then P(A U B) = P(A)+P(B) .
+
+Which of the following expressions represents the probability of rolling a number greater than 10?
+
+```{r}
+"(2+1)/36"
+```
+
+Use the answer to the previous question and the fact that the sum of all outcomes must sum to 1 to determine the probability of rolling a number less than or equal to 10.
+
+```{r}
+"11/12"
+```
+
+Now we'll apply the concepts of probability to playing cards.
+
+```{r}
+values <- c("A", as.character(2:10), "J", "Q", "K")
+suits <- c("spades", "hearts", "diamonds", "clubs")
+
+# Create a deck as a 13x4 matrix which is easy to verify by eye.
+deck <- sapply(suits, function(suit)paste(values, suit, sep=":"))
+
+# Note the value of a card is its row index (if Aces are low.)
+
+# Select n cards from a deck at random without replacement.
+hand <- function(n, deck)sample(deck, n, replace=FALSE)
+
+# Deal k hands of n cards each as a kxn matrix.
+deal <- function(k, n, deck){
+    # Select kxn cards at random without replacement.
+    temp <- hand(k*n, deck)
+    # Reshape selections into a kxn matrix. Since R
+    # fills by column, this is like dealing the cards
+    # out in circular order around the table. (Not that
+    # it makes any difference since the selection process
+    # is a random permutation of the deck anyway.)
+    matrix(temp, k, n)
+}
+```
+
+A deck of cards is a set of 52 cards, 4 suits of 13 cards each. There are two red suits, diamonds and hearts, and two black suits, spades and clubs. Each of the 13 cards in a suit has a value - an ace which is sometimes thought of as 1, a number from 2 to 10, and 3 face cards, king, queen, and jack. We've created a deck in R for you. Type 'deck' to see it now.
+
+```{r}
+deck
+```
+
+When drawing a single card, how many outcomes are possible?
+
+```{r}
+"52"
+```
+
+What is the probability of drawing a jack?
+
+```{r}
+"4/52"
+```
+
+If you're dealt a hand of 5 cards, what is the probability of getting all 5 of the same value?
+
+```{r}
+"0"
+```
+
+What is the probability of drawing a face card?
+
+```{r}
+"3/13"
+```
+
+Suppose you draw a face card and don't replace it in the deck. What is the probability that when you draw a second card it also will be a face card?
+
+```{r}
+"11/51"
+```
+
+Suppose you draw a face card and don't replace it in the deck. What is the probability that when you draw a second card it also will be a face card of the same suit?
+
+```{r}
+"2/51"
+```

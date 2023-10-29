@@ -1,0 +1,38 @@
+---
+title: "swirl Lesson 1: Introduction"
+output: html_notebook
+---
+
+"Introduction to Statistical_Inference. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to Statistical_Inference/Introduction.)"
+
+In this lesson, we'll briefly introduce basics of statistical inference, the process of drawing conclusions "about a population using noisy statistical data where uncertainty must be accounted for". In other words, statistical inference lets scientists formulate conclusions from data and quantify the uncertainty arising from using incomplete data.
+
+Which of the following is NOT an example of statistical inference? 
+
+```{r}
+"Recording the results of a statistics exam"
+```
+
+So statistical inference involves formulating conclusions using data AND quantifying the uncertainty associated with those conclusions. The uncertainty could arise from incomplete or bad data.
+
+Which of the following would NOT be a source of bad data? 
+
+```{r}
+"A randomly selected sample of population"
+```
+
+So with statistical inference we use data to draw general conclusions about a population. Which of the following would  a scientist using statistical inference techniques consider a problem?
+
+```{r}
+"Contaminated data"
+```
+
+Which of the following is NOT an example of statistical inference in action?
+
+```{r}
+"Counting sheep"
+```
+
+We want to emphasize a couple of important points here. First, a statistic (singular) is a number computed from a sample of data. We use statistics to infer information about a population. Second, a random variable is an outcome from an experiment. Deterministic processes, such as computing means or variances, applied to random variables, produce additional random variables which have their own distributions. It's important to keep straight which distributions you're talking about. 
+
+Finally, there are two broad flavors of inference. The first is frequency, which uses "long run proportion of times an event occurs in independent, identically distributed repetitions." The second is Bayesian in which the probability estimate for a hypothesis is updated as additional evidence is acquired. Both flavors require an understanding of probability so that's what the next lessons will cover.
