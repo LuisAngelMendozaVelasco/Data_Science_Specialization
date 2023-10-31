@@ -1,0 +1,76 @@
+---
+title: "Assignment: Regression Models Course Project"
+output: html_notebook
+---
+
+You work for Motor Trend, a magazine about the automobile industry. Looking at a data set of a collection of cars, they are interested in exploring the relationship between a set of variables and miles per gallon (MPG) (outcome). They are particularly interested in the following two questions:
+
+* “Is an automatic or manual transmission better for MPG”
+* "Quantify the MPG difference between automatic and manual transmissions"
+
+# Exploratory Data Analysis
+
+```{r}
+head(mtcars)
+```
+
+```{r}
+library(dplyr)
+mtcars <- mtcars %>%
+mutate(am = factor(am, labels = c("automatic", "manual"))) %>%
+mutate(vs = factor(vs))
+```
+
+## Two samples t test
+
+```{r}
+t.test(mtcars$mpg ~ mtcars$am)
+```
+
+# Regression Model and Hypothesis testing
+
+## Simple Linear Regression Model
+
+```{r}
+fit_am <- lm(mpg ~ am, mtcars)
+summary(fit_am) 
+```
+
+## Multivariate Linear Regression Model
+
+```{r}
+full.model <- lm(mpg ~ ., data = mtcars)
+summary(full.model) 
+```
+
+```{r}
+library(car)
+rbind(vif(full.model))
+```
+
+## Stepwise regression model
+
+```{r}
+bestModel <- step(full.model, direction = "both", trace = FALSE)
+summary(bestModel)
+```
+
+# Regression diagnostics
+
+```{r}
+vif <- cbind(vif(bestModel))
+colnames(vif) <- "VIF of bestmodel"
+vif
+```
+
+## Anova test on nested models
+
+```{r}
+fit0 <- lm(mpg ~ am, mtcars)
+fit1 <- update(fit0, mpg ~ am + wt)
+fit2 <- update(fit1, mpg ~ am + wt + qsec)
+fit3 <- update(fit2, mpg ~ am + wt + qsec + disp)
+fit4 <- update(fit3, mpg ~ am + wt + qsec + disp + hp)
+
+anova(fit0, fit1, fit2, fit3, fit4)
+```

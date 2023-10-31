@@ -1,0 +1,195 @@
+---
+title: "swirl Lesson 2: MultiVar Examples3"
+output: html_notebook
+---
+
+"MultiVar_Examples3. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to Regression_Models/02_02_multivariateExamples.)"
+
+This is the third and final lesson in which we'll look at regression models with more than one independent variable or predictor. We'll begin with  WHO hunger data which we've taken the liberty to load for you. WHO is the World Health Organization and this data concerns young children from around the world and rates of hunger among them which the organization compiled over a number of years. The original csv file was very large and we've subsetted just the rows which identify the gender of the child as either male or female. We've read the data into the data frame "hunger" for you, so you can easily access it.
+
+As we did in the last lesson let's first try to get a better understanding of the dataset. Use the R function dim to find the dimensions of hunger.
+
+```{r}
+hunger <-read.csv("./data/hunger.csv")
+```
+
+```{r}
+dim(hunger)
+```
+
+How many samples does hunger have?
+
+```{r}
+"948"
+```
+
+Now use the R function names to find out what the 13 columns of hunger represent.
+
+```{r}
+names(hunger)
+```
+
+The Numeric column for a particular row  tells us the percentage of children under age 5 who were underweight when that sample was taken. This is one of the columns we'll be focussing on in this lesson. It will be the outcome (dependent variable) for the models we generate.
+
+Let's first look at the rate of hunger and see how it's changed over time. Use the R function lm to generate the linear model in which the rate of hunger, Numeric, depends on the predictor, Year. Put the result in the variable fit. 
+
+```{r}
+fit <- lm(hunger$Numeric ~ hunger$Year)
+```
+
+Now look at the coef portion of the summary of fit.  
+
+```{r}
+summary(fit)$coef
+```
+
+What is the coefficient of hunger$Year?
+
+```{r}
+"-0.30840"
+```
+
+What does the negative Estimate of hunger$Year show?
+
+```{r}
+"As time goes on, the rate of hunger decreases"
+```
+
+What does the intercept of the model represent?
+
+```{r}
+"the percentage of hungry children at year 0"
+```
+
+Now let's use R's subsetting capability to look at the rates of hunger for the different genders to see how, or even if, they differ.  Once again use the R function lm to generate the linear model in which the rate of hunger (Numeric) for female children depends on Year. Put the result in the variable lmF. You'll have to use the R construct x[hunger$Sex=="Female"] to pick out both the correct Numerics and the correct Years.
+
+```{r}
+lmF <- lm(hunger$Numeric[hunger$Sex=="Female"] ~ hunger$Year[hunger$Sex=="Female"])
+```
+
+Do the same for male children and put the result in lmM.
+
+```{r}
+lmM <- lm(hunger$Numeric[hunger$Sex=="Male"] ~ hunger$Year[hunger$Sex=="Male"])
+```
+
+Now we'll plot the data points and fitted lines using different colors to distinguish between males (blue) and females (pink).
+
+```{r}
+plot(hunger$Year, hunger$Numeric, type="n")
+points(hunger$Year, hunger$Numeric, pch=19, col=((hunger$Sex=="Female")*1 + 125))
+lines(hunger$Year[hunger$Sex=="Male"], lmM$fitted, col="blue", lwd=3)
+lines(hunger$Year[hunger$Sex=="Female"], lmF$fitted, col="red", lwd=3)
+```
+
+We can see from the plot that the lines are not exactly parallel. On the right side of the graph (around the year 2010) they are closer together than on the left side (around 1970). Since they aren't parallel, their slopes must be different, though both are negative. Of the following R expressions which would confirm that the slope for males is negative?
+
+```{r}
+lmM$coef[2]
+```
+
+Now instead of separating the data by subsetting the samples by gender we'll use gender as another predictor to create the linear model lmBoth. Recall that to do this in R we place a plus sign "+" between the independent variables, so the formula looks like dependent ~ independent1 + independent2.
+
+Create  lmBoth now. Numeric is the dependent, Year and Sex are the independent variables. The data is "hunger". For lmBoth, make sure Year is first and Sex is second.
+
+```{r}
+lmBoth <- lm(hunger$Numeric ~ hunger$Year + hunger$Sex)
+```
+
+Now look at the summary of lmBoth with the R command summary.
+
+```{r}
+summary(lmBoth)
+```
+
+Notice that three estimates are given, the intercept, one for Year and one for Male. What happened to the estimate for Female? Note that Male and Female are categorical variables hence they are factors in this model. Recall from the last lesson (and slides) that R treats the first (alphabetical) factor as the reference and its estimate is the intercept which represents the percentage of hungry females at year 0. The estimate given for the factor Male is a distance from the intercept (the estimate of the reference group Female). To calculate the percentage of hungry males at year 0 you have to add together the intercept and the male estimate given by the model.
+
+```{r}
+"635.431 "
+```
+
+What does the estimate for hunger$Year represent?
+
+```{r}
+"the annual decrease in percentage of hungry children of both genders"
+```
+
+Now we'll replot the data points along with two new lines using different colors.  The red line will have the female intercept and the  blue line will have the male intercept. 
+
+```{r}
+plot(hunger$Year, hunger$Numeric, pch=19)
+points(hunger$Year, hunger$Numeric, pch=19, col=((hunger$Sex=="Female")*1 + 125))
+abline(c(lmBoth$coeff[1], lmBoth$coeff[2]), col="red", lwd=3)
+abline(c(lmBoth$coeff[1] + lmBoth$coeff[3], lmBoth$coeff[2]), col="blue", lwd=3)
+```
+
+The lines appear parallel. This is because
+
+```{r}
+"they have the same slope"
+```
+
+Now we'll consider the interaction between year and gender to see how that affects changes in rates of hunger. To do this we'll add a third term to the predictor portion of our model formula, the product of year and gender.
+
+Create the model lmInter. Numeric is the outcome and the three predictors are Year, Sex, and Sex*Year. The data is "hunger".
+
+```{r}
+lmInter <- lm(hunger$Numeric ~ hunger$Year + hunger$Sex + hunger$Year * hunger$Sex)
+```
+
+Now look at the summary of lmInter with the R command summary.
+
+```{r}
+summary(lmInter)
+```
+
+What is the percentage of hungry females at year 0?
+
+```{r}
+"603.5058"
+```
+
+What is the percentage of hungry males at year 0?
+
+```{r}
+"665.4535"
+```
+
+What is the annual change in percentage of hungry females?
+
+```{r}
+"-0.29340"
+```
+
+What is the annual change in percentage of hungry males?
+
+```{r}
+"-0.32340"
+```
+
+Now we'll replot the data points along with two new lines using different colors to distinguish between the genders. 
+
+```{r}
+plot(hunger$Year, hunger$Numeric, pch=19)
+points(hunger$Year, hunger$Numeric, pch=19, col=((hunger$Sex=="Male")*1 + 125))
+abline(c(lmInter$coeff[1], lmInter$coeff[2]), col="red", lwd=3)
+abline(c(lmInter$coeff[1] + lmInter$coeff[3], lmInter$coeff[2] +lmInter$coeff[4]), col="blue", lwd=3)
+```
+
+Which line has the steeper slope?
+
+```{r}
+"Male"
+```
+
+Finally, we note that things are a little trickier when we're dealing with an interaction between predictors which are continuous (and not factors). The slides show the underlying algebra, but we can summarize. 
+
+Suppose we have two interacting predictors and one of them is held constant. The expected change in the outcome for a unit change in the other predictor is the coefficient of that changing predictor  + the coefficient of the interaction * the value of the predictor held constant.
+
+Suppose the linear model is Hi = b0 + (b1*Ii) + (b2*Yi)+ (b3*Ii*Yi) + ei. Here the H's represent the outcomes, the I's and Y's the predictors, neither of which is a category, and the b's represent the estimated coefficients of the predictors. We can ignore the e's which represent the residuals of the model. This equation models a continuous interaction since neither I nor Y is a category or factor. Suppose we fix I at some value and let Y vary.
+
+Which expression represents the change in H per unit change in Y given that I is fixed at 5?
+
+```{r}
+"b2+b3*5"
+```
