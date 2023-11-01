@@ -1,0 +1,173 @@
+---
+title: "Assignment: Prediction Assignment Writeup"
+output: html_notebook
+---
+
+# Background
+
+Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: 
+http://groupware.les.inf.puc-rio.br/har
+ (see the section on the Weight Lifting Exercise Dataset). 
+
+# Data 
+
+The training data for this project are available here: 
+
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
+The test data are available here:
+
+https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+The data for this project come from this source: 
+http://groupware.les.inf.puc-rio.br/har
+. If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment. 
+
+# Goal
+
+The goal of your project is to predict the manner in which they did the exercise. This is the "classe" variable in the training set. You may use any of the other variables to predict with. You should create a report describing how you built your model, how you used cross validation, what you think the expected out of sample error is, and why you made the choices you did. You will also use your prediction model to predict 20 different test cases. 
+
+# Loading Data
+
+```{r}
+library("data.table")
+
+# training data
+url_train <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv"
+
+training <- fread(url_train, na.strings = c("#DIV/0", "", "NA"), stringsAsFactors = TRUE, showProgress = FALSE)
+    
+# testing data
+url_test <- "https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv"
+
+testing <- fread(url_test, na.strings = c("#DIV/0", "", "NA"), stringsAsFactors = TRUE, showProgress = FALSE)
+```
+
+# Data Preprocessing
+
+```{r}
+head(training)
+```
+
+```{r}
+training <- training[, -c(1:7)]
+testing <- testing[, -c(1:7)]
+```
+
+```{r}
+rbind(training = dim(training), testing = dim(testing))
+```
+
+```{r}
+library("purrr")
+
+# Function to remove columns with NAs
+na_remove_col <- function(data, threshold) {
+    data %>%
+    discard(~ sum(is.na(.x)) / length(.x) * 100 > threshold)
+}
+
+clean_train <- na_remove_col(training, 70)
+
+clean_test <- na_remove_col(testing, 70)
+
+rbind(training = dim(clean_train), testing = dim(clean_test))
+```
+
+# Data Partition
+
+```{r}
+library("caret")
+
+inTrain <- createDataPartition(clean_train$classe, p=0.7, list=FALSE)
+
+train <- clean_train[inTrain, ]
+test <- clean_train[-inTrain, ]
+```
+
+# Exploratory Data Analysis
+
+```{r}
+library("corrplot")
+library("dplyr")
+
+corr_data <- select_if(train, is.numeric)
+corrplot(cor(corr_data), method = "color", tl.pos = "n", insig = "blank")
+```
+
+# Prediction
+
+```{r}
+library("parallel")
+library("doParallel")
+
+cluster <- makeCluster(detectCores() - 1) 
+registerDoParallel(cluster)
+```
+
+```{r}
+set.seed(2021)
+
+fitControl <- trainControl(method = "cv",
+                           number = 7,
+                           allowParallel = TRUE)
+
+rf.fit <- train(classe ~ .,
+                method = "rf",
+                data = train,
+                trControl = fitControl)
+
+# Stop cluster
+stopCluster(cluster)
+registerDoSEQ()
+```
+
+## Model Performance
+
+```{r}
+model.rf = rf.fit
+```
+
+```{r}
+model.rf$finalModel
+```
+
+```{r}
+plot(model.rf$finalModel)
+```
+
+## Variable Importance
+
+```{r}
+importance <- varImp(model.rf, scale = FALSE)
+plot(importance, top=10)
+```
+
+## Prediction On Test Set
+
+```{r}
+pred.rf <- predict(model.rf, test)
+confM <- confusionMatrix(test$classe, pred.rf)
+confM$table
+```
+
+```{r}
+confM$overall["Accuracy"]
+```
+
+# Prediction On Validation Set
+
+```{r}
+final.pred.rf <- predict(model.rf, clean_test)
+summary(final.pred.rf)
+```
+
+```{r}
+final.pred.rf
+```
+
+# Session Info
+
+```{r}
+sessionInfo()
+```
