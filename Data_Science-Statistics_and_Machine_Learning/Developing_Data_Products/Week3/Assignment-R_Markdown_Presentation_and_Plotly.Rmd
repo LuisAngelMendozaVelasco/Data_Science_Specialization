@@ -1,0 +1,29 @@
+---
+title: "Assignment: R Markdown Presentation & Plotly"
+output: html_notebook
+---
+
+# Gapminder data
+
+```{r}
+library(gapminder)
+
+data(gapminder)
+head(gapminder)
+```
+
+# Animation with ggplotly
+
+```{r}
+library("ggplot2")
+library("plotly")
+
+gg <- ggplot(gapminder, aes(gdpPercap, lifeExp, color = continent)) +
+    geom_point(aes( size = pop,
+                    frame = year,
+                    ids = country,
+                    alpha = 0.3)) + 
+    scale_x_log10(labels = scales::dollar_format())
+
+ggplotly(gg)
+```

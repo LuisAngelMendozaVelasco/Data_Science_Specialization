@@ -1,0 +1,51 @@
+---
+title: "Assignment: R Markdown and Leaflet"
+output:
+  html_document:
+    df_print: paged
+---
+
+# Get the data
+
+```{r}
+library(data.table)
+
+url <- "https://raw.githubusercontent.com/chrismeller/StarbucksLocations/master/stores.csv"
+starbucks <- fread(url, showProgress=FALSE)
+head(starbucks)
+```
+
+```{r}
+library(dplyr)
+
+starbucks %>%
+    names()
+```
+
+# Data preprocessing
+
+```{r}
+sb_loc <- starbucks %>% 
+    filter(CountryCode == "US") %>% 
+    select(Latitude, Longitude, Name) %>% 
+    rename(lat = Latitude, lng = Longitude)
+```
+
+# Creating the map
+
+```{r}
+library(leaflet)
+
+m <- leaflet(sb_loc) %>%
+    addProviderTiles(providers$Esri.NatGeoWorldMap) %>%
+    addCircleMarkers(~ lng,
+                    ~ lat,
+                    popup = sb_loc$Name,
+                    weight = 3,
+                    radius = 4,
+                    stroke = F,
+                    fillOpacity = 0.5,
+                    clusterOptions = markerClusterOptions())
+
+m
+```
