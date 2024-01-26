@@ -11,7 +11,7 @@
 
 
 
-<title>swirl Lesson 2: K Means Clustering</title>
+<title>swirl Lesson 3: Dates and Times</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1746,708 +1746,398 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">swirl Lesson 2: K Means Clustering</h1>
+<h1 class="title toc-ignore">swirl Lesson 3: Dates and Times</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<p>“K_Means_Clustering. (Slides for this and other Data Science courses
-may be found at github <a href="https://github.com/DataScienceSpecialization/courses/" class="uri">https://github.com/DataScienceSpecialization/courses/</a>.
-If you care to use them, they must be downloaded as a zip file and
-viewed locally. This lesson corresponds to
-04_ExploratoryAnalysis/kmeansClustering.)”</p>
-<p>In this lesson we’ll learn about k-means clustering, another simple
-way of examining and organizing multi-dimensional data. As with
-hierarchical clustering, this technique is most useful in the early
-stages of analysis when you’re trying to get an understanding of the
-data, e.g., finding some pattern or relationship between different
-factors or variables.</p>
-<p>R documentation tells us that the k-means method “aims to partition
-the points into k groups such that the sum of squares from points to the
-assigned cluster centres is minimized.”</p>
-<p>Since clustering organizes data points that are close into groups
-we’ll assume we’ve decided on a measure of distance, e.g.,
-Euclidean.</p>
-<p>To illustrate the method, we’ll use these random points we generated,
-familiar to you if you’ve already gone through the hierarchical
-clustering lesson. We’ll demonstrate k-means clustering in several
-steps, but first we’ll explain the general idea.</p>
+<p>R has a special way of representing dates and times, which can be
+helpful if you’re working with data that show how something changes over
+time (i.e. time-series data) or if your data contain some other temporal
+information, like dates of birth.</p>
+<p>Dates are represented by the ‘Date’ class and times are represented
+by the ‘POSIXct’ and ‘POSIXlt’ classes. Internally, dates are stored as
+the number of days since 1970-01-01 and times are stored as either the
+number of seconds since 1970-01-01 (for ‘POSIXct’) or a list of seconds,
+minutes, hours, etc. (for ‘POSIXlt’)</p>
+<p>Let’s start by using d1 &lt;- Sys.Date() to get the current date and
+store it in the variable d1. (That’s the letter ‘d’ and the number
+1.)</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2V0LnNlZWQoMTIzNCk7XG54IDwtIHJub3JtKDEyLCBtZWFuPXJlcCgxOjMsZWFjaD00KSwgc2Q9MC4yKVxueSA8LSBybm9ybSgxMiwgbWVhbj1yZXAoYygxLCAyLCAxKSwgZWFjaD00KSwgc2Q9MC4yKVxuYGBgIn0= -->
-<pre class="r"><code>set.seed(1234);
-x &lt;- rnorm(12, mean=rep(1:3,each=4), sd=0.2)
-y &lt;- rnorm(12, mean=rep(c(1, 2, 1), each=4), sd=0.2)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZDEgPC0gU3lzLkRhdGUoKVxuYGBgIn0= -->
+<pre class="r"><code>d1 &lt;- Sys.Date()</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>Use the class() function to confirm d1 is a Date object.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFyKG1hcj1jKDAsIDAsIDAsIDApKVxucGxvdCh4LCB5LCBjb2w9XCJibHVlXCIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKVxudGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSlcbmBgYCJ9 -->
-<pre class="r"><code>par(mar=c(0, 0, 0, 0))
-plot(x, y, col=&quot;blue&quot;, pch=19, cex=2, asp=1)
-text(x+0.05, y+0.05, labels=as.character(1:12))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3MoZDEpXG5gYGAifQ== -->
+<pre class="r"><code>class(d1)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>As we said, k-means is a partioning approach which requires that you
-first guess how many clusters you have (or want). Once you fix this
-number, you randomly create a “centroid” (a phantom point) for each
-cluster and assign each point or observation in your dataset to the
-centroid to which it is closest. Once each point is assigned a centroid,
-you readjust the centroid’s position by making it the average of the
-points assigned to it.</p>
-<p>Once you have repositioned the centroids, you must recalculate the
-distance of the observations to the centroids and reassign any, if
-necessary, to the centroid closest to them. Again, once the
-reassignments are done, readjust the positions of the centroids based on
-the new cluster membership. The process stops once you reach an
-iteration in which no adjustments are made or when you’ve reached some
-predetermined maximum number of iterations.</p>
-<p>As described, what does this process require?</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJBbGwgb2YgdGhlIG90aGVyc1wiXG5gYGAifQ== -->
-<pre class="r"><code>&quot;All of the others&quot;</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiQWxsIG9mIHRoZSBvdGhlcnNcIlxuIn0= -->
-<pre><code>[1] &quot;All of the others&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRGF0ZVwiXG4ifQ== -->
+<pre><code>[1] &quot;Date&quot;</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>So k-means clustering requires some distance metric (say Euclidean),
-a hypothesized fixed number of clusters, and an initial guess as to
-cluster centroids. As described, what does this process produce?</p>
+<p>We can use the unclass() function to see what d1 looks like
+internally. Try it out.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJBbGwgb2YgdGhlIG90aGVyc1wiXG5gYGAifQ== -->
-<pre class="r"><code>&quot;All of the others&quot;</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudW5jbGFzcyhkMSlcbmBgYCJ9 -->
+<pre class="r"><code>unclass(d1)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiQWxsIG9mIHRoZSBvdGhlcnNcIlxuIn0= -->
-<pre><code>[1] &quot;All of the others&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDE5NzQ4XG4ifQ== -->
+<pre><code>[1] 19748</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>When it’s finished k-means clustering returns a final position of
-each cluster’s centroid as well as the assignment of each data point or
-observation to a cluster.</p>
-<p>Now we’ll step through this process using our random points as our
-data. The coordinates of these are stored in 2 vectors, x and y. We
-eyeball the display and guess that there are 3 clusters. We’ll pick 3
-positions of centroids, one for each cluster.</p>
-<p>We’ve created two 3-long vectors for you, cx and cy. These
-respectively hold the x- and y- coordinates for 3 proposed centroids.
-For convenience, we’ve also stored them in a 2 by 3 matrix cmat. The x
-coordinates are in the first row and the y coordinates in the second.
-Look at cmat now.</p>
+<p>That’s the exact number of days since 1970-01-01!</p>
+<p>However, if you print d1 to the console, you’ll get today’s date –
+YEAR-MONTH-DAY. Give it a try.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3ggPC0gYygxLCAxLjgsIDIuNSlcbmN5IDwtIGMoMiwgMSwgMS41KVxuY21hdCA8LSBtYXRyaXgoYyhjeCwgY3kpLCBucm93PTIsIGJ5cm93PVRSVUUpIFxuYGBgIn0= -->
-<pre class="r"><code>cx &lt;- c(1, 1.8, 2.5)
-cy &lt;- c(2, 1, 1.5)
-cmat &lt;- matrix(c(cx, cy), nrow=2, byrow=TRUE) </code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZDFcbmBgYCJ9 -->
+<pre class="r"><code>d1</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY21hdFxuYGBgIn0= -->
-<pre class="r"><code>cmat</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICBbLDFdIFssMl0gWywzXVxuWzEsXSAgICAxICAxLjggIDIuNVxuWzIsXSAgICAyICAxLjAgIDEuNVxuIn0= -->
-<pre><code>     [,1] [,2] [,3]
-[1,]    1  1.8  2.5
-[2,]    2  1.0  1.5</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiMjAyNC0wMS0yNlwiXG4ifQ== -->
+<pre><code>[1] &quot;2024-01-26&quot;</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>The coordinates of these points are (1,2), (1.8,1) and (2.5,1.5).
-We’ll add these centroids to the plot of our points. Do this by calling
-the R command points with 6 arguments. The first 2 are cx and cy, and
-the third is col set equal to the concatenation of 3 colors, “red”,
-“orange”, and “purple”. The fourth argument is pch set equal to 3 (a
-plus sign), the fifth is cex set equal to 2 (expansion of character),
-and the final is lwd (line width) also set equal to 2.</p>
+<p>What if we need to reference a date prior to 1970-01-01? Create a
+variable d2 containing as.Date(“1969-01-01”).</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFyKG1hcj1jKDAsIDAsIDAsIDApKVxucGxvdCh4LCB5LCBjb2w9XCJibHVlXCIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKVxudGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSlcbmBgYCJ9 -->
-<pre class="r"><code>par(mar=c(0, 0, 0, 0))
-plot(x, y, col=&quot;blue&quot;, pch=19, cex=2, asp=1)
-text(x+0.05, y+0.05, labels=as.character(1:12))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZDIgPC0gYXMuRGF0ZShcIjE5NjktMDEtMDFcIilcbmBgYCJ9 -->
+<pre class="r"><code>d2 &lt;- as.Date(&quot;1969-01-01&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucG9pbnRzKGN4LCBjeSwgY29sPWMoXCJyZWRcIiwgXCJvcmFuZ2VcIixcInB1cnBsZVwiKSwgcGNoPTMsIGNleD0yLCBsd2Q9MilcbmBgYCJ9 -->
-<pre class="r"><code>points(cx, cy, col=c(&quot;red&quot;, &quot;orange&quot;,&quot;purple&quot;), pch=3, cex=2, lwd=2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>We see the first centroid (1,2) is in red. The second (1.8,1), to the
-right and below the first, is orange, and the final centroid (2.5,1.5),
-the furthest to the right, is purple.</p>
-<p>Now we have to calculate distances between each point and every
-centroid. There are 12 data points and 3 centroids. How many distances
-do we have to calculate?</p>
+<p>Now use unclass() again to see what d2 looks like internally.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCIzNlwiXG5gYGAifQ== -->
-<pre class="r"><code>&quot;36&quot;</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudW5jbGFzcyhkMilcbmBgYCJ9 -->
+<pre class="r"><code>unclass(d2)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiMzZcIlxuIn0= -->
-<pre><code>[1] &quot;36&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0zNjVcbiJ9 -->
+<pre><code>[1] -365</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>We’ve written a function for you called mdist which takes 4
-arguments. The vectors of data points (x and y) are the first two and
-the two vectors of centroid coordinates (cx and cy) are the last two.
-Call mdist now with these arguments.</p>
+<p>As you may have anticipated, you get a negative number. In this case,
+it’s -365, since 1969-01-01 is exactly one calendar year (i.e. 365 days)
+BEFORE 1970-01-01.</p>
+<p>Now, let’s take a look at how R stores times. You can access the
+current date and time using the Sys.time() function with no arguments.
+Do this and store the result in a variable called t1.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWRpc3QgPC0gZnVuY3Rpb24oeCwgeSwgY3gsIGN5KXtcbiAgICBkaXN0VG1wIDwtIG1hdHJpeChOQSwgbnJvdz0zLCBuY29sPTEyKVxuICAgIGRpc3RUbXBbMSxdIDwtICh4IC0gY3hbMV0pXjIgKyAoeSAtIGN5WzFdKV4yXG4gICAgZGlzdFRtcFsyLF0gPC0gKHggLSBjeFsyXSleMiArICh5IC0gY3lbMl0pXjJcbiAgICBkaXN0VG1wWzMsXSA8LSAoeCAtIGN4WzNdKV4yICsgKHkgLSBjeVszXSleMiAgXG4gICAgcmV0dXJuKGRpc3RUbXApXG59XG5gYGAifQ== -->
-<pre class="r"><code>mdist &lt;- function(x, y, cx, cy){
-    distTmp &lt;- matrix(NA, nrow=3, ncol=12)
-    distTmp[1,] &lt;- (x - cx[1])^2 + (y - cy[1])^2
-    distTmp[2,] &lt;- (x - cx[2])^2 + (y - cy[2])^2
-    distTmp[3,] &lt;- (x - cx[3])^2 + (y - cy[3])^2  
-    return(distTmp)
-}</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDEgPC0gU3lzLnRpbWUoKVxuYGBgIn0= -->
+<pre class="r"><code>t1 &lt;- Sys.time()</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>View the contents of t1.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWRpc3QoeCwgeSwgY3gsIGN5KVxuYGBgIn0= -->
-<pre class="r"><code>mdist(x, y, cx, cy)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDFcbmBgYCJ9 -->
+<pre class="r"><code>t1</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgWywxXSAgICAgIFssMl0gICAgICBbLDNdICAgICBbLDRdICAgICAgWyw1XSAgICAgIFssNl0gICAgICBbLDddICAgICBbLDhdICAgICAgWyw5XSAgICAgWywxMF0gICAgIFssMTFdXG5bMSxdIDEuMzkyODg1IDAuOTc3NDYxNCAwLjcwMDA2ODAgMS4yNjQ2OTMgMS4xODk0NjEwIDEuMjQ1ODc3MSAwLjgxMTM1MTMgMS4wMjY3NTAgNC41MDgyNjY1IDQuNTI1NTYxNyA0LjgxMTMzNjhcblsyLF0gMS4xMDg2NDQgMC41NTQ0Njc1IDAuMzc2ODQ0NSAxLjYxMTIwMiAwLjg4NzczNzMgMC43NTk0NjExIDAuNzAwMzk5NCAyLjIwODAwNiAxLjE4MjUyNjUgMS4wNTQwOTk0IDEuMjI3ODE5M1xuWzMsXSAzLjQ2MTg3MyAyLjMyMzg5NTYgMS43NDEzMDIxIDQuMTUwMDU0IDAuMzI5Nzg0MyAwLjI2MDAwNDUgMC40ODg3NjEwIDEuMzM3ODk2IDAuMzczNzU1NCAwLjQ2MTQ0NzIgMC41MDk1NDI4XG4gICAgICAgICBbLDEyXVxuWzEsXSA0LjA2NTc3NTBcblsyLF0gMS4wMDkwOTQ0XG5bMyxdIDAuMjU2NzI0N1xuIn0= -->
-<pre><code>         [,1]      [,2]      [,3]     [,4]      [,5]      [,6]      [,7]     [,8]      [,9]     [,10]     [,11]
-[1,] 1.392885 0.9774614 0.7000680 1.264693 1.1894610 1.2458771 0.8113513 1.026750 4.5082665 4.5255617 4.8113368
-[2,] 1.108644 0.5544675 0.3768445 1.611202 0.8877373 0.7594611 0.7003994 2.208006 1.1825265 1.0540994 1.2278193
-[3,] 3.461873 2.3238956 1.7413021 4.150054 0.3297843 0.2600045 0.4887610 1.337896 0.3737554 0.4614472 0.5095428
-         [,12]
-[1,] 4.0657750
-[2,] 1.0090944
-[3,] 0.2567247</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiMjAyNC0wMS0yNiAxMzo0NTo0NyBDU1RcIlxuIn0= -->
+<pre><code>[1] &quot;2024-01-26 13:45:47 CST&quot;</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>We’ve stored these distances in the matrix distTmp for you. Now we
-have to assign a cluster to each point. To do that we’ll look at each
-column and ?</p>
+<p>And check the class() of t1.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJwaWNrIHRoZSBtaW5pbXVtIGVudHJ5XCJcbmBgYCJ9 -->
-<pre class="r"><code>&quot;pick the minimum entry&quot;</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3ModDEpXG5gYGAifQ== -->
+<pre class="r"><code>class(t1)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwicGljayB0aGUgbWluaW11bSBlbnRyeVwiXG4ifQ== -->
-<pre><code>[1] &quot;pick the minimum entry&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiUE9TSVhjdFwiIFwiUE9TSVh0XCIgXG4ifQ== -->
+<pre><code>[1] &quot;POSIXct&quot; &quot;POSIXt&quot; </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>From the distTmp entries, which cluster would point 6 be assigned
-to?</p>
+<p>As mentioned earlier, POSIXct is just one of two ways that R
+represents time information. (You can ignore the second value above,
+POSIXt, which just functions as a common language between POSIXct and
+POSIXlt.) Use unclass() to see what t1 looks like internally – the
+(large) number of seconds since the beginning of 1970.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCIzXCJcbmBgYCJ9 -->
-<pre class="r"><code>&quot;3&quot;</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudW5jbGFzcyh0MSlcbmBgYCJ9 -->
+<pre class="r"><code>unclass(t1)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiM1wiXG4ifQ== -->
-<pre><code>[1] &quot;3&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDE3MDYyOTgzNDhcbiJ9 -->
+<pre><code>[1] 1706298348</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>R has a handy function which.min which you can apply to ALL the
-columns of distTmp with one call. Simply call the R function apply with
-3 arguments. The first is distTmp, the second is 2 meaning the columns
-of distTmp, and the third is which.min, the function you want to apply
-to the columns of distTmp. Try this now.</p>
+<p>By default, Sys.time() returns an object of class POSIXct, but we can
+coerce the result to POSIXlt with as.POSIXlt(Sys.time()). Give it a try
+and store the result in t2.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGlzdFRtcCA8LSBtZGlzdCh4LCB5LCBjeCwgY3kpXG5gYGAifQ== -->
-<pre class="r"><code>distTmp &lt;- mdist(x, y, cx, cy)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDIgPC0gYXMuUE9TSVhsdChTeXMudGltZSgpKVxuYGBgIn0= -->
+<pre class="r"><code>t2 &lt;- as.POSIXlt(Sys.time())</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
+<p>Check the class of t2.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXBwbHkoZGlzdFRtcCwgMiwgd2hpY2gubWluKVxuYGBgIn0= -->
-<pre class="r"><code>apply(distTmp, 2, which.min)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3ModDIpXG5gYGAifQ== -->
+<pre class="r"><code>class(t2)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSAyIDIgMiAxIDMgMyAzIDEgMyAzIDMgM1xuIn0= -->
-<pre><code> [1] 2 2 2 1 3 3 3 1 3 3 3 3</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiUE9TSVhsdFwiIFwiUE9TSVh0XCIgXG4ifQ== -->
+<pre><code>[1] &quot;POSIXlt&quot; &quot;POSIXt&quot; </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>You can see that you were right and the 6th entry is indeed 3 as you
-answered before. We see the first 3 entries were assigned to the second
-(orange) cluster and only 2 points (4 and 8) were assigned to the first
-(red) cluster.</p>
-<p>We’ve stored the vector of cluster colors (“red”,“orange”,“purple”)
-in the array cols1 for you and we’ve also stored the cluster assignments
-in the array newClust. Let’s color the 12 data points according to their
-assignments. Again, use the command points with 5 arguments. The first 2
-are x and y. The third is pch set to 19, the fourth is cex set to 2, and
-the last, col is set to cols1[newClust].</p>
+<p>Now view its contents.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmV3Q2x1c3QgPC0gYXBwbHkoZGlzdFRtcCwgMiwgd2hpY2gubWluKVxuY29sczEgPC0gYyhcInJlZFwiLCBcIm9yYW5nZVwiLCBcInB1cnBsZVwiKVxuYGBgIn0= -->
-<pre class="r"><code>newClust &lt;- apply(distTmp, 2, which.min)
-cols1 &lt;- c(&quot;red&quot;, &quot;orange&quot;, &quot;purple&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDJcbmBgYCJ9 -->
+<pre class="r"><code>t2</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFyKG1hcj1jKDAsIDAsIDAsIDApKVxucGxvdCh4LCB5LCBjb2w9XCJibHVlXCIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKVxudGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSlcbmBgYCJ9 -->
-<pre class="r"><code>par(mar=c(0, 0, 0, 0))
-plot(x, y, col=&quot;blue&quot;, pch=19, cex=2, asp=1)
-text(x+0.05, y+0.05, labels=as.character(1:12))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucG9pbnRzKGN4LCBjeSwgY29sPWMoXCJyZWRcIiwgXCJvcmFuZ2VcIixcInB1cnBsZVwiKSwgcGNoPTMsIGNleD0yLCBsd2Q9MilcbnBvaW50cyh4LCB5LCBwY2g9MTksIGNleD0yLCBjb2w9Y29sczFbbmV3Q2x1c3RdKVxuYGBgIn0= -->
-<pre class="r"><code>points(cx, cy, col=c(&quot;red&quot;, &quot;orange&quot;,&quot;purple&quot;), pch=3, cex=2, lwd=2)
-points(x, y, pch=19, cex=2, col=cols1[newClust])</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Now we have to recalculate our centroids so they are the average
-(center of gravity) of the cluster of points assigned to them. We have
-to do the x and y coordinates separately. We’ll do the x coordinate
-first. Recall that the vectors x and y hold the respective coordinates
-of our 12 data points.</p>
-<p>We can use the R function tapply which applies “a function over a
-ragged array”. This means that every element of the array is assigned a
-factor and the function is applied to subsets of the array (identified
-by the factor vector). This allows us to take advantage of the factor
-vector newClust we calculated. Call tapply now with 3 arguments, x (the
-data), newClust (the factor array), and mean (the function to
-apply).</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFwcGx5KHgsIG5ld0NsdXN0LCBtZWFuKVxuYGBgIn0= -->
-<pre class="r"><code>tapply(x, newClust, mean)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgIDEgICAgICAgIDIgICAgICAgIDMgXG4xLjIxMDc2NyAxLjAxMDMyMCAyLjQ5ODAxMSBcbiJ9 -->
-<pre><code>       1        2        3 
-1.210767 1.010320 2.498011 </code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiMjAyNC0wMS0yNiAxMzo0NTo0NyBDU1RcIlxuIn0= -->
+<pre><code>[1] &quot;2024-01-26 13:45:47 CST&quot;</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Repeat the call, except now apply it to the vector y instead of
-x.</p>
+<p>The printed format of t2 is identical to that of t1. Now unclass() t2
+to see how it is different internally.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFwcGx5KHksIG5ld0NsdXN0LCBtZWFuKVxuYGBgIn0= -->
-<pre class="r"><code>tapply(y, newClust, mean)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudW5jbGFzcyh0MilcbmBgYCJ9 -->
+<pre class="r"><code>unclass(t2)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgIDEgICAgICAgIDIgICAgICAgIDMgXG4xLjczMDU1NSAxLjAxNjUxMyAxLjM1NDM3MyBcbiJ9 -->
-<pre><code>       1        2        3 
-1.730555 1.016513 1.354373 </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Now that we have new x and new y coordinates for the 3 centroids we
-can plot them. We’ve stored off the coordinates for you in variables
-newCx and newCy. Use the R command points with these as the first 2
-arguments. In addition, use the arguments col set equal to cols1, pch
-equal to 8, cex equal to 2 and lwd also equal to 2.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmV3Q3ggPC0gdGFwcGx5KHgsIG5ld0NsdXN0LCBtZWFuKVxubmV3Q3kgPC0gdGFwcGx5KHksIG5ld0NsdXN0LCBtZWFuKVxuYGBgIn0= -->
-<pre class="r"><code>newCx &lt;- tapply(x, newClust, mean)
-newCy &lt;- tapply(y, newClust, mean)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFyKG1hcj1jKDAsIDAsIDAsIDApKVxucGxvdCh4LCB5LCBjb2w9XCJibHVlXCIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKVxudGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSlcbmBgYCJ9 -->
-<pre class="r"><code>par(mar=c(0, 0, 0, 0))
-plot(x, y, col=&quot;blue&quot;, pch=19, cex=2, asp=1)
-text(x+0.05, y+0.05, labels=as.character(1:12))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucG9pbnRzKGN4LCBjeSwgY29sPWMoXCJyZWRcIiwgXCJvcmFuZ2VcIixcInB1cnBsZVwiKSwgcGNoPTMsIGNleD0yLCBsd2Q9MilcbnBvaW50cyh4LCB5LCBwY2g9MTksIGNleD0yLCBjb2w9Y29sczFbbmV3Q2x1c3RdKVxuYGBgIn0= -->
-<pre class="r"><code>points(cx, cy, col=c(&quot;red&quot;, &quot;orange&quot;,&quot;purple&quot;), pch=3, cex=2, lwd=2)
-points(x, y, pch=19, cex=2, col=cols1[newClust])</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucG9pbnRzKG5ld0N4LCBuZXdDeSwgY29sPWNvbHMxLCBwY2g9OCwgY2V4PTIsIGx3ZD0yKVxuYGBgIn0= -->
-<pre class="r"><code>points(newCx, newCy, col=cols1, pch=8, cex=2, lwd=2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>We see how the centroids have moved closer to their respective
-clusters. This is especially true of the second (orange) cluster. Now
-call the distance function mdist with the 4 arguments x, y, newCx, and
-newCy. This will allow us to reassign the data points to new clusters if
-necessary.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWRpc3QoeCwgeSwgbmV3Q3gsIG5ld0N5KVxuYGBgIn0= -->
-<pre class="r"><code>mdist(x, y, newCx, newCy)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAgICBbLDFdICAgICAgICBbLDJdICAgICAgWywzXSAgICAgIFssNF0gICAgICBbLDVdICAgICAgWyw2XSAgICAgIFssN10gICAgIFssOF0gICAgICBbLDldICAgIFssMTBdXG5bMSxdIDAuOTg5MTE4NzUgMC41MzkxNTI3MjUgMC4yOTAxODc5IDEuMDI4Njk3OSAwLjc5MzY5NjYgMC44MDA0OTU2IDAuNDY1MDY2NCAxLjAyODY5OCAzLjMwNTM3MDYgMy4yODI3NzhcblsyLF0gMC4wOTI4NzI2MiAwLjAwMjA1MzA0MSAwLjA3MzQzMDQgMC4yMzEzNjk0IDEuOTMzMzczMiAxLjgzMjA0MDcgMS40MzEwOTcxIDIuOTI2MDk1IDMuNTIyNDQ0MiAzLjI5NTMwMVxuWzMsXSAzLjI4NTMxMTgwIDIuMTk3NDg3Mzg3IDEuNjY3NjcyNSA0LjAxMTM3OTYgMC40NjUyMDc1IDAuMzcyMTc3OCAwLjYwNDM4NjEgMS42NDMwMzMgMC4yNTg2OTA4IDAuMzA5NzMwXG4gICAgICAgICBbLDExXSAgICAgWywxMl1cblsxLF0gMy41MzkxNTEyIDIuOTM0NTQ0NVxuWzIsXSAzLjU5OTA5NTUgMy4yMDk3OTQ0XG5bMyxdIDAuMzYxMDc0NyAwLjE2MDI3NTVcbiJ9 -->
-<pre><code>           [,1]        [,2]      [,3]      [,4]      [,5]      [,6]      [,7]     [,8]      [,9]    [,10]
-[1,] 0.98911875 0.539152725 0.2901879 1.0286979 0.7936966 0.8004956 0.4650664 1.028698 3.3053706 3.282778
-[2,] 0.09287262 0.002053041 0.0734304 0.2313694 1.9333732 1.8320407 1.4310971 2.926095 3.5224442 3.295301
-[3,] 3.28531180 2.197487387 1.6676725 4.0113796 0.4652075 0.3721778 0.6043861 1.643033 0.2586908 0.309730
-         [,11]     [,12]
-[1,] 3.5391512 2.9345445
-[2,] 3.5990955 3.2097944
-[3,] 0.3610747 0.1602755</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>We’ve stored off this new matrix of distances in the matrix distTmp2
-for you. Recall that the first cluster is red, the second orange and the
-third purple. Look closely at columns 4 and 7 of distTmp2. What will
-happen to points 4 and 7?</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJUaGV5IHdpbGwgYm90aCBjaGFuZ2UgY2x1c3RlcnNcIlxuYGBgIn0= -->
-<pre class="r"><code>&quot;They will both change clusters&quot;</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiVGhleSB3aWxsIGJvdGggY2hhbmdlIGNsdXN0ZXJzXCJcbiJ9 -->
-<pre><code>[1] &quot;They will both change clusters&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Now call apply with 3 arguments, distTmp2, 2, and which.min to find
-the new cluster assignments for the points.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGlzdFRtcDIgPC0gbWRpc3QoeCwgeSwgbmV3Q3gsIG5ld0N5KVxuYGBgIn0= -->
-<pre class="r"><code>distTmp2 &lt;- mdist(x, y, newCx, newCy)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXBwbHkoZGlzdFRtcDIsIDIsIHdoaWNoLm1pbilcbmBgYCJ9 -->
-<pre class="r"><code>apply(distTmp2, 2, which.min)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSAyIDIgMiAyIDMgMyAxIDEgMyAzIDMgM1xuIn0= -->
-<pre><code> [1] 2 2 2 2 3 3 1 1 3 3 3 3</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>We’ve stored off the new cluster assignments in a vector of factors
-called newClust2. Use the R function points to recolor the points with
-their new assignments. Again, there are 5 arguments, x and y are first,
-followed by pch set to 19, cex to 2, and col to cols1[newClust2].</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmV3Q2x1c3QyIDwtIGFwcGx5KGRpc3RUbXAyLCAyLCB3aGljaC5taW4pXG5gYGAifQ== -->
-<pre class="r"><code>newClust2 &lt;- apply(distTmp2, 2, which.min)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFyKG1hcj1jKDAsIDAsIDAsIDApKVxucGxvdCh4LCB5LCBjb2w9XCJibHVlXCIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKVxudGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSlcbmBgYCJ9 -->
-<pre class="r"><code>par(mar=c(0, 0, 0, 0))
-plot(x, y, col=&quot;blue&quot;, pch=19, cex=2, asp=1)
-text(x+0.05, y+0.05, labels=as.character(1:12))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucG9pbnRzKGN4LCBjeSwgY29sPWMoXCJyZWRcIiwgXCJvcmFuZ2VcIixcInB1cnBsZVwiKSwgcGNoPTMsIGNleD0yLCBsd2Q9MilcbnBvaW50cyh4LCB5LCBwY2g9MTksIGNleD0yLCBjb2w9Y29sczFbbmV3Q2x1c3RdKVxuYGBgIn0= -->
-<pre class="r"><code>points(cx, cy, col=c(&quot;red&quot;, &quot;orange&quot;,&quot;purple&quot;), pch=3, cex=2, lwd=2)
-points(x, y, pch=19, cex=2, col=cols1[newClust])</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucG9pbnRzKG5ld0N4LCBuZXdDeSwgY29sPWNvbHMxLCBwY2g9OCwgY2V4PTIsIGx3ZD0yKVxucG9pbnRzKHgsIHksIHBjaD0xOSwgY2V4PTIsIGNvbD1jb2xzMVtuZXdDbHVzdDJdKVxuYGBgIn0= -->
-<pre class="r"><code>points(newCx, newCy, col=cols1, pch=8, cex=2, lwd=2)
-points(x, y, pch=19, cex=2, col=cols1[newClust2])</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Notice that points 4 and 7 both changed clusters, 4 moved from 1 to 2
-(red to orange), and point 7 switched from 3 to 2 (purple to red).</p>
-<p>Now use tapply to find the x coordinate of the new centroid. Recall
-there are 3 arguments, x, newClust2, and mean.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFwcGx5KHgsIG5ld0NsdXN0MiwgbWVhbilcbmBgYCJ9 -->
-<pre class="r"><code>tapply(x, newClust2, mean)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgICAxICAgICAgICAgMiAgICAgICAgIDMgXG4xLjg4Nzg2MjggMC44OTA0NTUzIDIuNjAwMTcwNCBcbiJ9 -->
-<pre><code>        1         2         3 
-1.8878628 0.8904553 2.6001704 </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Do the same to find the new y coordinate.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFwcGx5KHksIG5ld0NsdXN0MiwgbWVhbilcbmBgYCJ9 -->
-<pre class="r"><code>tapply(y, newClust2, mean)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiICAgICAgIDEgICAgICAgIDIgICAgICAgIDMgXG4yLjE1Nzg2NiAxLjAwNjg3MSAxLjI3NDY3NSBcbiJ9 -->
-<pre><code>       1        2        3 
-2.157866 1.006871 1.274675 </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>We’ve stored off these coordinates for you in the variables finalCx
-and finalCy. Plot these new centroids using the points function with 6
-arguments. The first 2 are finalCx and finalCy. The argument col should
-equal cols1, pch should equal 9, cex 2 and lwd 2.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZmluYWxDeCA8LSB0YXBwbHkoeCwgbmV3Q2x1c3QyLCBtZWFuKVxuZmluYWxDeSA8LSB0YXBwbHkoeSwgbmV3Q2x1c3QyLCBtZWFuKVxuYGBgIn0= -->
-<pre class="r"><code>finalCx &lt;- tapply(x, newClust2, mean)
-finalCy &lt;- tapply(y, newClust2, mean)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFyKG1hcj1jKDAsIDAsIDAsIDApKVxucGxvdCh4LCB5LCBjb2w9XCJibHVlXCIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKVxudGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSlcbmBgYCJ9 -->
-<pre class="r"><code>par(mar=c(0, 0, 0, 0))
-plot(x, y, col=&quot;blue&quot;, pch=19, cex=2, asp=1)
-text(x+0.05, y+0.05, labels=as.character(1:12))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucG9pbnRzKGN4LCBjeSwgY29sPWMoXCJyZWRcIiwgXCJvcmFuZ2VcIixcInB1cnBsZVwiKSwgcGNoPTMsIGNleD0yLCBsd2Q9MilcbnBvaW50cyh4LCB5LCBwY2g9MTksIGNleD0yLCBjb2w9Y29sczFbbmV3Q2x1c3RdKVxuYGBgIn0= -->
-<pre class="r"><code>points(cx, cy, col=c(&quot;red&quot;, &quot;orange&quot;,&quot;purple&quot;), pch=3, cex=2, lwd=2)
-points(x, y, pch=19, cex=2, col=cols1[newClust])</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucG9pbnRzKG5ld0N4LCBuZXdDeSwgY29sPWNvbHMxLCBwY2g9OCwgY2V4PTIsIGx3ZD0yKVxucG9pbnRzKHgsIHksIHBjaD0xOSwgY2V4PTIsIGNvbD1jb2xzMVtuZXdDbHVzdDJdKVxuYGBgIn0= -->
-<pre class="r"><code>points(newCx, newCy, col=cols1, pch=8, cex=2, lwd=2)
-points(x, y, pch=19, cex=2, col=cols1[newClust2])</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucG9pbnRzKGZpbmFsQ3gsIGZpbmFsQ3ksIGNvbD1jb2xzMSwgcGNoPTksIGNleD0yLCBsd2Q9MilcbmBgYCJ9 -->
-<pre class="r"><code>points(finalCx, finalCy, col=cols1, pch=9, cex=2, lwd=2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>It should be obvious that if we continued this process points 5
-through 8 would all turn red, while points 1 through 4 stay orange, and
-points 9 through 12 purple.</p>
-<p>Now that you’ve gone through an example step by step, you’ll be
-relieved to hear that R provides a command to do all this work for you.
-Unsurprisingly it’s called kmeans and, although it has several
-parameters, we’ll just mention four. These are x, (the numeric matrix of
-data), centers, iter.max, and nstart. The second of these (centers) can
-be either a number of clusters or a set of initial centroids. The third,
-iter.max, specifies the maximum number of iterations to go through, and
-nstart is the number of random starts you want to try if you specify
-centers as a number.</p>
-<p>Call kmeans now with 2 arguments, dataFrame (which holds the x and y
-coordinates of our 12 points) and centers set equal to 3.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YUZyYW1lIDwtIGRhdGEuZnJhbWUoeD14LCB5PXkpXG5gYGAifQ== -->
-<pre class="r"><code>dataFrame &lt;- data.frame(x=x, y=y)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua21lYW5zKGRhdGFGcmFtZSwgY2VudGVycz0zKVxuYGBgIn0= -->
-<pre class="r"><code>kmeans(dataFrame, centers=3)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiSy1tZWFucyBjbHVzdGVyaW5nIHdpdGggMyBjbHVzdGVycyBvZiBzaXplcyAyLCA4LCAyXG5cbkNsdXN0ZXIgbWVhbnM6XG4gICAgICAgICAgeCAgICAgICAgIHlcbjEgMS4xMzYxODcwIDEuMTAyMzk1M1xuMiAyLjQyMjA5MzUgMS40OTU0NzI2XG4zIDAuNjQ0NzIzNyAwLjkxMTM0NjFcblxuQ2x1c3RlcmluZyB2ZWN0b3I6XG4gWzFdIDMgMSAxIDMgMiAyIDIgMiAyIDIgMiAyXG5cbldpdGhpbiBjbHVzdGVyIHN1bSBvZiBzcXVhcmVzIGJ5IGNsdXN0ZXI6XG5bMV0gMC4wMjkwNDcxMyAzLjk2OTE5NjY1IDAuMDM0Nzk5OTNcbiAoYmV0d2Vlbl9TUyAvIHRvdGFsX1NTID0gIDY0LjAgJSlcblxuQXZhaWxhYmxlIGNvbXBvbmVudHM6XG5cblsxXSBcImNsdXN0ZXJcIiAgICAgIFwiY2VudGVyc1wiICAgICAgXCJ0b3Rzc1wiICAgICAgICBcIndpdGhpbnNzXCIgICAgIFwidG90LndpdGhpbnNzXCIgXCJiZXR3ZWVuc3NcIiAgICBcInNpemVcIiAgICAgICAgXG5bOF0gXCJpdGVyXCIgICAgICAgICBcImlmYXVsdFwiICAgICAgXG4ifQ== -->
-<pre><code>K-means clustering with 3 clusters of sizes 2, 8, 2
+<!-- rnb-output-begin eyJkYXRhIjoiJHNlY1xuWzFdIDQ3LjYxNTI5XG5cbiRtaW5cblsxXSA0NVxuXG4kaG91clxuWzFdIDEzXG5cbiRtZGF5XG5bMV0gMjZcblxuJG1vblxuWzFdIDBcblxuJHllYXJcblsxXSAxMjRcblxuJHdkYXlcblsxXSA1XG5cbiR5ZGF5XG5bMV0gMjVcblxuJGlzZHN0XG5bMV0gMFxuXG4kem9uZVxuWzFdIFwiQ1NUXCJcblxuJGdtdG9mZlxuWzFdIC0yMTYwMFxuXG5hdHRyKCxcInR6b25lXCIpXG5bMV0gXCJcIiAgICBcIkNTVFwiIFwiQ1NUXCJcbmF0dHIoLFwiYmFsYW5jZWRcIilcblsxXSBUUlVFXG4ifQ== -->
+<pre><code>$sec
+[1] 47.61529
 
-Cluster means:
-          x         y
-1 1.1361870 1.1023953
-2 2.4220935 1.4954726
-3 0.6447237 0.9113461
+$min
+[1] 45
 
-Clustering vector:
- [1] 3 1 1 3 2 2 2 2 2 2 2 2
+$hour
+[1] 13
 
-Within cluster sum of squares by cluster:
-[1] 0.02904713 3.96919665 0.03479993
- (between_SS / total_SS =  64.0 %)
+$mday
+[1] 26
 
-Available components:
+$mon
+[1] 0
 
-[1] &quot;cluster&quot;      &quot;centers&quot;      &quot;totss&quot;        &quot;withinss&quot;     &quot;tot.withinss&quot; &quot;betweenss&quot;    &quot;size&quot;        
-[8] &quot;iter&quot;         &quot;ifault&quot;      </code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The program returns the information that the data clustered into 3
-clusters each of size 4. It also returns the coordinates of the 3
-cluster means, a vector named cluster indicating how the 12 points were
-partitioned into the clusters, and the sum of squares within each
-cluster. It also shows all the available components returned by the
-function. We’ve stored off this data for you in a kmeans object called
-kmObj. Look at kmObj$iter to see how many iterations the algorithm went
-through.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua21PYmogPC0ga21lYW5zKGRhdGFGcmFtZSwgMylcbmBgYCJ9 -->
-<pre class="r"><code>kmObj &lt;- kmeans(dataFrame, 3)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua21PYmokaXRlclxuYGBgIn0= -->
-<pre class="r"><code>kmObj$iter</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDFcbiJ9 -->
-<pre><code>[1] 1</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Two iterations as we did before. We just want to emphasize how you
-can access the information available to you. Let’s plot the data points
-color coded according to their cluster. This was stored in kmObj<span class="math inline">\(cluster. Run plot with 5 arguments. The data, x
-and y, are the first two; the third, col is set equal to
-kmObj\)</span>cluster, and the last two are pch and cex. The first of
-these should be set to 19 and the last to 2.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdCh4LCB5LCBjb2w9a21PYmokY2x1c3RlciwgcGNoPTE5LCBjZXg9MilcbmBgYCJ9 -->
-<pre class="r"><code>plot(x, y, col=kmObj$cluster, pch=19, cex=2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Now add the centroids which are stored in kmObj<span class="math inline">\(centers. Use the points function with 5 arguments.
-The first two are kmObj\)</span>centers and
-col=c(“black”,“red”,“green”). The last three, pch, cex, and lwd, should
-all equal 3.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdCh4LCB5LCBjb2w9a21PYmokY2x1c3RlciwgcGNoPTE5LCBjZXg9MilcbnBvaW50cyhrbU9iaiRjZW50ZXJzLCBjb2w9YyhcImJsYWNrXCIsIFwicmVkXCIsIFwiZ3JlZW5cIiksIHBjaD0zLCBjZXg9MywgbHdkPTMpXG5gYGAifQ== -->
-<pre class="r"><code>plot(x, y, col=kmObj$cluster, pch=19, cex=2)
-points(kmObj$centers, col=c(&quot;black&quot;, &quot;red&quot;, &quot;green&quot;), pch=3, cex=3, lwd=3)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Now for some fun! We want to show you how the output of the kmeans
-function is affected by its random start (when you just ask for a number
-of clusters). With random starts you might want to run the function
-several times to get an idea of the relationships between your
-observations. We’ll call kmeans with the same data points (stored in
-dataFrame), but ask for 6 clusters instead of 3.</p>
-<p>We’ll plot our data points several times and each time we’ll just
-change the argument col which will show us how the R function kmeans is
-clustering them. So, call plot now with 5 arguments. The first 2 are x
-and y. The third is col set equal to the call
-kmeans(dataFrame,6)$cluster. The last two (pch and cex) are set to 19
-and 2 respectively.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdCh4LCB5LCBjb2w9a21lYW5zKGRhdGFGcmFtZSwgNikkY2x1c3RlciwgcGNoPTE5LCBjZXg9MilcbmBgYCJ9 -->
-<pre class="r"><code>plot(x, y, col=kmeans(dataFrame, 6)$cluster, pch=19, cex=2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>See how the points cluster? Now recall your last command and rerun
-it.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdCh4LCB5LCBjb2w9a21lYW5zKGRhdGFGcmFtZSwgNikkY2x1c3RlciwgcGNoPTE5LCBjZXg9MilcbmBgYCJ9 -->
-<pre class="r"><code>plot(x, y, col=kmeans(dataFrame, 6)$cluster, pch=19, cex=2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>See how the clustering has changed? As the Teletubbies would say,
-“Again! Again!”</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdCh4LCB5LCBjb2w9a21lYW5zKGRhdGFGcmFtZSwgNikkY2x1c3RlciwgcGNoPTE5LCBjZXg9MilcbmBgYCJ9 -->
-<pre class="r"><code>plot(x, y, col=kmeans(dataFrame, 6)$cluster, pch=19, cex=2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-plot-begin eyJoZWlnaHQiOjQzMi42MzI5LCJ3aWR0aCI6NzAwLCJzaXplX2JlaGF2aW9yIjowLCJjb25kaXRpb25zIjpbXX0= -->
-<p><img src="data:image/png;base64,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" /></p>
-<!-- rnb-plot-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>So the clustering changes with different starts. Perhaps 6 is too
-many clusters?</p>
-<p>True or False? K-means clustering requires you to specify a number of
-clusters before you begin.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJUcnVlXCJcbmBgYCJ9 -->
-<pre class="r"><code>&quot;True&quot;</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiVHJ1ZVwiXG4ifQ== -->
-<pre><code>[1] &quot;True&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>True or False? K-means clustering requires you to specify a number of
-iterations before you begin.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJGYWxzZVwiXG5gYGAifQ== -->
-<pre class="r"><code>&quot;False&quot;</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRmFsc2VcIlxuIn0= -->
-<pre><code>[1] &quot;False&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>True or False? Every data set has a single fixed number of
-clusters.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJGYWxzZVwiXG5gYGAifQ== -->
-<pre class="r"><code>&quot;False&quot;</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRmFsc2VcIlxuIn0= -->
-<pre><code>[1] &quot;False&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>True or False? K-means clustering will always stop in 3
-iterations</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJGYWxzZVwiXG5gYGAifQ== -->
-<pre class="r"><code>&quot;False&quot;</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRmFsc2VcIlxuIn0= -->
-<pre><code>[1] &quot;False&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>True or False? When starting kmeans with random centroids, you’ll
-always end up with the same final clustering.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJGYWxzZVwiXG5gYGAifQ== -->
-<pre class="r"><code>&quot;False&quot;</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRmFsc2VcIlxuIn0= -->
-<pre><code>[1] &quot;False&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
+$year
+[1] 124
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogInN3aXJsIExlc3NvbiAyOiBLIE1lYW5zIENsdXN0ZXJpbmciDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQoiS19NZWFuc19DbHVzdGVyaW5nLiAoU2xpZGVzIGZvciB0aGlzIGFuZCBvdGhlciBEYXRhIFNjaWVuY2UgY291cnNlcyBtYXkgYmUgZm91bmQgYXQgZ2l0aHViIGh0dHBzOi8vZ2l0aHViLmNvbS9EYXRhU2NpZW5jZVNwZWNpYWxpemF0aW9uL2NvdXJzZXMvLiBJZiB5b3UgY2FyZSB0byB1c2UgdGhlbSwgdGhleSBtdXN0IGJlIGRvd25sb2FkZWQgYXMgYSB6aXAgZmlsZSBhbmQgdmlld2VkIGxvY2FsbHkuIFRoaXMgbGVzc29uIGNvcnJlc3BvbmRzIHRvIDA0X0V4cGxvcmF0b3J5QW5hbHlzaXMva21lYW5zQ2x1c3RlcmluZy4pIg0KDQpJbiB0aGlzIGxlc3NvbiB3ZSdsbCBsZWFybiBhYm91dCBrLW1lYW5zIGNsdXN0ZXJpbmcsIGFub3RoZXIgc2ltcGxlIHdheSBvZiBleGFtaW5pbmcgYW5kIG9yZ2FuaXppbmcgbXVsdGktZGltZW5zaW9uYWwgZGF0YS4gQXMgd2l0aCBoaWVyYXJjaGljYWwgY2x1c3RlcmluZywgdGhpcyB0ZWNobmlxdWUgaXMgIG1vc3QgdXNlZnVsIGluIHRoZSBlYXJseSBzdGFnZXMgb2YgYW5hbHlzaXMgd2hlbiB5b3UncmUgdHJ5aW5nIHRvIGdldCBhbiB1bmRlcnN0YW5kaW5nIG9mIHRoZSBkYXRhLCBlLmcuLCBmaW5kaW5nIHNvbWUgcGF0dGVybiBvciByZWxhdGlvbnNoaXAgYmV0d2VlbiBkaWZmZXJlbnQgZmFjdG9ycyBvciB2YXJpYWJsZXMuIA0KDQpSIGRvY3VtZW50YXRpb24gdGVsbHMgdXMgdGhhdCB0aGUgay1tZWFucyBtZXRob2QgImFpbXMgdG8gcGFydGl0aW9uIHRoZSBwb2ludHMgaW50byBrIGdyb3VwcyBzdWNoIHRoYXQgdGhlIHN1bSBvZiBzcXVhcmVzIGZyb20gcG9pbnRzIHRvIHRoZSBhc3NpZ25lZCBjbHVzdGVyIGNlbnRyZXMgaXMgbWluaW1pemVkLiIgDQoNClNpbmNlIGNsdXN0ZXJpbmcgb3JnYW5pemVzIGRhdGEgcG9pbnRzIHRoYXQgYXJlIGNsb3NlIGludG8gZ3JvdXBzIHdlJ2xsIGFzc3VtZSB3ZSd2ZSBkZWNpZGVkIG9uIGEgbWVhc3VyZSBvZiBkaXN0YW5jZSwgZS5nLiwgRXVjbGlkZWFuLiANCg0KVG8gaWxsdXN0cmF0ZSB0aGUgbWV0aG9kLCB3ZSdsbCB1c2UgdGhlc2UgcmFuZG9tIHBvaW50cyB3ZSBnZW5lcmF0ZWQsIGZhbWlsaWFyIHRvIHlvdSBpZiB5b3UndmUgYWxyZWFkeSBnb25lIHRocm91Z2ggdGhlIGhpZXJhcmNoaWNhbCBjbHVzdGVyaW5nIGxlc3Nvbi4gV2UnbGwgIGRlbW9uc3RyYXRlIGstbWVhbnMgY2x1c3RlcmluZyBpbiBzZXZlcmFsIHN0ZXBzLCBidXQgZmlyc3Qgd2UnbGwgZXhwbGFpbiB0aGUgZ2VuZXJhbCBpZGVhLg0KDQpgYGB7cn0NCnNldC5zZWVkKDEyMzQpOw0KeCA8LSBybm9ybSgxMiwgbWVhbj1yZXAoMTozLGVhY2g9NCksIHNkPTAuMikNCnkgPC0gcm5vcm0oMTIsIG1lYW49cmVwKGMoMSwgMiwgMSksIGVhY2g9NCksIHNkPTAuMikNCmBgYA0KDQoNCmBgYHtyfQ0KcGFyKG1hcj1jKDAsIDAsIDAsIDApKQ0KcGxvdCh4LCB5LCBjb2w9ImJsdWUiLCBwY2g9MTksIGNleD0yLCBhc3A9MSkNCnRleHQoeCswLjA1LCB5KzAuMDUsIGxhYmVscz1hcy5jaGFyYWN0ZXIoMToxMikpDQpgYGANCg0KQXMgd2Ugc2FpZCwgay1tZWFucyBpcyBhIHBhcnRpb25pbmcgYXBwcm9hY2ggd2hpY2ggcmVxdWlyZXMgdGhhdCB5b3UgZmlyc3QgZ3Vlc3MgaG93IG1hbnkgY2x1c3RlcnMgeW91IGhhdmUgKG9yIHdhbnQpLiBPbmNlIHlvdSBmaXggdGhpcyBudW1iZXIsIHlvdSByYW5kb21seSBjcmVhdGUgYSAiY2VudHJvaWQiIChhIHBoYW50b20gcG9pbnQpIGZvciBlYWNoIGNsdXN0ZXIgYW5kIGFzc2lnbiBlYWNoIHBvaW50IG9yIG9ic2VydmF0aW9uIGluIHlvdXIgZGF0YXNldCB0byB0aGUgY2VudHJvaWQgdG8gd2hpY2ggaXQgaXMgY2xvc2VzdC4gT25jZSBlYWNoIHBvaW50IGlzIGFzc2lnbmVkIGEgY2VudHJvaWQsIHlvdSByZWFkanVzdCB0aGUgY2VudHJvaWQncyBwb3NpdGlvbiBieSBtYWtpbmcgaXQgdGhlIGF2ZXJhZ2Ugb2YgdGhlIHBvaW50cyBhc3NpZ25lZCB0byBpdC4gDQoNCk9uY2UgeW91IGhhdmUgcmVwb3NpdGlvbmVkIHRoZSBjZW50cm9pZHMsIHlvdSBtdXN0IHJlY2FsY3VsYXRlIHRoZSBkaXN0YW5jZSBvZiB0aGUgb2JzZXJ2YXRpb25zIHRvIHRoZSBjZW50cm9pZHMgYW5kIHJlYXNzaWduIGFueSwgaWYgbmVjZXNzYXJ5LCB0byB0aGUgY2VudHJvaWQgY2xvc2VzdCB0byB0aGVtLiBBZ2Fpbiwgb25jZSB0aGUgcmVhc3NpZ25tZW50cyBhcmUgZG9uZSwgcmVhZGp1c3QgdGhlIHBvc2l0aW9ucyBvZiB0aGUgY2VudHJvaWRzIGJhc2VkIG9uIHRoZSBuZXcgY2x1c3RlciBtZW1iZXJzaGlwLiBUaGUgcHJvY2VzcyBzdG9wcyBvbmNlIHlvdSByZWFjaCBhbiBpdGVyYXRpb24gaW4gd2hpY2ggbm8gYWRqdXN0bWVudHMgYXJlIG1hZGUgb3Igd2hlbiB5b3UndmUgcmVhY2hlZCBzb21lIHByZWRldGVybWluZWQgbWF4aW11bSBudW1iZXIgb2YgaXRlcmF0aW9ucy4gDQoNCkFzIGRlc2NyaWJlZCwgd2hhdCBkb2VzIHRoaXMgcHJvY2VzcyByZXF1aXJlPw0KDQpgYGB7cn0NCiJBbGwgb2YgdGhlIG90aGVycyINCmBgYA0KDQpTbyBrLW1lYW5zIGNsdXN0ZXJpbmcgcmVxdWlyZXMgc29tZSBkaXN0YW5jZSBtZXRyaWMgKHNheSBFdWNsaWRlYW4pLCBhIGh5cG90aGVzaXplZCBmaXhlZCBudW1iZXIgb2YgY2x1c3RlcnMsIGFuZCBhbiBpbml0aWFsIGd1ZXNzIGFzIHRvIGNsdXN0ZXIgY2VudHJvaWRzLiBBcyBkZXNjcmliZWQsIHdoYXQgZG9lcyB0aGlzIHByb2Nlc3MgcHJvZHVjZT8NCg0KYGBge3J9DQoiQWxsIG9mIHRoZSBvdGhlcnMiDQpgYGANCg0KV2hlbiBpdCdzIGZpbmlzaGVkIGstbWVhbnMgY2x1c3RlcmluZyByZXR1cm5zIGEgZmluYWwgcG9zaXRpb24gb2YgZWFjaCBjbHVzdGVyJ3MgY2VudHJvaWQgYXMgd2VsbCBhcyB0aGUgYXNzaWdubWVudCBvZiBlYWNoIGRhdGEgcG9pbnQgb3Igb2JzZXJ2YXRpb24gdG8gYSBjbHVzdGVyLg0KDQpOb3cgd2UnbGwgc3RlcCB0aHJvdWdoIHRoaXMgcHJvY2VzcyB1c2luZyBvdXIgcmFuZG9tIHBvaW50cyBhcyBvdXIgZGF0YS4gVGhlIGNvb3JkaW5hdGVzIG9mIHRoZXNlIGFyZSBzdG9yZWQgaW4gMiB2ZWN0b3JzLCB4IGFuZCB5LiBXZSBleWViYWxsIHRoZSBkaXNwbGF5IGFuZCBndWVzcyB0aGF0IHRoZXJlIGFyZSAzIGNsdXN0ZXJzLiBXZSdsbCBwaWNrIDMgcG9zaXRpb25zIG9mIGNlbnRyb2lkcywgb25lIGZvciBlYWNoIGNsdXN0ZXIuDQoNCldlJ3ZlIGNyZWF0ZWQgdHdvIDMtbG9uZyB2ZWN0b3JzIGZvciB5b3UsIGN4IGFuZCBjeS4gVGhlc2UgcmVzcGVjdGl2ZWx5IGhvbGQgdGhlIHgtIGFuZCB5LSBjb29yZGluYXRlcyBmb3IgMyBwcm9wb3NlZCBjZW50cm9pZHMuIEZvciBjb252ZW5pZW5jZSwgd2UndmUgYWxzbyBzdG9yZWQgdGhlbSBpbiBhIDIgYnkgMyBtYXRyaXggY21hdC4gVGhlIHggY29vcmRpbmF0ZXMgYXJlIGluIHRoZSBmaXJzdCByb3cgYW5kIHRoZSB5IGNvb3JkaW5hdGVzIGluIHRoZSBzZWNvbmQuIExvb2sgYXQgY21hdCBub3cuDQoNCmBgYHtyfQ0KY3ggPC0gYygxLCAxLjgsIDIuNSkNCmN5IDwtIGMoMiwgMSwgMS41KQ0KY21hdCA8LSBtYXRyaXgoYyhjeCwgY3kpLCBucm93PTIsIGJ5cm93PVRSVUUpIA0KYGBgDQoNCg0KYGBge3J9DQpjbWF0DQpgYGANCg0KVGhlIGNvb3JkaW5hdGVzIG9mIHRoZXNlIHBvaW50cyBhcmUgKDEsMiksICgxLjgsMSkgYW5kICgyLjUsMS41KS4gV2UnbGwgYWRkIHRoZXNlIGNlbnRyb2lkcyB0byB0aGUgcGxvdCBvZiBvdXIgcG9pbnRzLiBEbyB0aGlzIGJ5IGNhbGxpbmcgdGhlIFIgY29tbWFuZCBwb2ludHMgd2l0aCA2IGFyZ3VtZW50cy4gVGhlIGZpcnN0IDIgYXJlIGN4IGFuZCBjeSwgYW5kIHRoZSB0aGlyZCBpcyBjb2wgc2V0IGVxdWFsIHRvIHRoZSBjb25jYXRlbmF0aW9uIG9mIDMgY29sb3JzLCAicmVkIiwgIm9yYW5nZSIsIGFuZCAicHVycGxlIi4gVGhlIGZvdXJ0aCBhcmd1bWVudCBpcyBwY2ggc2V0IGVxdWFsIHRvIDMgKGEgcGx1cyBzaWduKSwgdGhlIGZpZnRoIGlzIGNleCBzZXQgZXF1YWwgdG8gMiAoZXhwYW5zaW9uIG9mIGNoYXJhY3RlciksIGFuZCB0aGUgZmluYWwgaXMgbHdkIChsaW5lIHdpZHRoKSBhbHNvIHNldCBlcXVhbCB0byAyLg0KDQpgYGB7cn0NCnBhcihtYXI9YygwLCAwLCAwLCAwKSkNCnBsb3QoeCwgeSwgY29sPSJibHVlIiwgcGNoPTE5LCBjZXg9MiwgYXNwPTEpDQp0ZXh0KHgrMC4wNSwgeSswLjA1LCBsYWJlbHM9YXMuY2hhcmFjdGVyKDE6MTIpKQ0KcG9pbnRzKGN4LCBjeSwgY29sPWMoInJlZCIsICJvcmFuZ2UiLCJwdXJwbGUiKSwgcGNoPTMsIGNleD0yLCBsd2Q9MikNCmBgYA0KDQpXZSBzZWUgdGhlIGZpcnN0IGNlbnRyb2lkICgxLDIpIGlzIGluIHJlZC4gVGhlIHNlY29uZCAoMS44LDEpLCB0byB0aGUgcmlnaHQgYW5kIGJlbG93IHRoZSBmaXJzdCwgaXMgb3JhbmdlLCBhbmQgdGhlIGZpbmFsIGNlbnRyb2lkICgyLjUsMS41KSwgdGhlIGZ1cnRoZXN0IHRvIHRoZSByaWdodCwgaXMgcHVycGxlLg0KDQpOb3cgd2UgaGF2ZSB0byBjYWxjdWxhdGUgZGlzdGFuY2VzIGJldHdlZW4gZWFjaCBwb2ludCBhbmQgZXZlcnkgY2VudHJvaWQuIFRoZXJlIGFyZSAxMiBkYXRhIHBvaW50cyBhbmQgMyBjZW50cm9pZHMuIEhvdyBtYW55IGRpc3RhbmNlcyBkbyB3ZSBoYXZlIHRvIGNhbGN1bGF0ZT8NCg0KYGBge3J9DQoiMzYiDQpgYGANCg0KV2UndmUgd3JpdHRlbiBhIGZ1bmN0aW9uIGZvciB5b3UgY2FsbGVkIG1kaXN0IHdoaWNoIHRha2VzIDQgYXJndW1lbnRzLiBUaGUgdmVjdG9ycyBvZiBkYXRhIHBvaW50cyAoeCBhbmQgeSkgYXJlIHRoZSBmaXJzdCB0d28gYW5kIHRoZSB0d28gdmVjdG9ycyBvZiBjZW50cm9pZCBjb29yZGluYXRlcyAoY3ggYW5kIGN5KSBhcmUgdGhlIGxhc3QgdHdvLiBDYWxsIG1kaXN0IG5vdyB3aXRoIHRoZXNlIGFyZ3VtZW50cy4gDQoNCmBgYHtyfQ0KbWRpc3QgPC0gZnVuY3Rpb24oeCwgeSwgY3gsIGN5KXsNCiAgICBkaXN0VG1wIDwtIG1hdHJpeChOQSwgbnJvdz0zLCBuY29sPTEyKQ0KICAgIGRpc3RUbXBbMSxdIDwtICh4IC0gY3hbMV0pXjIgKyAoeSAtIGN5WzFdKV4yDQogICAgZGlzdFRtcFsyLF0gPC0gKHggLSBjeFsyXSleMiArICh5IC0gY3lbMl0pXjINCiAgICBkaXN0VG1wWzMsXSA8LSAoeCAtIGN4WzNdKV4yICsgKHkgLSBjeVszXSleMiAgDQogICAgcmV0dXJuKGRpc3RUbXApDQp9DQpgYGANCg0KDQpgYGB7cn0NCm1kaXN0KHgsIHksIGN4LCBjeSkNCmBgYA0KDQpXZSd2ZSBzdG9yZWQgdGhlc2UgZGlzdGFuY2VzIGluIHRoZSBtYXRyaXggZGlzdFRtcCBmb3IgeW91LiBOb3cgd2UgaGF2ZSB0byBhc3NpZ24gYSBjbHVzdGVyIHRvIGVhY2ggcG9pbnQuIFRvIGRvIHRoYXQgd2UnbGwgbG9vayBhdCBlYWNoIGNvbHVtbiBhbmQgPw0KDQpgYGB7cn0NCiJwaWNrIHRoZSBtaW5pbXVtIGVudHJ5Ig0KYGBgDQoNCkZyb20gdGhlIGRpc3RUbXAgZW50cmllcywgd2hpY2ggY2x1c3RlciB3b3VsZCBwb2ludCA2IGJlIGFzc2lnbmVkIHRvPw0KDQpgYGB7cn0NCiIzIg0KYGBgDQoNClIgaGFzIGEgaGFuZHkgZnVuY3Rpb24gd2hpY2gubWluIHdoaWNoIHlvdSBjYW4gYXBwbHkgdG8gQUxMIHRoZSBjb2x1bW5zIG9mIGRpc3RUbXAgd2l0aCBvbmUgY2FsbC4gU2ltcGx5IGNhbGwgdGhlIFIgZnVuY3Rpb24gYXBwbHkgd2l0aCAzIGFyZ3VtZW50cy4gVGhlIGZpcnN0IGlzIGRpc3RUbXAsIHRoZSBzZWNvbmQgaXMgMiBtZWFuaW5nIHRoZSBjb2x1bW5zIG9mIGRpc3RUbXAsIGFuZCB0aGUgdGhpcmQgaXMgd2hpY2gubWluLCB0aGUgZnVuY3Rpb24geW91IHdhbnQgdG8gYXBwbHkgdG8gdGhlIGNvbHVtbnMgb2YgZGlzdFRtcC4gVHJ5IHRoaXMgbm93Lg0KDQpgYGB7cn0NCmRpc3RUbXAgPC0gbWRpc3QoeCwgeSwgY3gsIGN5KQ0KYGBgDQoNCg0KYGBge3J9DQphcHBseShkaXN0VG1wLCAyLCB3aGljaC5taW4pDQpgYGANCg0KWW91IGNhbiBzZWUgdGhhdCB5b3Ugd2VyZSByaWdodCBhbmQgdGhlIDZ0aCBlbnRyeSBpcyBpbmRlZWQgMyBhcyB5b3UgYW5zd2VyZWQgYmVmb3JlLiBXZSBzZWUgdGhlIGZpcnN0IDMgZW50cmllcyB3ZXJlIGFzc2lnbmVkIHRvIHRoZSBzZWNvbmQgKG9yYW5nZSkgY2x1c3RlciBhbmQgb25seSAyIHBvaW50cyAoNCBhbmQgOCkgd2VyZSBhc3NpZ25lZCB0byB0aGUgZmlyc3QgKHJlZCkgY2x1c3Rlci4NCg0KV2UndmUgc3RvcmVkIHRoZSB2ZWN0b3Igb2YgY2x1c3RlciBjb2xvcnMgKCJyZWQiLCJvcmFuZ2UiLCJwdXJwbGUiKSBpbiB0aGUgYXJyYXkgY29sczEgZm9yIHlvdSBhbmQgd2UndmUgYWxzbyBzdG9yZWQgdGhlIGNsdXN0ZXIgYXNzaWdubWVudHMgaW4gdGhlIGFycmF5IG5ld0NsdXN0LiBMZXQncyBjb2xvciB0aGUgMTIgZGF0YSBwb2ludHMgIGFjY29yZGluZyB0byB0aGVpciBhc3NpZ25tZW50cy4gQWdhaW4sIHVzZSB0aGUgY29tbWFuZCBwb2ludHMgd2l0aCA1IGFyZ3VtZW50cy4gVGhlIGZpcnN0IDIgYXJlIHggYW5kIHkuIFRoZSB0aGlyZCBpcyBwY2ggc2V0IHRvIDE5LCB0aGUgZm91cnRoIGlzIGNleCBzZXQgdG8gMiwgYW5kIHRoZSBsYXN0LCBjb2wgaXMgc2V0IHRvIGNvbHMxW25ld0NsdXN0XS4NCg0KYGBge3J9DQpuZXdDbHVzdCA8LSBhcHBseShkaXN0VG1wLCAyLCB3aGljaC5taW4pDQpjb2xzMSA8LSBjKCJyZWQiLCAib3JhbmdlIiwgInB1cnBsZSIpDQpgYGANCg0KDQpgYGB7cn0NCnBhcihtYXI9YygwLCAwLCAwLCAwKSkNCnBsb3QoeCwgeSwgY29sPSJibHVlIiwgcGNoPTE5LCBjZXg9MiwgYXNwPTEpDQp0ZXh0KHgrMC4wNSwgeSswLjA1LCBsYWJlbHM9YXMuY2hhcmFjdGVyKDE6MTIpKQ0KcG9pbnRzKGN4LCBjeSwgY29sPWMoInJlZCIsICJvcmFuZ2UiLCJwdXJwbGUiKSwgcGNoPTMsIGNleD0yLCBsd2Q9MikNCnBvaW50cyh4LCB5LCBwY2g9MTksIGNleD0yLCBjb2w9Y29sczFbbmV3Q2x1c3RdKQ0KYGBgDQoNCk5vdyB3ZSBoYXZlIHRvIHJlY2FsY3VsYXRlIG91ciBjZW50cm9pZHMgc28gdGhleSBhcmUgdGhlIGF2ZXJhZ2UgKGNlbnRlciBvZiBncmF2aXR5KSBvZiB0aGUgY2x1c3RlciBvZiBwb2ludHMgYXNzaWduZWQgdG8gdGhlbS4gV2UgaGF2ZSB0byBkbyB0aGUgeCBhbmQgeSBjb29yZGluYXRlcyBzZXBhcmF0ZWx5LiBXZSdsbCBkbyB0aGUgeCBjb29yZGluYXRlIGZpcnN0LiBSZWNhbGwgdGhhdCB0aGUgdmVjdG9ycyB4IGFuZCB5IGhvbGQgdGhlIHJlc3BlY3RpdmUgY29vcmRpbmF0ZXMgb2Ygb3VyIDEyIGRhdGEgcG9pbnRzLg0KDQpXZSBjYW4gdXNlIHRoZSBSIGZ1bmN0aW9uIHRhcHBseSB3aGljaCBhcHBsaWVzICJhIGZ1bmN0aW9uIG92ZXIgYSByYWdnZWQgYXJyYXkiLiBUaGlzIG1lYW5zIHRoYXQgZXZlcnkgZWxlbWVudCBvZiB0aGUgYXJyYXkgaXMgYXNzaWduZWQgYSBmYWN0b3IgYW5kIHRoZSBmdW5jdGlvbiBpcyBhcHBsaWVkIHRvICBzdWJzZXRzIG9mIHRoZSBhcnJheSAoaWRlbnRpZmllZCBieSB0aGUgZmFjdG9yIHZlY3RvcikuIFRoaXMgYWxsb3dzIHVzIHRvIHRha2UgYWR2YW50YWdlIG9mIHRoZSBmYWN0b3IgdmVjdG9yIG5ld0NsdXN0IHdlIGNhbGN1bGF0ZWQuIENhbGwgdGFwcGx5IG5vdyB3aXRoIDMgYXJndW1lbnRzLCB4ICh0aGUgZGF0YSksIG5ld0NsdXN0ICh0aGUgZmFjdG9yIGFycmF5KSwgYW5kIG1lYW4gKHRoZSBmdW5jdGlvbiB0byBhcHBseSkuIA0KDQpgYGB7cn0NCnRhcHBseSh4LCBuZXdDbHVzdCwgbWVhbikNCmBgYA0KDQpSZXBlYXQgdGhlIGNhbGwsIGV4Y2VwdCBub3cgYXBwbHkgaXQgdG8gdGhlIHZlY3RvciB5IGluc3RlYWQgb2YgeC4NCg0KYGBge3J9DQp0YXBwbHkoeSwgbmV3Q2x1c3QsIG1lYW4pDQpgYGANCg0KTm93IHRoYXQgd2UgaGF2ZSAgbmV3IHggYW5kIG5ldyB5IGNvb3JkaW5hdGVzIGZvciB0aGUgMyBjZW50cm9pZHMgd2UgY2FuIHBsb3QgdGhlbS4gV2UndmUgc3RvcmVkIG9mZiB0aGUgY29vcmRpbmF0ZXMgZm9yIHlvdSBpbiB2YXJpYWJsZXMgbmV3Q3ggYW5kIG5ld0N5LiBVc2UgdGhlIFIgY29tbWFuZCBwb2ludHMgd2l0aCB0aGVzZSBhcyB0aGUgZmlyc3QgMiBhcmd1bWVudHMuIEluIGFkZGl0aW9uLCB1c2UgdGhlIGFyZ3VtZW50cyBjb2wgc2V0IGVxdWFsIHRvIGNvbHMxLCBwY2ggZXF1YWwgdG8gOCwgY2V4IGVxdWFsIHRvIDIgYW5kIGx3ZCBhbHNvIGVxdWFsIHRvIDIuDQoNCmBgYHtyfQ0KbmV3Q3ggPC0gdGFwcGx5KHgsIG5ld0NsdXN0LCBtZWFuKQ0KbmV3Q3kgPC0gdGFwcGx5KHksIG5ld0NsdXN0LCBtZWFuKQ0KYGBgDQoNCmBgYHtyfQ0KcGFyKG1hcj1jKDAsIDAsIDAsIDApKQ0KcGxvdCh4LCB5LCBjb2w9ImJsdWUiLCBwY2g9MTksIGNleD0yLCBhc3A9MSkNCnRleHQoeCswLjA1LCB5KzAuMDUsIGxhYmVscz1hcy5jaGFyYWN0ZXIoMToxMikpDQpwb2ludHMoY3gsIGN5LCBjb2w9YygicmVkIiwgIm9yYW5nZSIsInB1cnBsZSIpLCBwY2g9MywgY2V4PTIsIGx3ZD0yKQ0KcG9pbnRzKHgsIHksIHBjaD0xOSwgY2V4PTIsIGNvbD1jb2xzMVtuZXdDbHVzdF0pDQpwb2ludHMobmV3Q3gsIG5ld0N5LCBjb2w9Y29sczEsIHBjaD04LCBjZXg9MiwgbHdkPTIpDQpgYGANCg0KV2Ugc2VlIGhvdyB0aGUgY2VudHJvaWRzIGhhdmUgbW92ZWQgY2xvc2VyIHRvIHRoZWlyIHJlc3BlY3RpdmUgY2x1c3RlcnMuIFRoaXMgaXMgZXNwZWNpYWxseSB0cnVlIG9mIHRoZSBzZWNvbmQgKG9yYW5nZSkgY2x1c3Rlci4gTm93IGNhbGwgdGhlIGRpc3RhbmNlIGZ1bmN0aW9uIG1kaXN0IHdpdGggdGhlIDQgYXJndW1lbnRzIHgsIHksIG5ld0N4LCBhbmQgbmV3Q3kuIFRoaXMgd2lsbCBhbGxvdyB1cyB0byByZWFzc2lnbiB0aGUgZGF0YSBwb2ludHMgdG8gbmV3IGNsdXN0ZXJzIGlmIG5lY2Vzc2FyeS4NCg0KYGBge3J9DQptZGlzdCh4LCB5LCBuZXdDeCwgbmV3Q3kpDQpgYGANCg0KV2UndmUgc3RvcmVkIG9mZiB0aGlzIG5ldyBtYXRyaXggb2YgZGlzdGFuY2VzIGluIHRoZSBtYXRyaXggZGlzdFRtcDIgZm9yIHlvdS4gUmVjYWxsIHRoYXQgdGhlIGZpcnN0IGNsdXN0ZXIgaXMgcmVkLCB0aGUgc2Vjb25kIG9yYW5nZSBhbmQgdGhlIHRoaXJkIHB1cnBsZS4gTG9vayBjbG9zZWx5IGF0IGNvbHVtbnMgNCBhbmQgNyBvZiBkaXN0VG1wMi4gV2hhdCB3aWxsIGhhcHBlbiB0byBwb2ludHMgNCBhbmQgNz8NCg0KYGBge3J9DQoiVGhleSB3aWxsIGJvdGggY2hhbmdlIGNsdXN0ZXJzIg0KYGBgDQoNCk5vdyBjYWxsIGFwcGx5IHdpdGggMyBhcmd1bWVudHMsIGRpc3RUbXAyLCAyLCBhbmQgd2hpY2gubWluIHRvIGZpbmQgdGhlIG5ldyBjbHVzdGVyIGFzc2lnbm1lbnRzIGZvciB0aGUgcG9pbnRzLg0KDQpgYGB7cn0NCmRpc3RUbXAyIDwtIG1kaXN0KHgsIHksIG5ld0N4LCBuZXdDeSkNCmBgYA0KDQpgYGB7cn0NCmFwcGx5KGRpc3RUbXAyLCAyLCB3aGljaC5taW4pDQpgYGANCg0KV2UndmUgc3RvcmVkIG9mZiB0aGUgbmV3IGNsdXN0ZXIgYXNzaWdubWVudHMgaW4gYSB2ZWN0b3Igb2YgZmFjdG9ycyBjYWxsZWQgbmV3Q2x1c3QyLiBVc2UgdGhlIFIgZnVuY3Rpb24gcG9pbnRzIHRvIHJlY29sb3IgdGhlIHBvaW50cyB3aXRoIHRoZWlyIG5ldyBhc3NpZ25tZW50cy4gQWdhaW4sIHRoZXJlIGFyZSA1IGFyZ3VtZW50cywgeCBhbmQgeSBhcmUgZmlyc3QsIGZvbGxvd2VkIGJ5IHBjaCBzZXQgdG8gMTksIGNleCB0byAyLCBhbmQgY29sIHRvIGNvbHMxW25ld0NsdXN0Ml0uDQoNCmBgYHtyfQ0KbmV3Q2x1c3QyIDwtIGFwcGx5KGRpc3RUbXAyLCAyLCB3aGljaC5taW4pDQpgYGANCg0KYGBge3J9DQpwYXIobWFyPWMoMCwgMCwgMCwgMCkpDQpwbG90KHgsIHksIGNvbD0iYmx1ZSIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKQ0KdGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSkNCnBvaW50cyhjeCwgY3ksIGNvbD1jKCJyZWQiLCAib3JhbmdlIiwicHVycGxlIiksIHBjaD0zLCBjZXg9MiwgbHdkPTIpDQpwb2ludHMoeCwgeSwgcGNoPTE5LCBjZXg9MiwgY29sPWNvbHMxW25ld0NsdXN0XSkNCnBvaW50cyhuZXdDeCwgbmV3Q3ksIGNvbD1jb2xzMSwgcGNoPTgsIGNleD0yLCBsd2Q9MikNCnBvaW50cyh4LCB5LCBwY2g9MTksIGNleD0yLCBjb2w9Y29sczFbbmV3Q2x1c3QyXSkNCmBgYA0KDQpOb3RpY2UgdGhhdCBwb2ludHMgNCBhbmQgNyBib3RoIGNoYW5nZWQgY2x1c3RlcnMsIDQgbW92ZWQgZnJvbSAxIHRvIDIgKHJlZCB0byBvcmFuZ2UpLCBhbmQgcG9pbnQgNyBzd2l0Y2hlZCBmcm9tIDMgdG8gMiAocHVycGxlIHRvIHJlZCkuDQoNCk5vdyB1c2UgdGFwcGx5IHRvIGZpbmQgdGhlIHggY29vcmRpbmF0ZSBvZiB0aGUgbmV3IGNlbnRyb2lkLiBSZWNhbGwgdGhlcmUgYXJlIDMgYXJndW1lbnRzLCB4LCBuZXdDbHVzdDIsIGFuZCBtZWFuLg0KDQpgYGB7cn0NCnRhcHBseSh4LCBuZXdDbHVzdDIsIG1lYW4pDQpgYGANCg0KRG8gdGhlIHNhbWUgdG8gZmluZCB0aGUgbmV3IHkgY29vcmRpbmF0ZS4NCg0KYGBge3J9DQp0YXBwbHkoeSwgbmV3Q2x1c3QyLCBtZWFuKQ0KYGBgDQoNCldlJ3ZlIHN0b3JlZCBvZmYgdGhlc2UgY29vcmRpbmF0ZXMgZm9yIHlvdSBpbiB0aGUgdmFyaWFibGVzIGZpbmFsQ3ggYW5kIGZpbmFsQ3kuIFBsb3QgdGhlc2UgbmV3IGNlbnRyb2lkcyB1c2luZyB0aGUgcG9pbnRzIGZ1bmN0aW9uIHdpdGggNiBhcmd1bWVudHMuIFRoZSBmaXJzdCAyIGFyZSBmaW5hbEN4IGFuZCBmaW5hbEN5LiBUaGUgYXJndW1lbnQgY29sIHNob3VsZCBlcXVhbCBjb2xzMSwgcGNoIHNob3VsZCBlcXVhbCA5LCBjZXggMiBhbmQgbHdkIDIuDQoNCmBgYHtyfQ0KZmluYWxDeCA8LSB0YXBwbHkoeCwgbmV3Q2x1c3QyLCBtZWFuKQ0KZmluYWxDeSA8LSB0YXBwbHkoeSwgbmV3Q2x1c3QyLCBtZWFuKQ0KYGBgDQoNCmBgYHtyfQ0KcGFyKG1hcj1jKDAsIDAsIDAsIDApKQ0KcGxvdCh4LCB5LCBjb2w9ImJsdWUiLCBwY2g9MTksIGNleD0yLCBhc3A9MSkNCnRleHQoeCswLjA1LCB5KzAuMDUsIGxhYmVscz1hcy5jaGFyYWN0ZXIoMToxMikpDQpwb2ludHMoY3gsIGN5LCBjb2w9YygicmVkIiwgIm9yYW5nZSIsInB1cnBsZSIpLCBwY2g9MywgY2V4PTIsIGx3ZD0yKQ0KcG9pbnRzKHgsIHksIHBjaD0xOSwgY2V4PTIsIGNvbD1jb2xzMVtuZXdDbHVzdF0pDQpwb2ludHMobmV3Q3gsIG5ld0N5LCBjb2w9Y29sczEsIHBjaD04LCBjZXg9MiwgbHdkPTIpDQpwb2ludHMoeCwgeSwgcGNoPTE5LCBjZXg9MiwgY29sPWNvbHMxW25ld0NsdXN0Ml0pDQpwb2ludHMoZmluYWxDeCwgZmluYWxDeSwgY29sPWNvbHMxLCBwY2g9OSwgY2V4PTIsIGx3ZD0yKQ0KYGBgDQoNCkl0IHNob3VsZCBiZSBvYnZpb3VzIHRoYXQgaWYgd2UgY29udGludWVkIHRoaXMgcHJvY2VzcyBwb2ludHMgNSB0aHJvdWdoIDggd291bGQgYWxsIHR1cm4gcmVkLCB3aGlsZSBwb2ludHMgMSB0aHJvdWdoIDQgc3RheSBvcmFuZ2UsIGFuZCBwb2ludHMgOSB0aHJvdWdoIDEyIHB1cnBsZS4NCg0KTm93IHRoYXQgeW91J3ZlIGdvbmUgdGhyb3VnaCBhbiBleGFtcGxlIHN0ZXAgYnkgc3RlcCwgeW91J2xsIGJlIHJlbGlldmVkIHRvIGhlYXIgdGhhdCBSIHByb3ZpZGVzIGEgY29tbWFuZCB0byBkbyBhbGwgdGhpcyB3b3JrIGZvciB5b3UuIFVuc3VycHJpc2luZ2x5IGl0J3MgY2FsbGVkIGttZWFucyBhbmQsIGFsdGhvdWdoIGl0IGhhcyBzZXZlcmFsIHBhcmFtZXRlcnMsIHdlJ2xsIGp1c3QgbWVudGlvbiBmb3VyLiBUaGVzZSBhcmUgeCwgKHRoZSBudW1lcmljIG1hdHJpeCBvZiBkYXRhKSwgY2VudGVycywgaXRlci5tYXgsIGFuZCBuc3RhcnQuIFRoZSBzZWNvbmQgb2YgdGhlc2UgKGNlbnRlcnMpIGNhbiBiZSBlaXRoZXIgYSBudW1iZXIgb2YgY2x1c3RlcnMgb3IgYSBzZXQgb2YgaW5pdGlhbCBjZW50cm9pZHMuIFRoZSB0aGlyZCwgaXRlci5tYXgsIHNwZWNpZmllcyB0aGUgbWF4aW11bSBudW1iZXIgb2YgaXRlcmF0aW9ucyB0byBnbyB0aHJvdWdoLCBhbmQgbnN0YXJ0IGlzIHRoZSBudW1iZXIgb2YgcmFuZG9tIHN0YXJ0cyB5b3Ugd2FudCB0byB0cnkgaWYgeW91IHNwZWNpZnkgY2VudGVycyBhcyBhIG51bWJlci4NCg0KQ2FsbCBrbWVhbnMgbm93IHdpdGggMiBhcmd1bWVudHMsIGRhdGFGcmFtZSAod2hpY2ggaG9sZHMgdGhlIHggYW5kIHkgY29vcmRpbmF0ZXMgb2Ygb3VyIDEyIHBvaW50cykgYW5kIGNlbnRlcnMgc2V0IGVxdWFsIHRvIDMuDQoNCmBgYHtyfQ0KZGF0YUZyYW1lIDwtIGRhdGEuZnJhbWUoeD14LCB5PXkpDQpgYGANCg0KDQpgYGB7cn0NCmttZWFucyhkYXRhRnJhbWUsIGNlbnRlcnM9MykNCmBgYA0KDQpUaGUgcHJvZ3JhbSByZXR1cm5zIHRoZSBpbmZvcm1hdGlvbiB0aGF0IHRoZSBkYXRhIGNsdXN0ZXJlZCBpbnRvIDMgY2x1c3RlcnMgZWFjaCBvZiBzaXplIDQuIEl0IGFsc28gcmV0dXJucyB0aGUgY29vcmRpbmF0ZXMgb2YgdGhlIDMgY2x1c3RlciBtZWFucywgYSB2ZWN0b3IgbmFtZWQgY2x1c3RlciBpbmRpY2F0aW5nIGhvdyB0aGUgMTIgcG9pbnRzIHdlcmUgcGFydGl0aW9uZWQgaW50byB0aGUgY2x1c3RlcnMsIGFuZCB0aGUgc3VtIG9mIHNxdWFyZXMgd2l0aGluIGVhY2ggY2x1c3Rlci4gSXQgYWxzbyBzaG93cyBhbGwgdGhlIGF2YWlsYWJsZSBjb21wb25lbnRzIHJldHVybmVkIGJ5IHRoZSBmdW5jdGlvbi4gV2UndmUgc3RvcmVkIG9mZiB0aGlzIGRhdGEgZm9yIHlvdSBpbiBhIGttZWFucyBvYmplY3QgY2FsbGVkIGttT2JqLiBMb29rIGF0IGttT2JqJGl0ZXIgdG8gc2VlIGhvdyBtYW55IGl0ZXJhdGlvbnMgdGhlIGFsZ29yaXRobSB3ZW50IHRocm91Z2guDQoNCmBgYHtyfQ0Ka21PYmogPC0ga21lYW5zKGRhdGFGcmFtZSwgMykNCmBgYA0KDQoNCmBgYHtyfQ0Ka21PYmokaXRlcg0KYGBgDQoNClR3byBpdGVyYXRpb25zIGFzIHdlIGRpZCBiZWZvcmUuIFdlIGp1c3Qgd2FudCB0byBlbXBoYXNpemUgaG93IHlvdSBjYW4gYWNjZXNzIHRoZSBpbmZvcm1hdGlvbiBhdmFpbGFibGUgdG8geW91LiBMZXQncyBwbG90IHRoZSBkYXRhIHBvaW50cyBjb2xvciBjb2RlZCBhY2NvcmRpbmcgdG8gdGhlaXIgY2x1c3Rlci4gVGhpcyB3YXMgc3RvcmVkIGluIGttT2JqJGNsdXN0ZXIuIFJ1biBwbG90IHdpdGggNSBhcmd1bWVudHMuIFRoZSBkYXRhLCB4IGFuZCB5LCBhcmUgdGhlIGZpcnN0IHR3bzsgdGhlIHRoaXJkLCBjb2wgaXMgc2V0IGVxdWFsIHRvIGttT2JqJGNsdXN0ZXIsIGFuZCB0aGUgbGFzdCB0d28gYXJlIHBjaCBhbmQgY2V4LiBUaGUgZmlyc3Qgb2YgdGhlc2Ugc2hvdWxkIGJlIHNldCB0byAxOSBhbmQgdGhlIGxhc3QgdG8gMi4gDQoNCmBgYHtyfQ0KcGxvdCh4LCB5LCBjb2w9a21PYmokY2x1c3RlciwgcGNoPTE5LCBjZXg9MikNCmBgYA0KDQpOb3cgYWRkIHRoZSBjZW50cm9pZHMgd2hpY2ggYXJlIHN0b3JlZCBpbiBrbU9iaiRjZW50ZXJzLiBVc2UgdGhlIHBvaW50cyBmdW5jdGlvbiB3aXRoIDUgYXJndW1lbnRzLiBUaGUgZmlyc3QgdHdvIGFyZSAga21PYmokY2VudGVycyBhbmQgIGNvbD1jKCJibGFjayIsInJlZCIsImdyZWVuIikuIFRoZSBsYXN0IHRocmVlLCBwY2gsIGNleCwgYW5kIGx3ZCwgc2hvdWxkIGFsbCBlcXVhbCAzLg0KDQpgYGB7cn0NCnBsb3QoeCwgeSwgY29sPWttT2JqJGNsdXN0ZXIsIHBjaD0xOSwgY2V4PTIpDQpwb2ludHMoa21PYmokY2VudGVycywgY29sPWMoImJsYWNrIiwgInJlZCIsICJncmVlbiIpLCBwY2g9MywgY2V4PTMsIGx3ZD0zKQ0KYGBgDQoNCk5vdyBmb3Igc29tZSBmdW4hIFdlIHdhbnQgdG8gc2hvdyB5b3UgaG93IHRoZSBvdXRwdXQgb2YgdGhlIGttZWFucyBmdW5jdGlvbiBpcyBhZmZlY3RlZCBieSBpdHMgcmFuZG9tIHN0YXJ0ICh3aGVuIHlvdSBqdXN0IGFzayBmb3IgYSBudW1iZXIgb2YgY2x1c3RlcnMpLiBXaXRoIHJhbmRvbSBzdGFydHMgeW91IG1pZ2h0IHdhbnQgdG8gcnVuIHRoZSBmdW5jdGlvbiBzZXZlcmFsIHRpbWVzIHRvIGdldCBhbiBpZGVhIG9mIHRoZSByZWxhdGlvbnNoaXBzIGJldHdlZW4geW91ciBvYnNlcnZhdGlvbnMuIFdlJ2xsIGNhbGwga21lYW5zIHdpdGggdGhlIHNhbWUgZGF0YSBwb2ludHMgKHN0b3JlZCBpbiBkYXRhRnJhbWUpLCBidXQgYXNrIGZvciA2IGNsdXN0ZXJzIGluc3RlYWQgb2YgMy4NCg0KV2UnbGwgcGxvdCBvdXIgZGF0YSBwb2ludHMgc2V2ZXJhbCB0aW1lcyBhbmQgZWFjaCB0aW1lIHdlJ2xsIGp1c3QgY2hhbmdlIHRoZSBhcmd1bWVudCBjb2wgd2hpY2ggd2lsbCBzaG93IHVzIGhvdyB0aGUgUiBmdW5jdGlvbiBrbWVhbnMgaXMgY2x1c3RlcmluZyB0aGVtLiBTbywgY2FsbCBwbG90IG5vdyB3aXRoIDUgYXJndW1lbnRzLiBUaGUgZmlyc3QgMiBhcmUgeCBhbmQgeS4gVGhlIHRoaXJkIGlzIGNvbCBzZXQgZXF1YWwgdG8gdGhlIGNhbGwga21lYW5zKGRhdGFGcmFtZSw2KSRjbHVzdGVyLiBUaGUgbGFzdCB0d28gKHBjaCBhbmQgY2V4KSBhcmUgc2V0IHRvIDE5IGFuZCAyIHJlc3BlY3RpdmVseS4NCg0KYGBge3J9DQpwbG90KHgsIHksIGNvbD1rbWVhbnMoZGF0YUZyYW1lLCA2KSRjbHVzdGVyLCBwY2g9MTksIGNleD0yKQ0KYGBgDQoNClNlZSBob3cgdGhlIHBvaW50cyBjbHVzdGVyPyBOb3cgcmVjYWxsIHlvdXIgbGFzdCBjb21tYW5kIGFuZCByZXJ1biBpdC4NCg0KYGBge3J9DQpwbG90KHgsIHksIGNvbD1rbWVhbnMoZGF0YUZyYW1lLCA2KSRjbHVzdGVyLCBwY2g9MTksIGNleD0yKQ0KYGBgDQoNClNlZSBob3cgdGhlIGNsdXN0ZXJpbmcgaGFzIGNoYW5nZWQ/IEFzIHRoZSBUZWxldHViYmllcyB3b3VsZCBzYXksICJBZ2FpbiEgQWdhaW4hIiANCg0KYGBge3J9DQpwbG90KHgsIHksIGNvbD1rbWVhbnMoZGF0YUZyYW1lLCA2KSRjbHVzdGVyLCBwY2g9MTksIGNleD0yKQ0KYGBgDQoNClNvIHRoZSBjbHVzdGVyaW5nIGNoYW5nZXMgd2l0aCBkaWZmZXJlbnQgc3RhcnRzLiBQZXJoYXBzIDYgaXMgdG9vIG1hbnkgY2x1c3RlcnM/DQoNClRydWUgb3IgRmFsc2U/IEstbWVhbnMgY2x1c3RlcmluZyAgcmVxdWlyZXMgeW91IHRvIHNwZWNpZnkgYSBudW1iZXIgb2YgY2x1c3RlcnMgYmVmb3JlIHlvdSBiZWdpbi4NCg0KYGBge3J9DQoiVHJ1ZSINCmBgYA0KDQpUcnVlIG9yIEZhbHNlPyBLLW1lYW5zIGNsdXN0ZXJpbmcgIHJlcXVpcmVzIHlvdSB0byBzcGVjaWZ5IGEgbnVtYmVyIG9mIGl0ZXJhdGlvbnMgYmVmb3JlIHlvdSBiZWdpbi4NCg0KYGBge3J9DQoiRmFsc2UiDQpgYGANCg0KVHJ1ZSBvciBGYWxzZT8gRXZlcnkgZGF0YSBzZXQgaGFzIGEgc2luZ2xlIGZpeGVkIG51bWJlciBvZiBjbHVzdGVycy4NCg0KYGBge3J9DQoiRmFsc2UiDQpgYGANCg0KVHJ1ZSBvciBGYWxzZT8gSy1tZWFucyBjbHVzdGVyaW5nIHdpbGwgYWx3YXlzIHN0b3AgaW4gMyBpdGVyYXRpb25zDQoNCmBgYHtyfQ0KIkZhbHNlIg0KYGBgDQoNClRydWUgb3IgRmFsc2U/IFdoZW4gc3RhcnRpbmcga21lYW5zIHdpdGggcmFuZG9tIGNlbnRyb2lkcywgeW91J2xsIGFsd2F5cyBlbmQgdXAgd2l0aCB0aGUgc2FtZSBmaW5hbCBjbHVzdGVyaW5nLg0KDQpgYGB7cn0NCiJGYWxzZSINCmBgYA0K</div>
+$wday
+[1] 5
+
+$yday
+[1] 25
+
+$isdst
+[1] 0
+
+$zone
+[1] &quot;CST&quot;
+
+$gmtoff
+[1] -21600
+
+attr(,&quot;tzone&quot;)
+[1] &quot;&quot;    &quot;CST&quot; &quot;CST&quot;
+attr(,&quot;balanced&quot;)
+[1] TRUE</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>t2, like all POSIXlt objects, is just a list of values that make up
+the date and time. Use str(unclass(t2)) to have a more compact view.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RyKHVuY2xhc3ModDIpKVxuYGBgIn0= -->
+<pre class="r"><code>str(unclass(t2))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiTGlzdCBvZiAxMVxuICQgc2VjICAgOiBudW0gNDcuNlxuICQgbWluICAgOiBpbnQgNDVcbiAkIGhvdXIgIDogaW50IDEzXG4gJCBtZGF5ICA6IGludCAyNlxuICQgbW9uICAgOiBpbnQgMFxuICQgeWVhciAgOiBpbnQgMTI0XG4gJCB3ZGF5ICA6IGludCA1XG4gJCB5ZGF5ICA6IGludCAyNVxuICQgaXNkc3QgOiBpbnQgMFxuICQgem9uZSAgOiBjaHIgXCJDU1RcIlxuICQgZ210b2ZmOiBpbnQgLTIxNjAwXG4gLSBhdHRyKCosIFwidHpvbmVcIik9IGNociBbMTozXSBcIlwiIFwiQ1NUXCIgXCJDU1RcIlxuIC0gYXR0cigqLCBcImJhbGFuY2VkXCIpPSBsb2dpIFRSVUVcbiJ9 -->
+<pre><code>List of 11
+ $ sec   : num 47.6
+ $ min   : int 45
+ $ hour  : int 13
+ $ mday  : int 26
+ $ mon   : int 0
+ $ year  : int 124
+ $ wday  : int 5
+ $ yday  : int 25
+ $ isdst : int 0
+ $ zone  : chr &quot;CST&quot;
+ $ gmtoff: int -21600
+ - attr(*, &quot;tzone&quot;)= chr [1:3] &quot;&quot; &quot;CST&quot; &quot;CST&quot;
+ - attr(*, &quot;balanced&quot;)= logi TRUE</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>If, for example, we want just the minutes from the time stored in t2,
+we can access them with t2$min. Give it a try.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDIkbWluXG5gYGAifQ== -->
+<pre class="r"><code>t2$min</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDQ1XG4ifQ== -->
+<pre><code>[1] 45</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Now that we have explored all three types of date and time objects,
+let’s look at a few functions that extract useful information from any
+of these objects – weekdays(), months(), and quarters().</p>
+<p>The weekdays() function will return the day of week from any date or
+time object. Try it out on d1, which is the Date object that contains
+today’s date.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud2Vla2RheXMoZDEpXG5gYGAifQ== -->
+<pre class="r"><code>weekdays(d1)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRnJpZGF5XCJcbiJ9 -->
+<pre><code>[1] &quot;Friday&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The months() function also works on any date or time object. Try it
+on t1, which is the POSIXct object that contains the current time (well,
+it was the current time when you created it).</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9udGhzKHQxKVxuYGBgIn0= -->
+<pre class="r"><code>months(t1)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiSmFudWFyeVwiXG4ifQ== -->
+<pre><code>[1] &quot;January&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The quarters() function returns the quarter of the year (Q1-Q4) from
+any date or time object. Try it on t2, which is the POSIXlt object that
+contains the time at which you created it.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucXVhcnRlcnModDIpXG5gYGAifQ== -->
+<pre class="r"><code>quarters(t2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiUTFcIlxuIn0= -->
+<pre><code>[1] &quot;Q1&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Often, the dates and times in a dataset will be in a format that R
+does not recognize. The strptime() function can be helpful in this
+situation.</p>
+<p>strptime() converts character vectors to POSIXlt. In that sense, it
+is similar to as.POSIXlt(), except that the input doesn’t have to be in
+a particular format (YYYY-MM-DD).</p>
+<p>To see how it works, store the following character string in a
+variable called t3: “October 17, 1986 08:24” (with the quotes).</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDMgPC0gXCJPY3RvYmVyIDE3LCAxOTg2IDA4OjI0XCJcbmBgYCJ9 -->
+<pre class="r"><code>t3 &lt;- &quot;October 17, 1986 08:24&quot;</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Now, use strptime(t3, “%B %d, %Y %H:%M”) to help R convert our
+date/time object to a format that it understands. Assign the result to a
+new variable called t4. (You should pull up the documentation for
+strptime() if you’d like to know more about how it works.)</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDQgPC0gc3RycHRpbWUodDMsIFwiJUIgJWQsICVZICVIOiVNXCIpXG5gYGAifQ== -->
+<pre class="r"><code>t4 &lt;- strptime(t3, &quot;%B %d, %Y %H:%M&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Print the contents of t4.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDRcbmBgYCJ9 -->
+<pre class="r"><code>t4</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiMTk4Ni0xMC0xNyAwODoyNDowMCBDU1RcIlxuIn0= -->
+<pre><code>[1] &quot;1986-10-17 08:24:00 CST&quot;</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>That’s the format we’ve come to expect. Now, let’s check its
+class().</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3ModDQpXG5gYGAifQ== -->
+<pre class="r"><code>class(t4)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiUE9TSVhsdFwiIFwiUE9TSVh0XCIgXG4ifQ== -->
+<pre><code>[1] &quot;POSIXlt&quot; &quot;POSIXt&quot; </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Finally, there are a number of operations that you can perform on
+dates and times, including arithmetic operations (+ and -) and
+comparisons (&lt;, ==, etc.)</p>
+<p>The variable t1 contains the time at which you created it (recall you
+used Sys.time()). Confirm that some time has passed since you created t1
+by using the ‘greater than’ operator to compare it to the current time:
+Sys.time() &gt; t1</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuU3lzLnRpbWUoKSA+IHQxXG5gYGAifQ== -->
+<pre class="r"><code>Sys.time() &gt; t1</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 -->
+<pre><code>[1] TRUE</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>So we know that some time has passed, but how much? Try subtracting
+t1 from the current time using Sys.time() - t1. Don’t forget the
+parentheses at the end of Sys.time(), since it is a function.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuU3lzLnRpbWUoKSAtIHQxXG5gYGAifQ== -->
+<pre class="r"><code>Sys.time() - t1</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiVGltZSBkaWZmZXJlbmNlIG9mIDAuMDg4MzQ2IHNlY3NcbiJ9 -->
+<pre><code>Time difference of 0.088346 secs</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The same line of thinking applies to addition and the other
+comparison operators. If you want more control over the units when
+finding the above difference in times, you can use difftime(), which
+allows you to specify a ‘units’ parameter.</p>
+<p>Use difftime(Sys.time(), t1, units = ‘days’) to find the amount of
+time in DAYS that has passed since you created t1.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGlmZnRpbWUoU3lzLnRpbWUoKSwgdDEsIHVuaXRzPSdkYXlzJylcbmBgYCJ9 -->
+<pre class="r"><code>difftime(Sys.time(), t1, units=&#39;days&#39;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiVGltZSBkaWZmZXJlbmNlIG9mIDEuMTQzODg4ZS0wNiBkYXlzXG4ifQ== -->
+<pre><code>Time difference of 1.143888e-06 days</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>In this lesson, you learned how to work with dates and times in R.
+While it is important to understand the basics, if you find yourself
+working with dates and times often, you may want to check out the
+lubridate package by Hadley Wickham.</p>
+<!-- rnb-text-end -->
+
+<div id="rmd-source-code">LS0tCnRpdGxlOiAnc3dpcmwgTGVzc29uIDM6IERhdGVzIGFuZCBUaW1lcycKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKUiBoYXMgYSBzcGVjaWFsIHdheSBvZiByZXByZXNlbnRpbmcgZGF0ZXMgYW5kIHRpbWVzLCB3aGljaCBjYW4gYmUgaGVscGZ1bCBpZiB5b3UncmUgd29ya2luZyB3aXRoIGRhdGEgdGhhdCBzaG93IGhvdyBzb21ldGhpbmcgY2hhbmdlcyBvdmVyIHRpbWUgKGkuZS4gdGltZS1zZXJpZXMgZGF0YSkgb3IgaWYgeW91ciBkYXRhIGNvbnRhaW4gc29tZSBvdGhlciB0ZW1wb3JhbCBpbmZvcm1hdGlvbiwgbGlrZSBkYXRlcyBvZiBiaXJ0aC4KCkRhdGVzIGFyZSByZXByZXNlbnRlZCBieSB0aGUgJ0RhdGUnIGNsYXNzIGFuZCB0aW1lcyBhcmUgcmVwcmVzZW50ZWQgYnkgdGhlICdQT1NJWGN0JyBhbmQgJ1BPU0lYbHQnIGNsYXNzZXMuIEludGVybmFsbHksIGRhdGVzIGFyZSBzdG9yZWQgYXMgdGhlIG51bWJlciBvZiBkYXlzIHNpbmNlIDE5NzAtMDEtMDEgYW5kIHRpbWVzIGFyZSBzdG9yZWQgYXMgZWl0aGVyIHRoZSBudW1iZXIgb2Ygc2Vjb25kcyBzaW5jZSAxOTcwLTAxLTAxIChmb3IgJ1BPU0lYY3QnKSBvciBhIGxpc3Qgb2Ygc2Vjb25kcywgbWludXRlcywgaG91cnMsIGV0Yy4gKGZvciAnUE9TSVhsdCcpCgpMZXQncyBzdGFydCBieSB1c2luZyBkMSA8LSBTeXMuRGF0ZSgpIHRvIGdldCB0aGUgY3VycmVudCBkYXRlIGFuZCBzdG9yZSBpdCBpbiB0aGUgdmFyaWFibGUgZDEuIChUaGF0J3MgdGhlIGxldHRlciAnZCcgYW5kIHRoZSBudW1iZXIgMS4pCgpgYGB7cn0KZDEgPC0gU3lzLkRhdGUoKQpgYGAKClVzZSB0aGUgY2xhc3MoKSBmdW5jdGlvbiB0byBjb25maXJtIGQxIGlzIGEgRGF0ZSBvYmplY3QuCgpgYGB7cn0KY2xhc3MoZDEpCmBgYAoKV2UgY2FuIHVzZSB0aGUgdW5jbGFzcygpIGZ1bmN0aW9uIHRvIHNlZSB3aGF0IGQxIGxvb2tzIGxpa2UgaW50ZXJuYWxseS4gVHJ5IGl0IG91dC4KCmBgYHtyfQp1bmNsYXNzKGQxKQpgYGAKClRoYXQncyB0aGUgZXhhY3QgbnVtYmVyIG9mIGRheXMgc2luY2UgMTk3MC0wMS0wMSEKCkhvd2V2ZXIsIGlmIHlvdSBwcmludCBkMSB0byB0aGUgY29uc29sZSwgeW91J2xsIGdldCB0b2RheSdzIGRhdGUgLS0gWUVBUi1NT05USC1EQVkuIEdpdmUgaXQgYSB0cnkuCgpgYGB7cn0KZDEKYGBgCgpXaGF0IGlmIHdlIG5lZWQgdG8gcmVmZXJlbmNlIGEgZGF0ZSBwcmlvciB0byAxOTcwLTAxLTAxPyBDcmVhdGUgYSB2YXJpYWJsZSBkMiBjb250YWluaW5nIGFzLkRhdGUoIjE5NjktMDEtMDEiKS4KCmBgYHtyfQpkMiA8LSBhcy5EYXRlKCIxOTY5LTAxLTAxIikKYGBgCgpOb3cgdXNlIHVuY2xhc3MoKSBhZ2FpbiB0byBzZWUgd2hhdCBkMiBsb29rcyBsaWtlIGludGVybmFsbHkuCgpgYGB7cn0KdW5jbGFzcyhkMikKYGBgCgpBcyB5b3UgbWF5IGhhdmUgYW50aWNpcGF0ZWQsIHlvdSBnZXQgYSBuZWdhdGl2ZSBudW1iZXIuIEluIHRoaXMgY2FzZSwgaXQncyAtMzY1LCBzaW5jZSAxOTY5LTAxLTAxIGlzIGV4YWN0bHkgb25lIGNhbGVuZGFyIHllYXIgKGkuZS4gMzY1IGRheXMpIEJFRk9SRSAxOTcwLTAxLTAxLgoKTm93LCBsZXQncyB0YWtlIGEgbG9vayBhdCBob3cgUiBzdG9yZXMgdGltZXMuIFlvdSBjYW4gYWNjZXNzIHRoZSBjdXJyZW50IGRhdGUgYW5kIHRpbWUgdXNpbmcgdGhlIFN5cy50aW1lKCkgZnVuY3Rpb24gd2l0aCBubyBhcmd1bWVudHMuIERvIHRoaXMgYW5kIHN0b3JlIHRoZSByZXN1bHQgaW4gYSB2YXJpYWJsZSBjYWxsZWQgdDEuCgpgYGB7cn0KdDEgPC0gU3lzLnRpbWUoKQpgYGAKClZpZXcgdGhlIGNvbnRlbnRzIG9mIHQxLgoKYGBge3J9CnQxCmBgYAoKQW5kIGNoZWNrIHRoZSBjbGFzcygpIG9mIHQxLgoKYGBge3J9CmNsYXNzKHQxKQpgYGAKCkFzIG1lbnRpb25lZCBlYXJsaWVyLCBQT1NJWGN0IGlzIGp1c3Qgb25lIG9mIHR3byB3YXlzIHRoYXQgUiByZXByZXNlbnRzIHRpbWUgaW5mb3JtYXRpb24uIChZb3UgY2FuIGlnbm9yZSB0aGUgc2Vjb25kIHZhbHVlIGFib3ZlLCBQT1NJWHQsIHdoaWNoIGp1c3QgZnVuY3Rpb25zIGFzIGEgY29tbW9uIGxhbmd1YWdlIGJldHdlZW4gUE9TSVhjdCBhbmQgUE9TSVhsdC4pIFVzZSB1bmNsYXNzKCkgdG8gc2VlIHdoYXQgdDEgbG9va3MgbGlrZSBpbnRlcm5hbGx5IC0tIHRoZSAobGFyZ2UpIG51bWJlciBvZiBzZWNvbmRzIHNpbmNlIHRoZSBiZWdpbm5pbmcgb2YgMTk3MC4KCmBgYHtyfQp1bmNsYXNzKHQxKQpgYGAKCkJ5IGRlZmF1bHQsIFN5cy50aW1lKCkgcmV0dXJucyBhbiBvYmplY3Qgb2YgY2xhc3MgUE9TSVhjdCwgYnV0IHdlIGNhbiBjb2VyY2UgdGhlIHJlc3VsdCB0byBQT1NJWGx0IHdpdGggYXMuUE9TSVhsdChTeXMudGltZSgpKS4gR2l2ZSBpdCBhIHRyeSBhbmQgc3RvcmUgdGhlIHJlc3VsdCBpbiB0Mi4KCmBgYHtyfQp0MiA8LSBhcy5QT1NJWGx0KFN5cy50aW1lKCkpCmBgYAoKQ2hlY2sgdGhlIGNsYXNzIG9mIHQyLgoKYGBge3J9CmNsYXNzKHQyKQpgYGAKCk5vdyB2aWV3IGl0cyBjb250ZW50cy4KCmBgYHtyfQp0MgpgYGAKClRoZSBwcmludGVkIGZvcm1hdCBvZiB0MiBpcyBpZGVudGljYWwgdG8gdGhhdCBvZiB0MS4gTm93IHVuY2xhc3MoKSB0MiB0byBzZWUgaG93IGl0IGlzIGRpZmZlcmVudCBpbnRlcm5hbGx5LgoKYGBge3J9CnVuY2xhc3ModDIpCmBgYAoKdDIsIGxpa2UgYWxsIFBPU0lYbHQgb2JqZWN0cywgaXMganVzdCBhIGxpc3Qgb2YgdmFsdWVzIHRoYXQgbWFrZSB1cCB0aGUgZGF0ZSBhbmQgdGltZS4gVXNlIHN0cih1bmNsYXNzKHQyKSkgdG8gaGF2ZSBhIG1vcmUgY29tcGFjdCB2aWV3LgoKYGBge3J9CnN0cih1bmNsYXNzKHQyKSkKYGBgCgpJZiwgZm9yIGV4YW1wbGUsIHdlIHdhbnQganVzdCB0aGUgbWludXRlcyBmcm9tIHRoZSB0aW1lIHN0b3JlZCBpbiB0Miwgd2UgY2FuIGFjY2VzcyB0aGVtIHdpdGggdDIkbWluLiBHaXZlIGl0IGEgdHJ5LgoKYGBge3J9CnQyJG1pbgpgYGAKCk5vdyB0aGF0IHdlIGhhdmUgZXhwbG9yZWQgYWxsIHRocmVlIHR5cGVzIG9mIGRhdGUgYW5kIHRpbWUgb2JqZWN0cywgbGV0J3MgbG9vayBhdCBhIGZldyBmdW5jdGlvbnMgdGhhdCBleHRyYWN0IHVzZWZ1bCBpbmZvcm1hdGlvbiBmcm9tIGFueSBvZiB0aGVzZSBvYmplY3RzIC0tIHdlZWtkYXlzKCksIG1vbnRocygpLCBhbmQgcXVhcnRlcnMoKS4KClRoZSB3ZWVrZGF5cygpIGZ1bmN0aW9uIHdpbGwgcmV0dXJuIHRoZSBkYXkgb2Ygd2VlayBmcm9tIGFueSBkYXRlIG9yIHRpbWUgb2JqZWN0LiBUcnkgaXQgb3V0IG9uIGQxLCB3aGljaCBpcyB0aGUgRGF0ZSBvYmplY3QgdGhhdCBjb250YWlucyB0b2RheSdzIGRhdGUuCgpgYGB7cn0Kd2Vla2RheXMoZDEpCmBgYAoKVGhlIG1vbnRocygpIGZ1bmN0aW9uIGFsc28gd29ya3Mgb24gYW55IGRhdGUgb3IgdGltZSBvYmplY3QuIFRyeSBpdCBvbiB0MSwgd2hpY2ggaXMgdGhlIFBPU0lYY3Qgb2JqZWN0IHRoYXQgY29udGFpbnMgdGhlIGN1cnJlbnQgdGltZSAod2VsbCwgaXQgd2FzIHRoZSBjdXJyZW50IHRpbWUgd2hlbiB5b3UgY3JlYXRlZCBpdCkuCgpgYGB7cn0KbW9udGhzKHQxKQpgYGAKClRoZSBxdWFydGVycygpIGZ1bmN0aW9uIHJldHVybnMgdGhlIHF1YXJ0ZXIgb2YgdGhlIHllYXIgKFExLVE0KSBmcm9tIGFueSBkYXRlIG9yIHRpbWUgb2JqZWN0LiBUcnkgaXQgb24gdDIsIHdoaWNoIGlzIHRoZSBQT1NJWGx0IG9iamVjdCB0aGF0IGNvbnRhaW5zIHRoZSB0aW1lIGF0IHdoaWNoIHlvdSBjcmVhdGVkIGl0LgoKYGBge3J9CnF1YXJ0ZXJzKHQyKQpgYGAKCk9mdGVuLCB0aGUgZGF0ZXMgYW5kIHRpbWVzIGluIGEgZGF0YXNldCB3aWxsIGJlIGluIGEgZm9ybWF0IHRoYXQgUiBkb2VzIG5vdCByZWNvZ25pemUuIFRoZSBzdHJwdGltZSgpIGZ1bmN0aW9uIGNhbiBiZSBoZWxwZnVsIGluIHRoaXMgc2l0dWF0aW9uLgoKc3RycHRpbWUoKSBjb252ZXJ0cyBjaGFyYWN0ZXIgdmVjdG9ycyB0byBQT1NJWGx0LiBJbiB0aGF0IHNlbnNlLCBpdCBpcyBzaW1pbGFyIHRvIGFzLlBPU0lYbHQoKSwgZXhjZXB0IHRoYXQgdGhlIGlucHV0IGRvZXNuJ3QgaGF2ZSB0byBiZSBpbiBhIHBhcnRpY3VsYXIgZm9ybWF0IChZWVlZLU1NLUREKS4KClRvIHNlZSBob3cgaXQgd29ya3MsIHN0b3JlIHRoZSBmb2xsb3dpbmcgY2hhcmFjdGVyIHN0cmluZyBpbiBhIHZhcmlhYmxlIGNhbGxlZCB0MzogIk9jdG9iZXIgMTcsIDE5ODYgMDg6MjQiICh3aXRoIHRoZSBxdW90ZXMpLgoKYGBge3J9CnQzIDwtICJPY3RvYmVyIDE3LCAxOTg2IDA4OjI0IgpgYGAKCk5vdywgdXNlIHN0cnB0aW1lKHQzLCAiJUIgJWQsICVZICVIOiVNIikgdG8gaGVscCBSIGNvbnZlcnQgb3VyIGRhdGUvdGltZSBvYmplY3QgdG8gYSBmb3JtYXQgdGhhdCBpdCB1bmRlcnN0YW5kcy4gQXNzaWduIHRoZSByZXN1bHQgdG8gYSBuZXcgdmFyaWFibGUgY2FsbGVkIHQ0LiAoWW91IHNob3VsZCBwdWxsIHVwIHRoZSBkb2N1bWVudGF0aW9uIGZvciBzdHJwdGltZSgpIGlmIHlvdSdkIGxpa2UgdG8ga25vdyBtb3JlIGFib3V0IGhvdyBpdCB3b3Jrcy4pCgpgYGB7cn0KdDQgPC0gc3RycHRpbWUodDMsICIlQiAlZCwgJVkgJUg6JU0iKQpgYGAKClByaW50IHRoZSBjb250ZW50cyBvZiB0NC4KCmBgYHtyfQp0NApgYGAKClRoYXQncyB0aGUgZm9ybWF0IHdlJ3ZlIGNvbWUgdG8gZXhwZWN0LiBOb3csIGxldCdzIGNoZWNrIGl0cyBjbGFzcygpLgoKYGBge3J9CmNsYXNzKHQ0KQpgYGAKCkZpbmFsbHksIHRoZXJlIGFyZSBhIG51bWJlciBvZiBvcGVyYXRpb25zIHRoYXQgeW91IGNhbiBwZXJmb3JtIG9uIGRhdGVzIGFuZCB0aW1lcywgaW5jbHVkaW5nIGFyaXRobWV0aWMgb3BlcmF0aW9ucyAoKyBhbmQgLSkgYW5kIGNvbXBhcmlzb25zICg8LCA9PSwgZXRjLikKClRoZSB2YXJpYWJsZSB0MSBjb250YWlucyB0aGUgdGltZSBhdCB3aGljaCB5b3UgY3JlYXRlZCBpdCAocmVjYWxsIHlvdSB1c2VkIFN5cy50aW1lKCkpLiBDb25maXJtIHRoYXQgc29tZSB0aW1lIGhhcyBwYXNzZWQgc2luY2UgeW91IGNyZWF0ZWQgdDEgYnkgdXNpbmcgdGhlICdncmVhdGVyIHRoYW4nIG9wZXJhdG9yIHRvIGNvbXBhcmUgaXQgdG8gdGhlIGN1cnJlbnQgdGltZTogU3lzLnRpbWUoKSA+IHQxCgpgYGB7cn0KU3lzLnRpbWUoKSA+IHQxCmBgYAoKU28gd2Uga25vdyB0aGF0IHNvbWUgdGltZSBoYXMgcGFzc2VkLCBidXQgaG93IG11Y2g/IFRyeSBzdWJ0cmFjdGluZyB0MSBmcm9tIHRoZSBjdXJyZW50IHRpbWUgdXNpbmcgU3lzLnRpbWUoKSAtIHQxLiBEb24ndCBmb3JnZXQgdGhlIHBhcmVudGhlc2VzIGF0IHRoZSBlbmQgb2YgU3lzLnRpbWUoKSwgc2luY2UgaXQgaXMgYSBmdW5jdGlvbi4KCmBgYHtyfQpTeXMudGltZSgpIC0gdDEKYGBgCgpUaGUgc2FtZSBsaW5lIG9mIHRoaW5raW5nIGFwcGxpZXMgdG8gYWRkaXRpb24gYW5kIHRoZSBvdGhlciBjb21wYXJpc29uIG9wZXJhdG9ycy4gSWYgeW91IHdhbnQgbW9yZSBjb250cm9sIG92ZXIgdGhlIHVuaXRzIHdoZW4gZmluZGluZyB0aGUgYWJvdmUgZGlmZmVyZW5jZSBpbiB0aW1lcywgeW91IGNhbiB1c2UgZGlmZnRpbWUoKSwgd2hpY2ggYWxsb3dzIHlvdSB0byBzcGVjaWZ5IGEgJ3VuaXRzJyBwYXJhbWV0ZXIuCgpVc2UgZGlmZnRpbWUoU3lzLnRpbWUoKSwgdDEsIHVuaXRzID0gJ2RheXMnKSB0byBmaW5kIHRoZSBhbW91bnQgb2YgdGltZSBpbiBEQVlTIHRoYXQgaGFzIHBhc3NlZCBzaW5jZSB5b3UgY3JlYXRlZCB0MS4KCmBgYHtyfQpkaWZmdGltZShTeXMudGltZSgpLCB0MSwgdW5pdHM9J2RheXMnKQpgYGAKCkluIHRoaXMgbGVzc29uLCB5b3UgbGVhcm5lZCBob3cgdG8gd29yayB3aXRoIGRhdGVzIGFuZCB0aW1lcyBpbiBSLiBXaGlsZSBpdCBpcyBpbXBvcnRhbnQgdG8gdW5kZXJzdGFuZCB0aGUgYmFzaWNzLCBpZiB5b3UgZmluZCB5b3Vyc2VsZiB3b3JraW5nIHdpdGggZGF0ZXMgYW5kIHRpbWVzIG9mdGVuLCB5b3UgbWF5IHdhbnQgdG8gY2hlY2sgb3V0IHRoZSBsdWJyaWRhdGUgcGFja2FnZSBieSBIYWRsZXkgV2lja2hhbS4K</div>
 
 
 
@@ -2494,7 +2184,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("swirl_Lesson_2-K Means_Clustering.Rmd");
+  window.initializeSourceEmbed("swirl_Lesson_3-Dates_and_Times.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>

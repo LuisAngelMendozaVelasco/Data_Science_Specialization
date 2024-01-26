@@ -11,7 +11,7 @@
 
 
 
-<title>swirl Lesson 3: Functions</title>
+<title>swirl Lesson 2: K Means Clustering</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1746,560 +1746,553 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">swirl Lesson 3: Functions</h1>
+<h1 class="title toc-ignore">swirl Lesson 2: K Means Clustering</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<p>Functions are one of the fundamental building blocks of the R
-language. They are small pieces of reusable code that can be treated
-like any other R object.</p>
-<p>If you’ve worked through any other part of this course, you’ve
-probably used some functions already. Functions are usually
-characterized by the name of the function followed by parentheses.</p>
-<p>Let’s try using a few basic functions just for fun. The Sys.Date()
-function returns a string representing today’s date. Type Sys.Date()
-below and see what happens.</p>
+<p>“K_Means_Clustering. (Slides for this and other Data Science courses
+may be found at github <a href="https://github.com/DataScienceSpecialization/courses/" class="uri">https://github.com/DataScienceSpecialization/courses/</a>.
+If you care to use them, they must be downloaded as a zip file and
+viewed locally. This lesson corresponds to
+04_ExploratoryAnalysis/kmeansClustering.)”</p>
+<p>In this lesson we’ll learn about k-means clustering, another simple
+way of examining and organizing multi-dimensional data. As with
+hierarchical clustering, this technique is most useful in the early
+stages of analysis when you’re trying to get an understanding of the
+data, e.g., finding some pattern or relationship between different
+factors or variables.</p>
+<p>R documentation tells us that the k-means method “aims to partition
+the points into k groups such that the sum of squares from points to the
+assigned cluster centres is minimized.”</p>
+<p>Since clustering organizes data points that are close into groups
+we’ll assume we’ve decided on a measure of distance, e.g.,
+Euclidean.</p>
+<p>To illustrate the method, we’ll use these random points we generated,
+familiar to you if you’ve already gone through the hierarchical
+clustering lesson. We’ll demonstrate k-means clustering in several
+steps, but first we’ll explain the general idea.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuU3lzLkRhdGUoKVxuYGBgIn0= -->
-<pre class="r"><code>Sys.Date()</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiMjAyMy0xMC0xOFwiXG4ifQ== -->
-<pre><code>[1] &quot;2023-10-18&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Most functions in R return a value. Functions like Sys.Date() return
-a value based on your computer’s environment, while other functions
-manipulate input data in order to compute a return value.</p>
-<p>The mean() function takes a vector of numbers as input, and returns
-the average of all of the numbers in the input vector. Inputs to
-functions are often called arguments. Providing arguments to a function
-is also sometimes called passing arguments to that function. Arguments
-you want to pass to a function go inside the function’s parentheses. Try
-passing the argument c(2, 4, 5) to the mean() function.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWVhbihjKDIsIDQsIDUpKVxuYGBgIn0= -->
-<pre class="r"><code>mean(c(2, 4, 5))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMuNjY2NjY3XG4ifQ== -->
-<pre><code>[1] 3.666667</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Functions usually take arguments which are variables that the
-function operates on. For example, the mean() function takes a vector as
-an argument, like in the case of mean(c(2,6,8)). The mean() function
-then adds up all of the numbers in the vector and divides that sum by
-the length of the vector.</p>
-<p>You’re about to write your first function! Just like you would assign
-a value to a variable with the assignment operator, you assign functions
-in the following way:</p>
-<pre class="r"><code>function_name &lt;- function(arg1, arg2){
-      Manipulate arguments in some way
-      Return a value
-}</code></pre>
-<p>The “variable name” you assign will become the name of your function.
-arg1 and arg2 represent the arguments of your function. You can
-manipulate the arguments you specify within the function. After sourcing
-the function, you can use the function by typing:</p>
-<pre class="r"><code>function_name(value1, value2)</code></pre>
-<p>Below we will create a function called boring_function. This function
-takes the argument <code>x</code> as input, and returns the value of x
-without modifying it. Delete the pound sign in front of the x to make
-the function work!</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYm9yaW5nX2Z1bmN0aW9uIDwtIGZ1bmN0aW9uKHgpIHtcbiAgICB4XG59XG5gYGAifQ== -->
-<pre class="r"><code>boring_function &lt;- function(x) {
-    x
-}</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc2V0LnNlZWQoMTIzNCk7XG54IDwtIHJub3JtKDEyLCBtZWFuPXJlcCgxOjMsZWFjaD00KSwgc2Q9MC4yKVxueSA8LSBybm9ybSgxMiwgbWVhbj1yZXAoYygxLCAyLCAxKSwgZWFjaD00KSwgc2Q9MC4yKVxuYGBgIn0= -->
+<pre class="r"><code>set.seed(1234);
+x &lt;- rnorm(12, mean=rep(1:3,each=4), sd=0.2)
+y &lt;- rnorm(12, mean=rep(c(1, 2, 1), each=4), sd=0.2)</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Now that you’ve created your first function let’s test it! Type:
-boring_function(‘My first function!’). If your function works, it shoul
-just return the string: ‘My first function!’</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYm9yaW5nX2Z1bmN0aW9uKCdNeSBmaXJzdCBmdW5jdGlvbiEnKVxuYGBgIn0= -->
-<pre class="r"><code>boring_function(&#39;My first function!&#39;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiTXkgZmlyc3QgZnVuY3Rpb24hXCJcbiJ9 -->
-<pre><code>[1] &quot;My first function!&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Congratulations on writing your first function. By writing functions,
-you can gain serious insight into how R works. As John Chambers, the
-creator of R once said:</p>
-<p>To understand computations in R, two slogans are helpful:</p>
-<ol style="list-style-type: decimal">
-<li>Everything that exists is an object.</li>
-<li>Everything that happens is a function call.</li>
-</ol>
-<p>If you want to see the source code for any function, just type the
-function name without any arguments or parentheses. Let’s try this out
-with the function you just created. Type: boring_function to view its
-source code.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYm9yaW5nX2Z1bmN0aW9uXG5gYGAifQ== -->
-<pre class="r"><code>boring_function</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZnVuY3Rpb24oeCkge1xuICAgIHhcbn1cbiJ9 -->
-<pre><code>function(x) {
-    x
-}</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Time to make a more useful function! We’re going to replicate the
-functionality of the mean() function by creating a function called:
-my_mean(). Remember that to calculate the average of all of the numbers
-in a vector you find the sum of all the numbers in the vector, and then
-divide that sum by the number of numbers in the vector.</p>
-<p>You’re free to implement the function my_mean however you want, as
-long as it returns the average of all of the numbers in
-<code>my_vector</code>.</p>
-<p>Hint #1: sum() returns the sum of a vector. Ex: sum(c(1, 2, 3))
-evaluates to 6</p>
-<p>Hint #2: length() returns the size of a vector. Ex: length(c(1, 2,
-3)) evaluates to 3</p>
-<p>Hint #3: The mean of all the numbers in a vector is equal to the sum
-of all of the numbers in the vector divided by the size of the
-vector.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXlfbWVhbiA8LSBmdW5jdGlvbihteV92ZWN0b3IpIHtcbiAgICAjIFdyaXRlIHlvdXIgY29kZSBoZXJlIVxuICAgICMgUmVtZW1iZXI6IHRoZSBsYXN0IGV4cHJlc3Npb24gZXZhbHVhdGVkIHdpbGwgYmUgcmV0dXJuZWQhIFxuICAgIHN1bShteV92ZWN0b3IpIC8gbGVuZ3RoKG15X3ZlY3Rvcilcbn1cbmBgYCJ9 -->
-<pre class="r"><code>my_mean &lt;- function(my_vector) {
-    # Write your code here!
-    # Remember: the last expression evaluated will be returned! 
-    sum(my_vector) / length(my_vector)
-}</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFyKG1hcj1jKDAsIDAsIDAsIDApKVxucGxvdCh4LCB5LCBjb2w9XCJibHVlXCIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKVxudGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSlcbmBgYCJ9 -->
+<pre class="r"><code>par(mar=c(0, 0, 0, 0))
+plot(x, y, col=&quot;blue&quot;, pch=19, cex=2, asp=1)
+text(x+0.05, y+0.05, labels=as.character(1:12))</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Now test out your my_mean() function by finding the mean of the
-vector c(4, 5, 10).</p>
+<p>As we said, k-means is a partioning approach which requires that you
+first guess how many clusters you have (or want). Once you fix this
+number, you randomly create a “centroid” (a phantom point) for each
+cluster and assign each point or observation in your dataset to the
+centroid to which it is closest. Once each point is assigned a centroid,
+you readjust the centroid’s position by making it the average of the
+points assigned to it.</p>
+<p>Once you have repositioned the centroids, you must recalculate the
+distance of the observations to the centroids and reassign any, if
+necessary, to the centroid closest to them. Again, once the
+reassignments are done, readjust the positions of the centroids based on
+the new cluster membership. The process stops once you reach an
+iteration in which no adjustments are made or when you’ve reached some
+predetermined maximum number of iterations.</p>
+<p>As described, what does this process require?</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXlfbWVhbihjKDQsIDUsIDEwKSlcbmBgYCJ9 -->
-<pre class="r"><code>my_mean(c(4, 5, 10))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJBbGwgb2YgdGhlIG90aGVyc1wiXG5gYGAifQ== -->
+<pre class="r"><code>&quot;All of the others&quot;</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDYuMzMzMzMzXG4ifQ== -->
-<pre><code>[1] 6.333333</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Next, let’s try writing a function with default arguments. You can
-set default values for a function’s arguments, and this can be useful if
-you think someone who uses your function will set a certain argument to
-the same value most of the time.</p>
-<p>Let’s see an example of a function called increment(). Most of the
-time we want to use this function to increase the value of a number by
-one. This function will take two arguments: “number” and “by” where
-“number” is the digit we want to increment and “by” is the amount we
-want to increment “number” by. We’ve written the function below.</p>
-<pre class="r"><code>increment &lt;- function(number, by = 1){
-    number + by
-}</code></pre>
-<p>If you take a look in between the parentheses you can see that we’ve
-set “by” equal to 1. This means that the “by” argument will have the
-default value of 1.</p>
-<p>We can now use the increment function without providing a value for
-“by”: increment(5) will evaluate to 6.</p>
-<p>However if we want to provide a value for the “by” argument we still
-can! The expression: increment(5, 2) will evaluate to 7.</p>
-<p>You’re going to write a function called “remainder.” remainder() will
-take two arguments: “num” and “divisor” where “num” is divided by
-“divisor” and the remainder is returned. Imagine that you usually want
-to know the remainder when you divide by 2, so set the default value of
-“divisor” to 2. Please be sure that “num” is the first argument and
-“divisor” is the second argument.</p>
-<p>Hint #1: You can use the modulus operator %% to find the remainder.
-Ex: 7 %% 4 evaluates to 3.</p>
-<p>Remember to set appropriate default values!</p>
+<p>So k-means clustering requires some distance metric (say Euclidean),
+a hypothesized fixed number of clusters, and an initial guess as to
+cluster centroids. As described, what does this process produce?</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVtYWluZGVyIDwtIGZ1bmN0aW9uKG51bSwgZGl2aXNvcj0yKSB7XG4gICAgIyBXcml0ZSB5b3VyIGNvZGUgaGVyZSFcbiAgICAjIFJlbWVtYmVyOiB0aGUgbGFzdCBleHByZXNzaW9uIGV2YWx1YXRlZCB3aWxsIGJlIHJldHVybmVkISBcbiAgICBudW0gJSUgZGl2aXNvclxufVxuYGBgIn0= -->
-<pre class="r"><code>remainder &lt;- function(num, divisor=2) {
-    # Write your code here!
-    # Remember: the last expression evaluated will be returned! 
-    num %% divisor
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJBbGwgb2YgdGhlIG90aGVyc1wiXG5gYGAifQ== -->
+<pre class="r"><code>&quot;All of the others&quot;</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>When it’s finished k-means clustering returns a final position of
+each cluster’s centroid as well as the assignment of each data point or
+observation to a cluster.</p>
+<p>Now we’ll step through this process using our random points as our
+data. The coordinates of these are stored in 2 vectors, x and y. We
+eyeball the display and guess that there are 3 clusters. We’ll pick 3
+positions of centroids, one for each cluster.</p>
+<p>We’ve created two 3-long vectors for you, cx and cy. These
+respectively hold the x- and y- coordinates for 3 proposed centroids.
+For convenience, we’ve also stored them in a 2 by 3 matrix cmat. The x
+coordinates are in the first row and the y coordinates in the second.
+Look at cmat now.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY3ggPC0gYygxLCAxLjgsIDIuNSlcbmN5IDwtIGMoMiwgMSwgMS41KVxuY21hdCA8LSBtYXRyaXgoYyhjeCwgY3kpLCBucm93PTIsIGJ5cm93PVRSVUUpIFxuYGBgIn0= -->
+<pre class="r"><code>cx &lt;- c(1, 1.8, 2.5)
+cy &lt;- c(2, 1, 1.5)
+cmat &lt;- matrix(c(cx, cy), nrow=2, byrow=TRUE) </code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY21hdFxuYGBgIn0= -->
+<pre class="r"><code>cmat</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The coordinates of these points are (1,2), (1.8,1) and (2.5,1.5).
+We’ll add these centroids to the plot of our points. Do this by calling
+the R command points with 6 arguments. The first 2 are cx and cy, and
+the third is col set equal to the concatenation of 3 colors, “red”,
+“orange”, and “purple”. The fourth argument is pch set equal to 3 (a
+plus sign), the fifth is cex set equal to 2 (expansion of character),
+and the final is lwd (line width) also set equal to 2.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFyKG1hcj1jKDAsIDAsIDAsIDApKVxucGxvdCh4LCB5LCBjb2w9XCJibHVlXCIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKVxudGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSlcbnBvaW50cyhjeCwgY3ksIGNvbD1jKFwicmVkXCIsIFwib3JhbmdlXCIsXCJwdXJwbGVcIiksIHBjaD0zLCBjZXg9MiwgbHdkPTIpXG5gYGAifQ== -->
+<pre class="r"><code>par(mar=c(0, 0, 0, 0))
+plot(x, y, col=&quot;blue&quot;, pch=19, cex=2, asp=1)
+text(x+0.05, y+0.05, labels=as.character(1:12))
+points(cx, cy, col=c(&quot;red&quot;, &quot;orange&quot;,&quot;purple&quot;), pch=3, cex=2, lwd=2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We see the first centroid (1,2) is in red. The second (1.8,1), to the
+right and below the first, is orange, and the final centroid (2.5,1.5),
+the furthest to the right, is purple.</p>
+<p>Now we have to calculate distances between each point and every
+centroid. There are 12 data points and 3 centroids. How many distances
+do we have to calculate?</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCIzNlwiXG5gYGAifQ== -->
+<pre class="r"><code>&quot;36&quot;</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We’ve written a function for you called mdist which takes 4
+arguments. The vectors of data points (x and y) are the first two and
+the two vectors of centroid coordinates (cx and cy) are the last two.
+Call mdist now with these arguments.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWRpc3QgPC0gZnVuY3Rpb24oeCwgeSwgY3gsIGN5KXtcbiAgICBkaXN0VG1wIDwtIG1hdHJpeChOQSwgbnJvdz0zLCBuY29sPTEyKVxuICAgIGRpc3RUbXBbMSxdIDwtICh4IC0gY3hbMV0pXjIgKyAoeSAtIGN5WzFdKV4yXG4gICAgZGlzdFRtcFsyLF0gPC0gKHggLSBjeFsyXSleMiArICh5IC0gY3lbMl0pXjJcbiAgICBkaXN0VG1wWzMsXSA8LSAoeCAtIGN4WzNdKV4yICsgKHkgLSBjeVszXSleMiAgXG4gICAgcmV0dXJuKGRpc3RUbXApXG59XG5gYGAifQ== -->
+<pre class="r"><code>mdist &lt;- function(x, y, cx, cy){
+    distTmp &lt;- matrix(NA, nrow=3, ncol=12)
+    distTmp[1,] &lt;- (x - cx[1])^2 + (y - cy[1])^2
+    distTmp[2,] &lt;- (x - cx[2])^2 + (y - cy[2])^2
+    distTmp[3,] &lt;- (x - cx[3])^2 + (y - cy[3])^2  
+    return(distTmp)
 }</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Let’s do some testing of the remainder function. Run remainder(5) and
-see what happens.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVtYWluZGVyKDUpXG5gYGAifQ== -->
-<pre class="r"><code>remainder(5)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWRpc3QoeCwgeSwgY3gsIGN5KVxuYGBgIn0= -->
+<pre class="r"><code>mdist(x, y, cx, cy)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDFcbiJ9 -->
-<pre><code>[1] 1</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Let’s take a moment to examine what just happened. You provided one
-argument to the function, and R matched that argument to ‘num’ since
-‘num’ is the first argument. The default value for ‘divisor’ is 2, so
-the function used the default value you provided.</p>
-<p>Now let’s test the remainder function by providing two arguments.
-Type: remainder(11, 5) and let’s see what happens.</p>
+<p>We’ve stored these distances in the matrix distTmp for you. Now we
+have to assign a cluster to each point. To do that we’ll look at each
+column and ?</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVtYWluZGVyKDExLCA1KVxuYGBgIn0= -->
-<pre class="r"><code>remainder(11, 5)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJwaWNrIHRoZSBtaW5pbXVtIGVudHJ5XCJcbmBgYCJ9 -->
+<pre class="r"><code>&quot;pick the minimum entry&quot;</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDFcbiJ9 -->
-<pre><code>[1] 1</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Once again, the arguments have been matched appropriately.</p>
-<p>You can also explicitly specify arguments in a function. When you
-explicitly designate argument values by name, the ordering of the
-arguments becomes unimportant. You can try this out by typing:
-remainder(divisor = 11, num = 5).</p>
+<p>From the distTmp entries, which cluster would point 6 be assigned
+to?</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVtYWluZGVyKGRpdmlzb3I9MTEsIG51bT01KVxuYGBgIn0= -->
-<pre class="r"><code>remainder(divisor=11, num=5)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCIzXCJcbmBgYCJ9 -->
+<pre class="r"><code>&quot;3&quot;</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDVcbiJ9 -->
-<pre><code>[1] 5</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>As you can see, there is a significant difference between
-remainder(11, 5) and remainder(divisor = 11, num = 5)!</p>
-<p>R can also partially match arguments. Try typing remainder(4, div =
-2) to see this feature in action.</p>
+<p>R has a handy function which.min which you can apply to ALL the
+columns of distTmp with one call. Simply call the R function apply with
+3 arguments. The first is distTmp, the second is 2 meaning the columns
+of distTmp, and the third is which.min, the function you want to apply
+to the columns of distTmp. Try this now.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVtYWluZGVyKDQsIGRpdj0yKVxuYGBgIn0= -->
-<pre class="r"><code>remainder(4, div=2)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGlzdFRtcCA8LSBtZGlzdCh4LCB5LCBjeCwgY3kpXG5gYGAifQ== -->
+<pre class="r"><code>distTmp &lt;- mdist(x, y, cx, cy)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDBcbiJ9 -->
-<pre><code>[1] 0</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>A word of warning: in general you want to make your code as easy to
-understand as possible. Switching around the orders of arguments by
-specifying their names or only using partial argument names can be
-confusing, so use these features with caution!</p>
-<p>With all of this talk about arguments, you may be wondering if there
-is a way you can see a function’s arguments (besides looking at the
-documentation). Thankfully, you can use the args() function! Type:
-args(remainder) to examine the arguments for the remainder function.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXJncyhyZW1haW5kZXIpXG5gYGAifQ== -->
-<pre class="r"><code>args(remainder)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXBwbHkoZGlzdFRtcCwgMiwgd2hpY2gubWluKVxuYGBgIn0= -->
+<pre class="r"><code>apply(distTmp, 2, which.min)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiZnVuY3Rpb24gKG51bSwgZGl2aXNvciA9IDIpIFxuTlVMTFxuIn0= -->
-<pre><code>function (num, divisor = 2) 
-NULL</code></pre>
-<!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>You may not realize it but we just tricked you into doing something
-pretty interesting! args() is a function, remainder() is a function, yet
-remainder was an argument for args(). Yes it’s true: you can pass
-functions as arguments! This is a very powerful concept. Let’s write a
-script to see how it works.</p>
-<p>You can pass functions as arguments to other functions just like you
-can pass data to functions. Let’s say you define the following
-functions:</p>
-<pre class="r"><code>add_two_numbers &lt;- function(num1, num2){
-   num1 + num2
-}
+<p>You can see that you were right and the 6th entry is indeed 3 as you
+answered before. We see the first 3 entries were assigned to the second
+(orange) cluster and only 2 points (4 and 8) were assigned to the first
+(red) cluster.</p>
+<p>We’ve stored the vector of cluster colors (“red”,“orange”,“purple”)
+in the array cols1 for you and we’ve also stored the cluster assignments
+in the array newClust. Let’s color the 12 data points according to their
+assignments. Again, use the command points with 5 arguments. The first 2
+are x and y. The third is pch set to 19, the fourth is cex set to 2, and
+the last, col is set to cols1[newClust].</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmV3Q2x1c3QgPC0gYXBwbHkoZGlzdFRtcCwgMiwgd2hpY2gubWluKVxuY29sczEgPC0gYyhcInJlZFwiLCBcIm9yYW5nZVwiLCBcInB1cnBsZVwiKVxuYGBgIn0= -->
+<pre class="r"><code>newClust &lt;- apply(distTmp, 2, which.min)
+cols1 &lt;- c(&quot;red&quot;, &quot;orange&quot;, &quot;purple&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFyKG1hcj1jKDAsIDAsIDAsIDApKVxucGxvdCh4LCB5LCBjb2w9XCJibHVlXCIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKVxudGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSlcbnBvaW50cyhjeCwgY3ksIGNvbD1jKFwicmVkXCIsIFwib3JhbmdlXCIsXCJwdXJwbGVcIiksIHBjaD0zLCBjZXg9MiwgbHdkPTIpXG5wb2ludHMoeCwgeSwgcGNoPTE5LCBjZXg9MiwgY29sPWNvbHMxW25ld0NsdXN0XSlcbmBgYCJ9 -->
+<pre class="r"><code>par(mar=c(0, 0, 0, 0))
+plot(x, y, col=&quot;blue&quot;, pch=19, cex=2, asp=1)
+text(x+0.05, y+0.05, labels=as.character(1:12))
+points(cx, cy, col=c(&quot;red&quot;, &quot;orange&quot;,&quot;purple&quot;), pch=3, cex=2, lwd=2)
+points(x, y, pch=19, cex=2, col=cols1[newClust])</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Now we have to recalculate our centroids so they are the average
+(center of gravity) of the cluster of points assigned to them. We have
+to do the x and y coordinates separately. We’ll do the x coordinate
+first. Recall that the vectors x and y hold the respective coordinates
+of our 12 data points.</p>
+<p>We can use the R function tapply which applies “a function over a
+ragged array”. This means that every element of the array is assigned a
+factor and the function is applied to subsets of the array (identified
+by the factor vector). This allows us to take advantage of the factor
+vector newClust we calculated. Call tapply now with 3 arguments, x (the
+data), newClust (the factor array), and mean (the function to
+apply).</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFwcGx5KHgsIG5ld0NsdXN0LCBtZWFuKVxuYGBgIn0= -->
+<pre class="r"><code>tapply(x, newClust, mean)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Repeat the call, except now apply it to the vector y instead of
+x.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFwcGx5KHksIG5ld0NsdXN0LCBtZWFuKVxuYGBgIn0= -->
+<pre class="r"><code>tapply(y, newClust, mean)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Now that we have new x and new y coordinates for the 3 centroids we
+can plot them. We’ve stored off the coordinates for you in variables
+newCx and newCy. Use the R command points with these as the first 2
+arguments. In addition, use the arguments col set equal to cols1, pch
+equal to 8, cex equal to 2 and lwd also equal to 2.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmV3Q3ggPC0gdGFwcGx5KHgsIG5ld0NsdXN0LCBtZWFuKVxubmV3Q3kgPC0gdGFwcGx5KHksIG5ld0NsdXN0LCBtZWFuKVxuYGBgIn0= -->
+<pre class="r"><code>newCx &lt;- tapply(x, newClust, mean)
+newCy &lt;- tapply(y, newClust, mean)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFyKG1hcj1jKDAsIDAsIDAsIDApKVxucGxvdCh4LCB5LCBjb2w9XCJibHVlXCIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKVxudGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSlcbnBvaW50cyhjeCwgY3ksIGNvbD1jKFwicmVkXCIsIFwib3JhbmdlXCIsXCJwdXJwbGVcIiksIHBjaD0zLCBjZXg9MiwgbHdkPTIpXG5wb2ludHMoeCwgeSwgcGNoPTE5LCBjZXg9MiwgY29sPWNvbHMxW25ld0NsdXN0XSlcbnBvaW50cyhuZXdDeCwgbmV3Q3ksIGNvbD1jb2xzMSwgcGNoPTgsIGNleD0yLCBsd2Q9MilcbmBgYCJ9 -->
+<pre class="r"><code>par(mar=c(0, 0, 0, 0))
+plot(x, y, col=&quot;blue&quot;, pch=19, cex=2, asp=1)
+text(x+0.05, y+0.05, labels=as.character(1:12))
+points(cx, cy, col=c(&quot;red&quot;, &quot;orange&quot;,&quot;purple&quot;), pch=3, cex=2, lwd=2)
+points(x, y, pch=19, cex=2, col=cols1[newClust])
+points(newCx, newCy, col=cols1, pch=8, cex=2, lwd=2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We see how the centroids have moved closer to their respective
+clusters. This is especially true of the second (orange) cluster. Now
+call the distance function mdist with the 4 arguments x, y, newCx, and
+newCy. This will allow us to reassign the data points to new clusters if
+necessary.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWRpc3QoeCwgeSwgbmV3Q3gsIG5ld0N5KVxuYGBgIn0= -->
+<pre class="r"><code>mdist(x, y, newCx, newCy)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We’ve stored off this new matrix of distances in the matrix distTmp2
+for you. Recall that the first cluster is red, the second orange and the
+third purple. Look closely at columns 4 and 7 of distTmp2. What will
+happen to points 4 and 7?</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJUaGV5IHdpbGwgYm90aCBjaGFuZ2UgY2x1c3RlcnNcIlxuYGBgIn0= -->
+<pre class="r"><code>&quot;They will both change clusters&quot;</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Now call apply with 3 arguments, distTmp2, 2, and which.min to find
+the new cluster assignments for the points.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGlzdFRtcDIgPC0gbWRpc3QoeCwgeSwgbmV3Q3gsIG5ld0N5KVxuYGBgIn0= -->
+<pre class="r"><code>distTmp2 &lt;- mdist(x, y, newCx, newCy)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXBwbHkoZGlzdFRtcDIsIDIsIHdoaWNoLm1pbilcbmBgYCJ9 -->
+<pre class="r"><code>apply(distTmp2, 2, which.min)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We’ve stored off the new cluster assignments in a vector of factors
+called newClust2. Use the R function points to recolor the points with
+their new assignments. Again, there are 5 arguments, x and y are first,
+followed by pch set to 19, cex to 2, and col to cols1[newClust2].</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubmV3Q2x1c3QyIDwtIGFwcGx5KGRpc3RUbXAyLCAyLCB3aGljaC5taW4pXG5gYGAifQ== -->
+<pre class="r"><code>newClust2 &lt;- apply(distTmp2, 2, which.min)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFyKG1hcj1jKDAsIDAsIDAsIDApKVxucGxvdCh4LCB5LCBjb2w9XCJibHVlXCIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKVxudGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSlcbnBvaW50cyhjeCwgY3ksIGNvbD1jKFwicmVkXCIsIFwib3JhbmdlXCIsXCJwdXJwbGVcIiksIHBjaD0zLCBjZXg9MiwgbHdkPTIpXG5wb2ludHMoeCwgeSwgcGNoPTE5LCBjZXg9MiwgY29sPWNvbHMxW25ld0NsdXN0XSlcbnBvaW50cyhuZXdDeCwgbmV3Q3ksIGNvbD1jb2xzMSwgcGNoPTgsIGNleD0yLCBsd2Q9MilcbnBvaW50cyh4LCB5LCBwY2g9MTksIGNleD0yLCBjb2w9Y29sczFbbmV3Q2x1c3QyXSlcbmBgYCJ9 -->
+<pre class="r"><code>par(mar=c(0, 0, 0, 0))
+plot(x, y, col=&quot;blue&quot;, pch=19, cex=2, asp=1)
+text(x+0.05, y+0.05, labels=as.character(1:12))
+points(cx, cy, col=c(&quot;red&quot;, &quot;orange&quot;,&quot;purple&quot;), pch=3, cex=2, lwd=2)
+points(x, y, pch=19, cex=2, col=cols1[newClust])
+points(newCx, newCy, col=cols1, pch=8, cex=2, lwd=2)
+points(x, y, pch=19, cex=2, col=cols1[newClust2])</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Notice that points 4 and 7 both changed clusters, 4 moved from 1 to 2
+(red to orange), and point 7 switched from 3 to 2 (purple to red).</p>
+<p>Now use tapply to find the x coordinate of the new centroid. Recall
+there are 3 arguments, x, newClust2, and mean.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFwcGx5KHgsIG5ld0NsdXN0MiwgbWVhbilcbmBgYCJ9 -->
+<pre class="r"><code>tapply(x, newClust2, mean)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Do the same to find the new y coordinate.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGFwcGx5KHksIG5ld0NsdXN0MiwgbWVhbilcbmBgYCJ9 -->
+<pre class="r"><code>tapply(y, newClust2, mean)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>We’ve stored off these coordinates for you in the variables finalCx
+and finalCy. Plot these new centroids using the points function with 6
+arguments. The first 2 are finalCx and finalCy. The argument col should
+equal cols1, pch should equal 9, cex 2 and lwd 2.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZmluYWxDeCA8LSB0YXBwbHkoeCwgbmV3Q2x1c3QyLCBtZWFuKVxuZmluYWxDeSA8LSB0YXBwbHkoeSwgbmV3Q2x1c3QyLCBtZWFuKVxuYGBgIn0= -->
+<pre class="r"><code>finalCx &lt;- tapply(x, newClust2, mean)
+finalCy &lt;- tapply(y, newClust2, mean)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFyKG1hcj1jKDAsIDAsIDAsIDApKVxucGxvdCh4LCB5LCBjb2w9XCJibHVlXCIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKVxudGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSlcbnBvaW50cyhjeCwgY3ksIGNvbD1jKFwicmVkXCIsIFwib3JhbmdlXCIsXCJwdXJwbGVcIiksIHBjaD0zLCBjZXg9MiwgbHdkPTIpXG5wb2ludHMoeCwgeSwgcGNoPTE5LCBjZXg9MiwgY29sPWNvbHMxW25ld0NsdXN0XSlcbnBvaW50cyhuZXdDeCwgbmV3Q3ksIGNvbD1jb2xzMSwgcGNoPTgsIGNleD0yLCBsd2Q9MilcbnBvaW50cyh4LCB5LCBwY2g9MTksIGNleD0yLCBjb2w9Y29sczFbbmV3Q2x1c3QyXSlcbnBvaW50cyhmaW5hbEN4LCBmaW5hbEN5LCBjb2w9Y29sczEsIHBjaD05LCBjZXg9MiwgbHdkPTIpXG5gYGAifQ== -->
+<pre class="r"><code>par(mar=c(0, 0, 0, 0))
+plot(x, y, col=&quot;blue&quot;, pch=19, cex=2, asp=1)
+text(x+0.05, y+0.05, labels=as.character(1:12))
+points(cx, cy, col=c(&quot;red&quot;, &quot;orange&quot;,&quot;purple&quot;), pch=3, cex=2, lwd=2)
+points(x, y, pch=19, cex=2, col=cols1[newClust])
+points(newCx, newCy, col=cols1, pch=8, cex=2, lwd=2)
+points(x, y, pch=19, cex=2, col=cols1[newClust2])
+points(finalCx, finalCy, col=cols1, pch=9, cex=2, lwd=2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>It should be obvious that if we continued this process points 5
+through 8 would all turn red, while points 1 through 4 stay orange, and
+points 9 through 12 purple.</p>
+<p>Now that you’ve gone through an example step by step, you’ll be
+relieved to hear that R provides a command to do all this work for you.
+Unsurprisingly it’s called kmeans and, although it has several
+parameters, we’ll just mention four. These are x, (the numeric matrix of
+data), centers, iter.max, and nstart. The second of these (centers) can
+be either a number of clusters or a set of initial centroids. The third,
+iter.max, specifies the maximum number of iterations to go through, and
+nstart is the number of random starts you want to try if you specify
+centers as a number.</p>
+<p>Call kmeans now with 2 arguments, dataFrame (which holds the x and y
+coordinates of our 12 points) and centers set equal to 3.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGF0YUZyYW1lIDwtIGRhdGEuZnJhbWUoeD14LCB5PXkpXG5gYGAifQ== -->
+<pre class="r"><code>dataFrame &lt;- data.frame(x=x, y=y)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua21lYW5zKGRhdGFGcmFtZSwgY2VudGVycz0zKVxuYGBgIn0= -->
+<pre class="r"><code>kmeans(dataFrame, centers=3)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>The program returns the information that the data clustered into 3
+clusters each of size 4. It also returns the coordinates of the 3
+cluster means, a vector named cluster indicating how the 12 points were
+partitioned into the clusters, and the sum of squares within each
+cluster. It also shows all the available components returned by the
+function. We’ve stored off this data for you in a kmeans object called
+kmObj. Look at kmObj$iter to see how many iterations the algorithm went
+through.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua21PYmogPC0ga21lYW5zKGRhdGFGcmFtZSwgMylcbmBgYCJ9 -->
+<pre class="r"><code>kmObj &lt;- kmeans(dataFrame, 3)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxua21PYmokaXRlclxuYGBgIn0= -->
+<pre class="r"><code>kmObj$iter</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Two iterations as we did before. We just want to emphasize how you
+can access the information available to you. Let’s plot the data points
+color coded according to their cluster. This was stored in kmObj<span class="math inline">\(cluster. Run plot with 5 arguments. The data, x
+and y, are the first two; the third, col is set equal to
+kmObj\)</span>cluster, and the last two are pch and cex. The first of
+these should be set to 19 and the last to 2.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdCh4LCB5LCBjb2w9a21PYmokY2x1c3RlciwgcGNoPTE5LCBjZXg9MilcbmBgYCJ9 -->
+<pre class="r"><code>plot(x, y, col=kmObj$cluster, pch=19, cex=2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Now add the centroids which are stored in kmObj<span class="math inline">\(centers. Use the points function with 5 arguments.
+The first two are kmObj\)</span>centers and
+col=c(“black”,“red”,“green”). The last three, pch, cex, and lwd, should
+all equal 3.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdCh4LCB5LCBjb2w9a21PYmokY2x1c3RlciwgcGNoPTE5LCBjZXg9MilcbnBvaW50cyhrbU9iaiRjZW50ZXJzLCBjb2w9YyhcImJsYWNrXCIsIFwicmVkXCIsIFwiZ3JlZW5cIiksIHBjaD0zLCBjZXg9MywgbHdkPTMpXG5gYGAifQ== -->
+<pre class="r"><code>plot(x, y, col=kmObj$cluster, pch=19, cex=2)
+points(kmObj$centers, col=c(&quot;black&quot;, &quot;red&quot;, &quot;green&quot;), pch=3, cex=3, lwd=3)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Now for some fun! We want to show you how the output of the kmeans
+function is affected by its random start (when you just ask for a number
+of clusters). With random starts you might want to run the function
+several times to get an idea of the relationships between your
+observations. We’ll call kmeans with the same data points (stored in
+dataFrame), but ask for 6 clusters instead of 3.</p>
+<p>We’ll plot our data points several times and each time we’ll just
+change the argument col which will show us how the R function kmeans is
+clustering them. So, call plot now with 5 arguments. The first 2 are x
+and y. The third is col set equal to the call
+kmeans(dataFrame,6)$cluster. The last two (pch and cex) are set to 19
+and 2 respectively.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdCh4LCB5LCBjb2w9a21lYW5zKGRhdGFGcmFtZSwgNikkY2x1c3RlciwgcGNoPTE5LCBjZXg9MilcbmBgYCJ9 -->
+<pre class="r"><code>plot(x, y, col=kmeans(dataFrame, 6)$cluster, pch=19, cex=2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>See how the points cluster? Now recall your last command and rerun
+it.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdCh4LCB5LCBjb2w9a21lYW5zKGRhdGFGcmFtZSwgNikkY2x1c3RlciwgcGNoPTE5LCBjZXg9MilcbmBgYCJ9 -->
+<pre class="r"><code>plot(x, y, col=kmeans(dataFrame, 6)$cluster, pch=19, cex=2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>See how the clustering has changed? As the Teletubbies would say,
+“Again! Again!”</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdCh4LCB5LCBjb2w9a21lYW5zKGRhdGFGcmFtZSwgNikkY2x1c3RlciwgcGNoPTE5LCBjZXg9MilcbmBgYCJ9 -->
+<pre class="r"><code>plot(x, y, col=kmeans(dataFrame, 6)$cluster, pch=19, cex=2)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>So the clustering changes with different starts. Perhaps 6 is too
+many clusters?</p>
+<p>True or False? K-means clustering requires you to specify a number of
+clusters before you begin.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJUcnVlXCJcbmBgYCJ9 -->
+<pre class="r"><code>&quot;True&quot;</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>True or False? K-means clustering requires you to specify a number of
+iterations before you begin.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJGYWxzZVwiXG5gYGAifQ== -->
+<pre class="r"><code>&quot;False&quot;</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>True or False? Every data set has a single fixed number of
+clusters.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJGYWxzZVwiXG5gYGAifQ== -->
+<pre class="r"><code>&quot;False&quot;</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>True or False? K-means clustering will always stop in 3
+iterations</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJGYWxzZVwiXG5gYGAifQ== -->
+<pre class="r"><code>&quot;False&quot;</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>True or False? When starting kmeans with random centroids, you’ll
+always end up with the same final clustering.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCJGYWxzZVwiXG5gYGAifQ== -->
+<pre class="r"><code>&quot;False&quot;</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
 
-multiply_two_numbers &lt;- function(num1, num2){
-    num1 * num2
-}
-
-some_function &lt;- function(func){
-   func(2, 4)
-}</code></pre>
-<p>As you can see we use the argument name “func” like a function inside
-of “some_function().” By passing functions as arguments
-some_function(add_two_numbers) will evaluate to 6, while
-some_function(multiply_two_numbers) will evaluate to 8.</p>
-<p>Finish the function definition below so that if a function is passed
-into the “func” argument and some data (like a vector) is passed into
-the dat argument the evaluate() function will return the result of dat
-being passed as an argument to func.</p>
-<p>Hints: This exercise is a little tricky so I’ll provide a few example
-of how evaluate() should act: 1. evaluate(sum, c(2, 4, 6)) should
-evaluate to 12 2. evaluate(median, c(7, 40, 9)) should evaluate to 9 3.
-evaluate(floor, 11.1) should evaluate to 11</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXZhbHVhdGUgPC0gZnVuY3Rpb24oZnVuYywgZGF0KXtcbiAgICAjIFdyaXRlIHlvdXIgY29kZSBoZXJlIVxuICAgICMgUmVtZW1iZXI6IHRoZSBsYXN0IGV4cHJlc3Npb24gZXZhbHVhdGVkIHdpbGwgYmUgcmV0dXJuZWQhIFxuICAgIGZ1bmMoZGF0KVxufVxuYGBgIn0= -->
-<pre class="r"><code>evaluate &lt;- function(func, dat){
-    # Write your code here!
-    # Remember: the last expression evaluated will be returned! 
-    func(dat)
-}</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Let’s take your new evaluate() function for a spin! Use evaluate to
-find the standard deviation of the vector c(1.4, 3.6, 7.9, 8.8).</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXZhbHVhdGUoc2QsIGMoMS40LCAzLjYsIDcuOSwgOC44KSlcbmBgYCJ9 -->
-<pre class="r"><code>evaluate(sd, c(1.4, 3.6, 7.9, 8.8))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMuNTE0MTM4XG4ifQ== -->
-<pre><code>[1] 3.514138</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The idea of passing functions as arguments to other functions is an
-important and fundamental concept in programming.</p>
-<p>You may be surprised to learn that you can pass a function as an
-argument without first defining the passed function. Functions that are
-not named are appropriately known as anonymous functions.</p>
-<p>Let’s use the evaluate function to explore how anonymous functions
-work. For the first argument of the evaluate function we’re going to
-write a tiny function that fits on one line. In the second argument
-we’ll pass some data to the tiny anonymous function in the first
-argument.</p>
-<p>Type the following command and then we’ll discuss how it works:
-evaluate(function(x){x+1}, 6)</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXZhbHVhdGUoZnVuY3Rpb24oeCl7eCsxfSwgNilcbmBgYCJ9 -->
-<pre class="r"><code>evaluate(function(x){x+1}, 6)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDdcbiJ9 -->
-<pre><code>[1] 7</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The first argument is a tiny anonymous function that takes one
-argument <code>x</code> and returns <code>x+1</code>. We passed the
-number 6 into this function so the entire expression evaluates to 7.</p>
-<p>Try using evaluate() along with an anonymous function to return the
-first element of the vector c(8, 4, 0). Your anonymous function should
-only take one argument which should be a variable <code>x</code>.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXZhbHVhdGUoZnVuY3Rpb24oeCl7eFsxXX0sIGMoOCwgNCwgMCkpXG5gYGAifQ== -->
-<pre class="r"><code>evaluate(function(x){x[1]}, c(8, 4, 0))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDhcbiJ9 -->
-<pre><code>[1] 8</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Now try using evaluate() along with an anonymous function to return
-the last element of the vector c(8, 4, 0). Your anonymous function
-should only take one argument which should be a variable
-<code>x</code>.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXZhbHVhdGUoZnVuY3Rpb24oeCl7eFtsZW5ndGgoeCldfSwgYyg4LCA0LCAwKSlcbmBgYCJ9 -->
-<pre class="r"><code>evaluate(function(x){x[length(x)]}, c(8, 4, 0))</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDBcbiJ9 -->
-<pre><code>[1] 0</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>For the rest of the course we’re going to use the paste() function
-frequently. Type ?paste so we can take a look at the documentation for
-the paste function.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuP3Bhc3RlXG5gYGAifQ== -->
-<pre class="r"><code>?paste</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>As you can see the first argument of paste() is <code>...</code>
-which is referred to as an ellipsis or simply dot-dot-dot. The ellipsis
-allows an indefinite number of arguments to be passed into a function.
-In the case of paste() any number of strings can be passed as arguments
-and paste() will return all of the strings combined into one string.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFzdGUoXCJQcm9ncmFtbWluZ1wiLCBcImlzXCIsIFwiZnVuIVwiKVxuYGBgIn0= -->
-<pre class="r"><code>paste(&quot;Programming&quot;, &quot;is&quot;, &quot;fun!&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiUHJvZ3JhbW1pbmcgaXMgZnVuIVwiXG4ifQ== -->
-<pre><code>[1] &quot;Programming is fun!&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Time to write our own modified version of paste().</p>
-<p>The ellipses can be used to pass on arguments to other functions that
-are used within the function you’re writing. Usually a function that has
-the ellipses as an argument has the ellipses as the last argument. The
-usage of such a function would look like:</p>
-<pre class="r"><code>ellipses_func(arg1, arg2 = TRUE, ...)</code></pre>
-<p>In the above example arg1 has no default value, so a value must be
-provided for arg1. arg2 has a default value, and other arguments can
-come after arg2 depending on how they’re defined in the ellipses_func()
-documentation. Interestingly the usage for the paste function is as
-follows:</p>
-<pre class="r"><code>paste (..., sep = &quot; &quot;, collapse = NULL)</code></pre>
-<p>Notice that the ellipses is the first argument, and all other
-arguments after the ellipses have default values. This is a strict rule
-in R programming: all arguments after an ellipses must have default
-values. Take a look at the simon_says function below:</p>
-<pre class="r"><code>simon_says &lt;- function(...){
-    paste(&quot;Simon says:&quot;, ...)
-}</code></pre>
-<p>The simon_says function works just like the paste function, except
-the begining of every string is prepended by the string “Simon
-says:”</p>
-<p>Telegrams used to be peppered with the words START and STOP in order
-to demarcate the beginning and end of sentences. Write a function below
-called telegram that formats sentences for telegrams. For example the
-expression <code>telegram(&quot;Good&quot;, &quot;morning&quot;)</code> should evaluate
-to:</p>
-<p>“START Good morning STOP”</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGVsZWdyYW0gPC0gZnVuY3Rpb24oLi4uKXtcbiAgIHBhc3RlKFwiU1RBUlRcIiwgLi4uLCBcIlNUT1BcIilcbn1cbmBgYCJ9 -->
-<pre class="r"><code>telegram &lt;- function(...){
-   paste(&quot;START&quot;, ..., &quot;STOP&quot;)
-}</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Now let’s test out your telegram function. Use your new telegram
-function passing in whatever arguments you wish!</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGVsZWdyYW0oXCJIZWxsb1wiKVxuYGBgIn0= -->
-<pre class="r"><code>telegram(&quot;Hello&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiU1RBUlQgSGVsbG8gU1RPUFwiXG4ifQ== -->
-<pre><code>[1] &quot;START Hello STOP&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Let’s explore how to “unpack” arguments from an ellipses when you use
-the ellipses as an argument in a function. Below we have an example
-function that is supposed to add two explicitly named arguments called
-alpha and beta.</p>
-<pre class="r"><code>add_alpha_and_beta &lt;- function(...){
-    # First we must capture the ellipsis inside of a list
-    # and then assign the list to a variable. Let&#39;s name this
-    # variable `args`.
-    
-    args &lt;- list(...)
-    
-    # We&#39;re now going to assume that there are two named arguments within args
-    # with the names `alpha` and `beta.` We can extract named arguments from
-    # the args list by using the name of the argument and double brackets. The
-    # `args` variable is just a regular list after all!
-    
-    alpha &lt;- args[[&quot;alpha&quot;]]
-    beta  &lt;- args[[&quot;beta&quot;]]
-    
-    # Then we return the sum of alpha and beta.
-    
-    alpha + beta 
-}</code></pre>
-<p>Have you ever played Mad Libs before? The function below will
-construct a sentence from parts of speech that you provide as arguments.
-We’ll write most of the function, but you’ll need to unpack the
-appropriate arguments from the ellipses.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWFkX2xpYnMgPC0gZnVuY3Rpb24oLi4uKXtcbiAgICAjIERvIHlvdXIgYXJndW1lbnQgdW5wYWNraW5nIGhlcmUhXG4gICAgYXJncyA8LSBsaXN0KC4uLilcbiAgICBwbGFjZSA8LSBhcmdzW1tcInBsYWNlXCJdXVxuICAgIGFkamVjdGl2ZSA8LSBhcmdzW1tcImFkamVjdGl2ZVwiXV1cbiAgICBub3VuIDwtIGFyZ3NbW1wibm91blwiXV1cblxuICAgICMgRG9uJ3QgbW9kaWZ5IGFueSBjb2RlIGJlbG93IHRoaXMgY29tbWVudC5cbiAgICAjIE5vdGljZSB0aGUgdmFyaWFibGVzIHlvdSdsbCBuZWVkIHRvIGNyZWF0ZSBpbiBvcmRlciBmb3IgdGhlIGNvZGUgYmVsb3cgdG9cbiAgICAjIGJlIGZ1bmN0aW9uYWwhXG4gICAgcGFzdGUoXCJOZXdzIGZyb21cIiwgcGxhY2UsIFwidG9kYXkgd2hlcmVcIiwgYWRqZWN0aXZlLCBcInN0dWRlbnRzIHRvb2sgdG8gdGhlIHN0cmVldHMgaW4gcHJvdGVzdCBvZiB0aGUgbmV3XCIsIG5vdW4sIFwiYmVpbmcgaW5zdGFsbGVkIG9uIGNhbXB1cy5cIilcbn1cbmBgYCJ9 -->
-<pre class="r"><code>mad_libs &lt;- function(...){
-    # Do your argument unpacking here!
-    args &lt;- list(...)
-    place &lt;- args[[&quot;place&quot;]]
-    adjective &lt;- args[[&quot;adjective&quot;]]
-    noun &lt;- args[[&quot;noun&quot;]]
-
-    # Don&#39;t modify any code below this comment.
-    # Notice the variables you&#39;ll need to create in order for the code below to
-    # be functional!
-    paste(&quot;News from&quot;, place, &quot;today where&quot;, adjective, &quot;students took to the streets in protest of the new&quot;, noun, &quot;being installed on campus.&quot;)
-}</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Time to use your mad_libs function. Make sure to name the place,
-adjective, and noun arguments in order for your function to work.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWFkX2xpYnMoYWRqZWN0aXZlPVwic21hcnRcIiwgcGxhY2U9XCJNZXhpY29cIiwgbm91bj1cImludGVybmV0XCIpXG5gYGAifQ== -->
-<pre class="r"><code>mad_libs(adjective=&quot;smart&quot;, place=&quot;Mexico&quot;, noun=&quot;internet&quot;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiTmV3cyBmcm9tIE1leGljbyB0b2RheSB3aGVyZSBzbWFydCBzdHVkZW50cyB0b29rIHRvIHRoZSBzdHJlZXRzIGluIHByb3Rlc3Qgb2YgdGhlIG5ldyBpbnRlcm5ldCBiZWluZyBpbnN0YWxsZWQgb24gY2FtcHVzLlwiXG4ifQ== -->
-<pre><code>[1] &quot;News from Mexico today where smart students took to the streets in protest of the new internet being installed on campus.&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>We’re coming to the end of this lesson, but there’s still one more
-idea you should be made aware of.</p>
-<p>You’re familiar with adding, subtracting, multiplying, and dividing
-numbers in R. To do this you use the +, -, *, and / symbols. These
-symbols are called binary operators because they take two inputs, an
-input from the left and an input from the right.</p>
-<p>In R you can define your own binary operators. In the next script
-we’ll show you how.</p>
-<p>The syntax for creating new binary operators in R is unlike anything
-else in R, but it allows you to define a new syntax for your function. I
-would only recommend making your own binary operator if you plan on
-using it often!</p>
-<p>User-defined binary operators have the following syntax:</p>
-<pre><code>%[whatever]% </code></pre>
-<p>where [whatever] represents any valid variable name.</p>
-<p>Let’s say I wanted to define a binary operator that multiplied two
-numbers and then added one to the product. An implementation of that
-operator is below:</p>
-<pre class="r"><code>&quot;%mult_add_one%&quot; &lt;- function(left, right){ Notice the quotation marks!
-    left * right + 1
-}</code></pre>
-<p>I could then use this binary operator like
-<code>4 %mult_add_one% 5</code> which would evaluate to 21.</p>
-<p>Write your own binary operator below from absolute scratch! Your
-binary operator must be called %p% so that the expression:</p>
-<pre><code>&quot;Good&quot; %p% &quot;job!&quot;</code></pre>
-<p>will evaluate to: “Good job!”</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCIlcCVcIiA8LSBmdW5jdGlvbihsZWZ0LCByaWdodCl7ICMgUmVtZW1iZXIgdG8gYWRkIGFyZ3VtZW50cyFcbiAgICBwYXN0ZShsZWZ0LCByaWdodClcbn1cbmBgYCJ9 -->
-<pre class="r"><code>&quot;%p%&quot; &lt;- function(left, right){ # Remember to add arguments!
-    paste(left, right)
-}</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>You made your own binary operator! Let’s test it out. Paste together
-the strings: ‘I’, ‘love’, ‘R!’ using your new binary operator.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuJ0knICVwJSAnbG92ZScgJXAlICdSISdcbmBgYCJ9 -->
-<pre class="r"><code>&#39;I&#39; %p% &#39;love&#39; %p% &#39;R!&#39;</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiSSBsb3ZlIFIhXCJcbiJ9 -->
-<pre><code>[1] &quot;I love R!&quot;</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>We’ve come to the end of our lesson! Go out there and write some
-great functions!</p>
-<!-- rnb-text-end -->
-
-<div id="rmd-source-code">LS0tDQp0aXRsZTogInN3aXJsIExlc3NvbiAzOiBGdW5jdGlvbnMiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpGdW5jdGlvbnMgYXJlIG9uZSBvZiB0aGUgZnVuZGFtZW50YWwgYnVpbGRpbmcgYmxvY2tzIG9mIHRoZSBSIGxhbmd1YWdlLiBUaGV5IGFyZSBzbWFsbCBwaWVjZXMgb2YgcmV1c2FibGUgY29kZSB0aGF0IGNhbiBiZSB0cmVhdGVkIGxpa2UgYW55IG90aGVyIFIgb2JqZWN0Lg0KDQpJZiB5b3UndmUgd29ya2VkIHRocm91Z2ggYW55IG90aGVyIHBhcnQgb2YgdGhpcyBjb3Vyc2UsIHlvdSd2ZSBwcm9iYWJseSB1c2VkIHNvbWUgZnVuY3Rpb25zIGFscmVhZHkuIEZ1bmN0aW9ucyBhcmUgdXN1YWxseSBjaGFyYWN0ZXJpemVkIGJ5IHRoZSBuYW1lIG9mIHRoZSBmdW5jdGlvbiBmb2xsb3dlZCBieSBwYXJlbnRoZXNlcy4NCg0KTGV0J3MgdHJ5IHVzaW5nIGEgZmV3IGJhc2ljIGZ1bmN0aW9ucyBqdXN0IGZvciBmdW4uIFRoZSBTeXMuRGF0ZSgpIGZ1bmN0aW9uIHJldHVybnMgYSBzdHJpbmcgcmVwcmVzZW50aW5nIHRvZGF5J3MgZGF0ZS4gVHlwZSBTeXMuRGF0ZSgpIGJlbG93IGFuZCBzZWUgd2hhdCBoYXBwZW5zLg0KDQpgYGB7cn0NClN5cy5EYXRlKCkNCmBgYA0KDQpNb3N0IGZ1bmN0aW9ucyBpbiBSIHJldHVybiBhIHZhbHVlLiBGdW5jdGlvbnMgbGlrZSBTeXMuRGF0ZSgpIHJldHVybiBhIHZhbHVlIGJhc2VkIG9uIHlvdXIgY29tcHV0ZXIncyBlbnZpcm9ubWVudCwgd2hpbGUgb3RoZXIgZnVuY3Rpb25zIG1hbmlwdWxhdGUgaW5wdXQgZGF0YSBpbiBvcmRlciB0byBjb21wdXRlIGEgcmV0dXJuIHZhbHVlLg0KDQpUaGUgbWVhbigpIGZ1bmN0aW9uIHRha2VzIGEgdmVjdG9yIG9mIG51bWJlcnMgYXMgaW5wdXQsIGFuZCByZXR1cm5zIHRoZSBhdmVyYWdlIG9mIGFsbCBvZiB0aGUgbnVtYmVycyBpbiB0aGUgaW5wdXQgdmVjdG9yLiBJbnB1dHMgdG8gZnVuY3Rpb25zIGFyZSBvZnRlbiBjYWxsZWQgYXJndW1lbnRzLiBQcm92aWRpbmcgYXJndW1lbnRzIHRvIGEgZnVuY3Rpb24gaXMgYWxzbyBzb21ldGltZXMgY2FsbGVkIHBhc3NpbmcgYXJndW1lbnRzIHRvIHRoYXQgZnVuY3Rpb24uIEFyZ3VtZW50cyB5b3Ugd2FudCB0byBwYXNzIHRvIGEgZnVuY3Rpb24gZ28gaW5zaWRlIHRoZSBmdW5jdGlvbidzIHBhcmVudGhlc2VzLiBUcnkgcGFzc2luZyB0aGUgYXJndW1lbnQgYygyLCA0LCA1KSB0byB0aGUgbWVhbigpIGZ1bmN0aW9uLg0KDQpgYGB7cn0NCm1lYW4oYygyLCA0LCA1KSkNCmBgYA0KDQpGdW5jdGlvbnMgdXN1YWxseSB0YWtlIGFyZ3VtZW50cyB3aGljaCBhcmUgdmFyaWFibGVzIHRoYXQgdGhlIGZ1bmN0aW9uIG9wZXJhdGVzIG9uLiBGb3IgZXhhbXBsZSwgdGhlIG1lYW4oKSBmdW5jdGlvbiB0YWtlcyBhIHZlY3RvciBhcyBhbiBhcmd1bWVudCwgbGlrZSBpbiB0aGUgY2FzZSBvZiBtZWFuKGMoMiw2LDgpKS4gVGhlIG1lYW4oKSBmdW5jdGlvbiB0aGVuIGFkZHMgdXAgYWxsIG9mIHRoZSBudW1iZXJzIGluIHRoZSB2ZWN0b3IgYW5kIGRpdmlkZXMgdGhhdCBzdW0gYnkgdGhlIGxlbmd0aCBvZiB0aGUgdmVjdG9yLg0KDQpZb3UncmUgYWJvdXQgdG8gd3JpdGUgeW91ciBmaXJzdCBmdW5jdGlvbiEgSnVzdCBsaWtlIHlvdSB3b3VsZCBhc3NpZ24gYSB2YWx1ZSB0byBhIHZhcmlhYmxlIHdpdGggdGhlIGFzc2lnbm1lbnQgb3BlcmF0b3IsIHlvdSBhc3NpZ24gZnVuY3Rpb25zIGluIHRoZSBmb2xsb3dpbmcgd2F5Og0KDQpgYGBSDQpmdW5jdGlvbl9uYW1lIDwtIGZ1bmN0aW9uKGFyZzEsIGFyZzIpew0KICAgICAgTWFuaXB1bGF0ZSBhcmd1bWVudHMgaW4gc29tZSB3YXkNCiAgICAgIFJldHVybiBhIHZhbHVlDQp9DQpgYGANCg0KVGhlICJ2YXJpYWJsZSBuYW1lIiB5b3UgYXNzaWduIHdpbGwgYmVjb21lIHRoZSBuYW1lIG9mIHlvdXIgZnVuY3Rpb24uIGFyZzEgYW5kIGFyZzIgcmVwcmVzZW50IHRoZSBhcmd1bWVudHMgb2YgeW91ciBmdW5jdGlvbi4gWW91IGNhbiBtYW5pcHVsYXRlIHRoZSBhcmd1bWVudHMgeW91IHNwZWNpZnkgd2l0aGluIHRoZSBmdW5jdGlvbi4gQWZ0ZXIgc291cmNpbmcgdGhlIGZ1bmN0aW9uLCB5b3UgY2FuIHVzZSB0aGUgZnVuY3Rpb24gYnkgdHlwaW5nOg0KDQpgYGBSDQpmdW5jdGlvbl9uYW1lKHZhbHVlMSwgdmFsdWUyKQ0KYGBgDQoNCkJlbG93IHdlIHdpbGwgY3JlYXRlIGEgZnVuY3Rpb24gY2FsbGVkIGJvcmluZ19mdW5jdGlvbi4gVGhpcyBmdW5jdGlvbiB0YWtlcyB0aGUgYXJndW1lbnQgYHhgIGFzIGlucHV0LCBhbmQgcmV0dXJucyB0aGUgdmFsdWUgb2YgeCB3aXRob3V0IG1vZGlmeWluZyBpdC4gRGVsZXRlIHRoZSBwb3VuZCBzaWduIGluIGZyb250IG9mIHRoZSB4IHRvIG1ha2UgdGhlIGZ1bmN0aW9uIHdvcmshDQoNCmBgYHtyfQ0KYm9yaW5nX2Z1bmN0aW9uIDwtIGZ1bmN0aW9uKHgpIHsNCiAgICB4DQp9DQpgYGANCg0KTm93IHRoYXQgeW91J3ZlIGNyZWF0ZWQgeW91ciBmaXJzdCBmdW5jdGlvbiBsZXQncyB0ZXN0IGl0ISBUeXBlOiBib3JpbmdfZnVuY3Rpb24oJ015IGZpcnN0IGZ1bmN0aW9uIScpLiBJZiB5b3VyIGZ1bmN0aW9uIHdvcmtzLCBpdCBzaG91bCBqdXN0IHJldHVybiB0aGUgc3RyaW5nOiAnTXkgZmlyc3QgZnVuY3Rpb24hJw0KDQpgYGB7cn0NCmJvcmluZ19mdW5jdGlvbignTXkgZmlyc3QgZnVuY3Rpb24hJykNCmBgYA0KDQpDb25ncmF0dWxhdGlvbnMgb24gd3JpdGluZyB5b3VyIGZpcnN0IGZ1bmN0aW9uLiBCeSB3cml0aW5nIGZ1bmN0aW9ucywgeW91IGNhbiBnYWluIHNlcmlvdXMgaW5zaWdodCBpbnRvIGhvdyBSIHdvcmtzLiBBcyBKb2huIENoYW1iZXJzLCB0aGUgY3JlYXRvciBvZiBSIG9uY2Ugc2FpZDoNCg0KVG8gdW5kZXJzdGFuZCBjb21wdXRhdGlvbnMgaW4gUiwgdHdvIHNsb2dhbnMgYXJlIGhlbHBmdWw6IA0KDQoxLiBFdmVyeXRoaW5nIHRoYXQgZXhpc3RzIGlzIGFuIG9iamVjdC4gDQoyLiBFdmVyeXRoaW5nIHRoYXQgaGFwcGVucyBpcyBhIGZ1bmN0aW9uIGNhbGwuDQoNCklmIHlvdSB3YW50IHRvIHNlZSB0aGUgc291cmNlIGNvZGUgZm9yIGFueSBmdW5jdGlvbiwganVzdCB0eXBlIHRoZSBmdW5jdGlvbiBuYW1lIHdpdGhvdXQgYW55IGFyZ3VtZW50cyBvciBwYXJlbnRoZXNlcy4gTGV0J3MgdHJ5IHRoaXMgb3V0IHdpdGggdGhlIGZ1bmN0aW9uIHlvdSBqdXN0IGNyZWF0ZWQuIFR5cGU6IGJvcmluZ19mdW5jdGlvbiB0byB2aWV3IGl0cyBzb3VyY2UgY29kZS4NCg0KYGBge3J9DQpib3JpbmdfZnVuY3Rpb24NCmBgYA0KDQpUaW1lIHRvIG1ha2UgYSBtb3JlIHVzZWZ1bCBmdW5jdGlvbiEgV2UncmUgZ29pbmcgdG8gcmVwbGljYXRlIHRoZSBmdW5jdGlvbmFsaXR5IG9mIHRoZSBtZWFuKCkgZnVuY3Rpb24gYnkgY3JlYXRpbmcgYSBmdW5jdGlvbiBjYWxsZWQ6IG15X21lYW4oKS4gUmVtZW1iZXIgdGhhdCB0byBjYWxjdWxhdGUgdGhlIGF2ZXJhZ2Ugb2YgYWxsIG9mIHRoZSBudW1iZXJzIGluIGEgdmVjdG9yIHlvdSBmaW5kIHRoZSBzdW0gb2YgYWxsIHRoZSBudW1iZXJzIGluIHRoZSB2ZWN0b3IsIGFuZCB0aGVuIGRpdmlkZSB0aGF0IHN1bSBieSB0aGUgbnVtYmVyIG9mIG51bWJlcnMgaW4gdGhlIHZlY3Rvci4NCg0KWW91J3JlIGZyZWUgdG8gaW1wbGVtZW50IHRoZSBmdW5jdGlvbiBteV9tZWFuIGhvd2V2ZXIgeW91IHdhbnQsIGFzIGxvbmcgYXMgaXQgcmV0dXJucyB0aGUgYXZlcmFnZSBvZiBhbGwgb2YgdGhlIG51bWJlcnMgaW4gYG15X3ZlY3RvcmAuDQoNCkhpbnQgIzE6IHN1bSgpIHJldHVybnMgdGhlIHN1bSBvZiBhIHZlY3Rvci4NCglFeDogc3VtKGMoMSwgMiwgMykpIGV2YWx1YXRlcyB0byA2DQoNCkhpbnQgIzI6IGxlbmd0aCgpIHJldHVybnMgdGhlIHNpemUgb2YgYSB2ZWN0b3IuDQoJRXg6IGxlbmd0aChjKDEsIDIsIDMpKSBldmFsdWF0ZXMgdG8gMw0KCQ0KSGludCAjMzogVGhlIG1lYW4gb2YgYWxsIHRoZSBudW1iZXJzIGluIGEgdmVjdG9yIGlzIGVxdWFsIHRvIHRoZSBzdW0gb2YgYWxsIG9mIHRoZSBudW1iZXJzIGluIHRoZSB2ZWN0b3IgZGl2aWRlZCBieSB0aGUgc2l6ZSBvZiB0aGUgdmVjdG9yLg0KDQpgYGB7cn0NCm15X21lYW4gPC0gZnVuY3Rpb24obXlfdmVjdG9yKSB7DQogICAgIyBXcml0ZSB5b3VyIGNvZGUgaGVyZSENCiAgICAjIFJlbWVtYmVyOiB0aGUgbGFzdCBleHByZXNzaW9uIGV2YWx1YXRlZCB3aWxsIGJlIHJldHVybmVkISANCiAgICBzdW0obXlfdmVjdG9yKSAvIGxlbmd0aChteV92ZWN0b3IpDQp9DQpgYGANCg0KTm93IHRlc3Qgb3V0IHlvdXIgbXlfbWVhbigpIGZ1bmN0aW9uIGJ5IGZpbmRpbmcgdGhlIG1lYW4gb2YgdGhlIHZlY3RvciBjKDQsIDUsIDEwKS4NCg0KYGBge3J9DQpteV9tZWFuKGMoNCwgNSwgMTApKQ0KYGBgDQoNCk5leHQsIGxldCdzIHRyeSB3cml0aW5nIGEgZnVuY3Rpb24gd2l0aCBkZWZhdWx0IGFyZ3VtZW50cy4gWW91IGNhbiBzZXQgZGVmYXVsdCB2YWx1ZXMgZm9yIGEgZnVuY3Rpb24ncyBhcmd1bWVudHMsIGFuZCB0aGlzIGNhbiBiZSB1c2VmdWwgaWYgeW91IHRoaW5rIHNvbWVvbmUgd2hvIHVzZXMgeW91ciBmdW5jdGlvbiB3aWxsIHNldCBhIGNlcnRhaW4gYXJndW1lbnQgdG8gdGhlIHNhbWUgdmFsdWUgbW9zdCBvZiB0aGUgdGltZS4NCg0KTGV0J3Mgc2VlIGFuIGV4YW1wbGUgb2YgYSBmdW5jdGlvbiBjYWxsZWQgaW5jcmVtZW50KCkuIE1vc3Qgb2YgdGhlIHRpbWUgd2Ugd2FudCB0byB1c2UgdGhpcyBmdW5jdGlvbiB0byBpbmNyZWFzZSB0aGUgdmFsdWUgb2YgYSBudW1iZXIgYnkgb25lLiBUaGlzIGZ1bmN0aW9uIHdpbGwgdGFrZSB0d28gYXJndW1lbnRzOiAibnVtYmVyIiBhbmQgImJ5IiB3aGVyZSAibnVtYmVyIiBpcyB0aGUgZGlnaXQgd2Ugd2FudCB0byBpbmNyZW1lbnQgYW5kICJieSIgaXMgdGhlIGFtb3VudCB3ZSB3YW50IHRvIGluY3JlbWVudCAibnVtYmVyIiBieS4gV2UndmUgd3JpdHRlbiB0aGUgZnVuY3Rpb24gYmVsb3cuIA0KDQpgYGBSDQppbmNyZW1lbnQgPC0gZnVuY3Rpb24obnVtYmVyLCBieSA9IDEpew0KICAgIG51bWJlciArIGJ5DQp9DQpgYGANCg0KSWYgeW91IHRha2UgYSBsb29rIGluIGJldHdlZW4gdGhlIHBhcmVudGhlc2VzIHlvdSBjYW4gc2VlIHRoYXQgd2UndmUgc2V0ICJieSIgZXF1YWwgdG8gMS4gVGhpcyBtZWFucyB0aGF0IHRoZSAiYnkiIGFyZ3VtZW50IHdpbGwgaGF2ZSB0aGUgZGVmYXVsdCB2YWx1ZSBvZiAxLg0KDQpXZSBjYW4gbm93IHVzZSB0aGUgaW5jcmVtZW50IGZ1bmN0aW9uIHdpdGhvdXQgcHJvdmlkaW5nIGEgdmFsdWUgZm9yICJieSI6IGluY3JlbWVudCg1KSB3aWxsIGV2YWx1YXRlIHRvIDYuIA0KDQpIb3dldmVyIGlmIHdlIHdhbnQgdG8gcHJvdmlkZSBhIHZhbHVlIGZvciB0aGUgImJ5IiBhcmd1bWVudCB3ZSBzdGlsbCBjYW4hIFRoZSBleHByZXNzaW9uOiBpbmNyZW1lbnQoNSwgMikgd2lsbCBldmFsdWF0ZSB0byA3LiANCg0KWW91J3JlIGdvaW5nIHRvIHdyaXRlIGEgZnVuY3Rpb24gY2FsbGVkICJyZW1haW5kZXIuIiByZW1haW5kZXIoKSB3aWxsIHRha2UgdHdvIGFyZ3VtZW50czogIm51bSIgYW5kICJkaXZpc29yIiB3aGVyZSAibnVtIiBpcyBkaXZpZGVkIGJ5ICJkaXZpc29yIiBhbmQgdGhlIHJlbWFpbmRlciBpcyByZXR1cm5lZC4gSW1hZ2luZSB0aGF0IHlvdSB1c3VhbGx5IHdhbnQgdG8ga25vdyB0aGUgcmVtYWluZGVyIHdoZW4geW91IGRpdmlkZSBieSAyLCBzbyBzZXQgdGhlIGRlZmF1bHQgdmFsdWUgb2YgImRpdmlzb3IiIHRvIDIuIFBsZWFzZSBiZSBzdXJlIHRoYXQgIm51bSIgaXMgdGhlIGZpcnN0IGFyZ3VtZW50IGFuZCAiZGl2aXNvciIgaXMgdGhlIHNlY29uZCBhcmd1bWVudC4NCg0KSGludCAjMTogWW91IGNhbiB1c2UgdGhlIG1vZHVsdXMgb3BlcmF0b3IgJSUgdG8gZmluZCB0aGUgcmVtYWluZGVyLg0KICAgIEV4OiA3ICUlIDQgZXZhbHVhdGVzIHRvIDMuIA0KDQpSZW1lbWJlciB0byBzZXQgYXBwcm9wcmlhdGUgZGVmYXVsdCB2YWx1ZXMhDQoNCmBgYHtyfQ0KcmVtYWluZGVyIDwtIGZ1bmN0aW9uKG51bSwgZGl2aXNvcj0yKSB7DQogICAgIyBXcml0ZSB5b3VyIGNvZGUgaGVyZSENCiAgICAjIFJlbWVtYmVyOiB0aGUgbGFzdCBleHByZXNzaW9uIGV2YWx1YXRlZCB3aWxsIGJlIHJldHVybmVkISANCiAgICBudW0gJSUgZGl2aXNvcg0KfQ0KYGBgDQoNCkxldCdzIGRvIHNvbWUgdGVzdGluZyBvZiB0aGUgcmVtYWluZGVyIGZ1bmN0aW9uLiBSdW4gcmVtYWluZGVyKDUpIGFuZCBzZWUgd2hhdCBoYXBwZW5zLg0KDQpgYGB7cn0NCnJlbWFpbmRlcig1KQ0KYGBgDQoNCkxldCdzIHRha2UgYSBtb21lbnQgdG8gZXhhbWluZSB3aGF0IGp1c3QgaGFwcGVuZWQuIFlvdSBwcm92aWRlZCBvbmUgYXJndW1lbnQgdG8gdGhlIGZ1bmN0aW9uLCBhbmQgUiBtYXRjaGVkIHRoYXQgYXJndW1lbnQgdG8gJ251bScgc2luY2UgJ251bScgaXMgdGhlIGZpcnN0IGFyZ3VtZW50LiBUaGUgZGVmYXVsdCB2YWx1ZSBmb3IgJ2Rpdmlzb3InIGlzIDIsIHNvIHRoZSBmdW5jdGlvbiB1c2VkIHRoZSBkZWZhdWx0IHZhbHVlIHlvdSBwcm92aWRlZC4NCg0KTm93IGxldCdzIHRlc3QgdGhlIHJlbWFpbmRlciBmdW5jdGlvbiBieSBwcm92aWRpbmcgdHdvIGFyZ3VtZW50cy4gVHlwZTogcmVtYWluZGVyKDExLCA1KSBhbmQgbGV0J3Mgc2VlIHdoYXQgaGFwcGVucy4NCg0KYGBge3J9DQpyZW1haW5kZXIoMTEsIDUpDQpgYGANCg0KT25jZSBhZ2FpbiwgdGhlIGFyZ3VtZW50cyBoYXZlIGJlZW4gbWF0Y2hlZCBhcHByb3ByaWF0ZWx5Lg0KDQpZb3UgY2FuIGFsc28gZXhwbGljaXRseSBzcGVjaWZ5IGFyZ3VtZW50cyBpbiBhIGZ1bmN0aW9uLiBXaGVuIHlvdSBleHBsaWNpdGx5IGRlc2lnbmF0ZSBhcmd1bWVudCB2YWx1ZXMgYnkgbmFtZSwgdGhlIG9yZGVyaW5nIG9mIHRoZSBhcmd1bWVudHMgYmVjb21lcyB1bmltcG9ydGFudC4gWW91IGNhbiB0cnkgdGhpcyBvdXQgYnkgdHlwaW5nOiAgcmVtYWluZGVyKGRpdmlzb3IgPSAxMSwgbnVtID0gNSkuDQoNCmBgYHtyfQ0KcmVtYWluZGVyKGRpdmlzb3I9MTEsIG51bT01KQ0KYGBgDQoNCkFzIHlvdSBjYW4gc2VlLCB0aGVyZSBpcyBhIHNpZ25pZmljYW50IGRpZmZlcmVuY2UgYmV0d2VlbiByZW1haW5kZXIoMTEsIDUpIGFuZCByZW1haW5kZXIoZGl2aXNvciA9IDExLCBudW0gPSA1KSENCg0KUiBjYW4gYWxzbyBwYXJ0aWFsbHkgbWF0Y2ggYXJndW1lbnRzLiBUcnkgdHlwaW5nIHJlbWFpbmRlcig0LCBkaXYgPSAyKSB0byBzZWUgdGhpcyBmZWF0dXJlIGluIGFjdGlvbi4NCg0KYGBge3J9DQpyZW1haW5kZXIoNCwgZGl2PTIpDQpgYGANCg0KQSB3b3JkIG9mIHdhcm5pbmc6IGluIGdlbmVyYWwgeW91IHdhbnQgdG8gbWFrZSB5b3VyIGNvZGUgYXMgZWFzeSB0byB1bmRlcnN0YW5kIGFzIHBvc3NpYmxlLiBTd2l0Y2hpbmcgYXJvdW5kIHRoZSBvcmRlcnMgb2YgYXJndW1lbnRzIGJ5IHNwZWNpZnlpbmcgdGhlaXIgbmFtZXMgb3Igb25seSB1c2luZyBwYXJ0aWFsIGFyZ3VtZW50IG5hbWVzIGNhbiBiZSBjb25mdXNpbmcsIHNvIHVzZSB0aGVzZSBmZWF0dXJlcyB3aXRoIGNhdXRpb24hDQoNCldpdGggYWxsIG9mIHRoaXMgdGFsayBhYm91dCBhcmd1bWVudHMsIHlvdSBtYXkgYmUgd29uZGVyaW5nIGlmIHRoZXJlIGlzIGEgd2F5IHlvdSBjYW4gc2VlIGEgZnVuY3Rpb24ncyBhcmd1bWVudHMgKGJlc2lkZXMgbG9va2luZyBhdCB0aGUgIGRvY3VtZW50YXRpb24pLiBUaGFua2Z1bGx5LCB5b3UgY2FuIHVzZSB0aGUgYXJncygpIGZ1bmN0aW9uISBUeXBlOiBhcmdzKHJlbWFpbmRlcikgdG8gZXhhbWluZSB0aGUgYXJndW1lbnRzIGZvciB0aGUgcmVtYWluZGVyIGZ1bmN0aW9uLg0KDQpgYGB7cn0NCmFyZ3MocmVtYWluZGVyKQ0KYGBgDQoNCllvdSBtYXkgbm90IHJlYWxpemUgaXQgYnV0IHdlIGp1c3QgdHJpY2tlZCB5b3UgaW50byBkb2luZyBzb21ldGhpbmcgcHJldHR5IGludGVyZXN0aW5nISBhcmdzKCkgaXMgYSBmdW5jdGlvbiwgcmVtYWluZGVyKCkgaXMgYSBmdW5jdGlvbiwgeWV0IHJlbWFpbmRlciB3YXMgYW4gYXJndW1lbnQgZm9yIGFyZ3MoKS4gWWVzIGl0J3MgdHJ1ZTogeW91IGNhbiBwYXNzIGZ1bmN0aW9ucyBhcyBhcmd1bWVudHMhIFRoaXMgaXMgYSB2ZXJ5IHBvd2VyZnVsIGNvbmNlcHQuIExldCdzIHdyaXRlIGEgc2NyaXB0IHRvIHNlZSBob3cgaXQgd29ya3MuDQoNCllvdSBjYW4gcGFzcyBmdW5jdGlvbnMgYXMgYXJndW1lbnRzIHRvIG90aGVyIGZ1bmN0aW9ucyBqdXN0IGxpa2UgeW91IGNhbiBwYXNzIGRhdGEgdG8gZnVuY3Rpb25zLiBMZXQncyBzYXkgeW91IGRlZmluZSB0aGUgZm9sbG93aW5nIGZ1bmN0aW9uczoNCg0KYGBgUg0KYWRkX3R3b19udW1iZXJzIDwtIGZ1bmN0aW9uKG51bTEsIG51bTIpew0KICAgbnVtMSArIG51bTINCn0NCg0KbXVsdGlwbHlfdHdvX251bWJlcnMgPC0gZnVuY3Rpb24obnVtMSwgbnVtMil7DQoJbnVtMSAqIG51bTINCn0NCg0Kc29tZV9mdW5jdGlvbiA8LSBmdW5jdGlvbihmdW5jKXsNCiAgIGZ1bmMoMiwgNCkNCn0NCmBgYA0KDQpBcyB5b3UgY2FuIHNlZSB3ZSB1c2UgdGhlIGFyZ3VtZW50IG5hbWUgImZ1bmMiIGxpa2UgYSBmdW5jdGlvbiBpbnNpZGUgb2YgInNvbWVfZnVuY3Rpb24oKS4iIEJ5IHBhc3NpbmcgZnVuY3Rpb25zIGFzIGFyZ3VtZW50cyBzb21lX2Z1bmN0aW9uKGFkZF90d29fbnVtYmVycykgd2lsbCBldmFsdWF0ZSB0byA2LCB3aGlsZSBzb21lX2Z1bmN0aW9uKG11bHRpcGx5X3R3b19udW1iZXJzKSB3aWxsIGV2YWx1YXRlIHRvIDguDQoNCkZpbmlzaCB0aGUgZnVuY3Rpb24gZGVmaW5pdGlvbiBiZWxvdyBzbyB0aGF0IGlmIGEgZnVuY3Rpb24gaXMgcGFzc2VkIGludG8gdGhlICJmdW5jIiBhcmd1bWVudCBhbmQgc29tZSBkYXRhIChsaWtlIGEgdmVjdG9yKSBpcyBwYXNzZWQgaW50byB0aGUgZGF0IGFyZ3VtZW50IHRoZSBldmFsdWF0ZSgpIGZ1bmN0aW9uIHdpbGwgcmV0dXJuIHRoZSByZXN1bHQgb2YgZGF0IGJlaW5nIHBhc3NlZCBhcyBhbiBhcmd1bWVudCB0byBmdW5jLg0KDQpIaW50czogVGhpcyBleGVyY2lzZSBpcyBhIGxpdHRsZSB0cmlja3kgc28gSSdsbCBwcm92aWRlIGEgZmV3IGV4YW1wbGUgb2YgaG93IGV2YWx1YXRlKCkgc2hvdWxkIGFjdDoNCiAgIDEuIGV2YWx1YXRlKHN1bSwgYygyLCA0LCA2KSkgc2hvdWxkIGV2YWx1YXRlIHRvIDEyDQogICAyLiBldmFsdWF0ZShtZWRpYW4sIGMoNywgNDAsIDkpKSBzaG91bGQgZXZhbHVhdGUgdG8gOQ0KICAgMy4gZXZhbHVhdGUoZmxvb3IsIDExLjEpIHNob3VsZCBldmFsdWF0ZSB0byAxMQ0KICAgDQpgYGB7cn0NCmV2YWx1YXRlIDwtIGZ1bmN0aW9uKGZ1bmMsIGRhdCl7DQogICAgIyBXcml0ZSB5b3VyIGNvZGUgaGVyZSENCiAgICAjIFJlbWVtYmVyOiB0aGUgbGFzdCBleHByZXNzaW9uIGV2YWx1YXRlZCB3aWxsIGJlIHJldHVybmVkISANCiAgICBmdW5jKGRhdCkNCn0NCmBgYA0KDQpMZXQncyB0YWtlIHlvdXIgbmV3IGV2YWx1YXRlKCkgZnVuY3Rpb24gZm9yIGEgc3BpbiEgVXNlIGV2YWx1YXRlIHRvIGZpbmQgdGhlIHN0YW5kYXJkIGRldmlhdGlvbiBvZiB0aGUgdmVjdG9yIGMoMS40LCAzLjYsIDcuOSwgOC44KS4NCg0KYGBge3J9DQpldmFsdWF0ZShzZCwgYygxLjQsIDMuNiwgNy45LCA4LjgpKQ0KYGBgDQoNClRoZSBpZGVhIG9mIHBhc3NpbmcgZnVuY3Rpb25zIGFzIGFyZ3VtZW50cyB0byBvdGhlciBmdW5jdGlvbnMgaXMgYW4gaW1wb3J0YW50IGFuZCBmdW5kYW1lbnRhbCBjb25jZXB0IGluIHByb2dyYW1taW5nLg0KDQpZb3UgbWF5IGJlIHN1cnByaXNlZCB0byBsZWFybiB0aGF0IHlvdSBjYW4gcGFzcyBhIGZ1bmN0aW9uIGFzIGFuIGFyZ3VtZW50IHdpdGhvdXQgZmlyc3QgZGVmaW5pbmcgdGhlIHBhc3NlZCBmdW5jdGlvbi4gRnVuY3Rpb25zIHRoYXQgYXJlIG5vdCBuYW1lZCBhcmUgYXBwcm9wcmlhdGVseSBrbm93biBhcyBhbm9ueW1vdXMgZnVuY3Rpb25zLg0KDQpMZXQncyB1c2UgdGhlIGV2YWx1YXRlIGZ1bmN0aW9uIHRvIGV4cGxvcmUgaG93IGFub255bW91cyBmdW5jdGlvbnMgd29yay4gRm9yIHRoZSBmaXJzdCBhcmd1bWVudCBvZiB0aGUgZXZhbHVhdGUgZnVuY3Rpb24gd2UncmUgZ29pbmcgdG8gd3JpdGUgYSB0aW55IGZ1bmN0aW9uIHRoYXQgZml0cyBvbiBvbmUgbGluZS4gSW4gdGhlIHNlY29uZCBhcmd1bWVudCB3ZSdsbCBwYXNzIHNvbWUgZGF0YSB0byB0aGUgdGlueSBhbm9ueW1vdXMgZnVuY3Rpb24gaW4gdGhlIGZpcnN0IGFyZ3VtZW50Lg0KDQpUeXBlIHRoZSBmb2xsb3dpbmcgY29tbWFuZCBhbmQgdGhlbiB3ZSdsbCBkaXNjdXNzIGhvdyBpdCB3b3JrczogZXZhbHVhdGUoZnVuY3Rpb24oeCl7eCsxfSwgNikNCg0KYGBge3J9DQpldmFsdWF0ZShmdW5jdGlvbih4KXt4KzF9LCA2KQ0KYGBgDQoNClRoZSBmaXJzdCBhcmd1bWVudCBpcyBhIHRpbnkgYW5vbnltb3VzIGZ1bmN0aW9uIHRoYXQgdGFrZXMgb25lIGFyZ3VtZW50IGB4YCBhbmQgcmV0dXJucyBgeCsxYC4gV2UgcGFzc2VkIHRoZSBudW1iZXIgNiBpbnRvIHRoaXMgZnVuY3Rpb24gc28gdGhlIGVudGlyZSBleHByZXNzaW9uIGV2YWx1YXRlcyB0byA3Lg0KDQpUcnkgdXNpbmcgZXZhbHVhdGUoKSBhbG9uZyB3aXRoIGFuIGFub255bW91cyBmdW5jdGlvbiB0byByZXR1cm4gdGhlICBmaXJzdCBlbGVtZW50IG9mIHRoZSB2ZWN0b3IgYyg4LCA0LCAwKS4gWW91ciBhbm9ueW1vdXMgZnVuY3Rpb24gc2hvdWxkIG9ubHkgdGFrZSBvbmUgYXJndW1lbnQgd2hpY2ggc2hvdWxkIGJlIGEgdmFyaWFibGUgYHhgLg0KDQpgYGB7cn0NCmV2YWx1YXRlKGZ1bmN0aW9uKHgpe3hbMV19LCBjKDgsIDQsIDApKQ0KYGBgDQoNCk5vdyB0cnkgdXNpbmcgZXZhbHVhdGUoKSBhbG9uZyB3aXRoIGFuIGFub255bW91cyBmdW5jdGlvbiB0byByZXR1cm4gdGhlICBsYXN0IGVsZW1lbnQgb2YgdGhlIHZlY3RvciBjKDgsIDQsIDApLiBZb3VyIGFub255bW91cyBmdW5jdGlvbiBzaG91bGQgb25seSB0YWtlIG9uZSBhcmd1bWVudCB3aGljaCBzaG91bGQgYmUgYSB2YXJpYWJsZSBgeGAuDQoNCmBgYHtyfQ0KZXZhbHVhdGUoZnVuY3Rpb24oeCl7eFtsZW5ndGgoeCldfSwgYyg4LCA0LCAwKSkNCmBgYA0KDQpGb3IgdGhlIHJlc3Qgb2YgdGhlIGNvdXJzZSB3ZSdyZSBnb2luZyB0byB1c2UgdGhlIHBhc3RlKCkgZnVuY3Rpb24gZnJlcXVlbnRseS4gVHlwZSA/cGFzdGUgc28gd2UgY2FuIHRha2UgYSBsb29rIGF0IHRoZSBkb2N1bWVudGF0aW9uIGZvciB0aGUgIHBhc3RlIGZ1bmN0aW9uLg0KDQpgYGB7cn0NCj9wYXN0ZQ0KYGBgDQoNCkFzIHlvdSBjYW4gc2VlIHRoZSBmaXJzdCBhcmd1bWVudCBvZiBwYXN0ZSgpIGlzIGAuLi5gIHdoaWNoIGlzIHJlZmVycmVkIHRvIGFzIGFuIGVsbGlwc2lzIG9yIHNpbXBseSBkb3QtZG90LWRvdC4gVGhlIGVsbGlwc2lzIGFsbG93cyBhbiBpbmRlZmluaXRlICBudW1iZXIgb2YgYXJndW1lbnRzIHRvIGJlIHBhc3NlZCBpbnRvIGEgZnVuY3Rpb24uIEluIHRoZSBjYXNlIG9mIHBhc3RlKCkgYW55IG51bWJlciBvZiBzdHJpbmdzIGNhbiBiZSBwYXNzZWQgYXMgYXJndW1lbnRzIGFuZCBwYXN0ZSgpIHdpbGwgcmV0dXJuIGFsbCBvZiAgdGhlIHN0cmluZ3MgY29tYmluZWQgaW50byBvbmUgc3RyaW5nLg0KDQpgYGB7cn0NCnBhc3RlKCJQcm9ncmFtbWluZyIsICJpcyIsICJmdW4hIikNCmBgYA0KDQpUaW1lIHRvIHdyaXRlIG91ciBvd24gbW9kaWZpZWQgdmVyc2lvbiBvZiBwYXN0ZSgpLg0KDQpUaGUgZWxsaXBzZXMgY2FuIGJlIHVzZWQgdG8gcGFzcyBvbiBhcmd1bWVudHMgdG8gb3RoZXIgZnVuY3Rpb25zIHRoYXQgYXJlIHVzZWQgd2l0aGluIHRoZSBmdW5jdGlvbiB5b3UncmUgd3JpdGluZy4gVXN1YWxseSBhIGZ1bmN0aW9uIHRoYXQgaGFzIHRoZSBlbGxpcHNlcyBhcyBhbiBhcmd1bWVudCBoYXMgdGhlIGVsbGlwc2VzIGFzIHRoZSBsYXN0IGFyZ3VtZW50LiBUaGUgdXNhZ2Ugb2Ygc3VjaCBhIGZ1bmN0aW9uIHdvdWxkIGxvb2sgbGlrZToNCg0KYGBgUg0KZWxsaXBzZXNfZnVuYyhhcmcxLCBhcmcyID0gVFJVRSwgLi4uKQ0KYGBgDQoNCkluIHRoZSBhYm92ZSBleGFtcGxlIGFyZzEgaGFzIG5vIGRlZmF1bHQgdmFsdWUsIHNvIGEgdmFsdWUgbXVzdCBiZSBwcm92aWRlZCBmb3IgYXJnMS4gYXJnMiBoYXMgYSBkZWZhdWx0IHZhbHVlLCBhbmQgb3RoZXIgYXJndW1lbnRzIGNhbiBjb21lIGFmdGVyIGFyZzIgZGVwZW5kaW5nIG9uIGhvdyB0aGV5J3JlIGRlZmluZWQgaW4gdGhlIGVsbGlwc2VzX2Z1bmMoKSBkb2N1bWVudGF0aW9uLiBJbnRlcmVzdGluZ2x5IHRoZSB1c2FnZSBmb3IgdGhlIHBhc3RlIGZ1bmN0aW9uIGlzIGFzIGZvbGxvd3M6DQoNCmBgYFINCnBhc3RlICguLi4sIHNlcCA9ICIgIiwgY29sbGFwc2UgPSBOVUxMKQ0KYGBgDQoNCk5vdGljZSB0aGF0IHRoZSBlbGxpcHNlcyBpcyB0aGUgZmlyc3QgYXJndW1lbnQsIGFuZCBhbGwgb3RoZXIgYXJndW1lbnRzIGFmdGVyIHRoZSBlbGxpcHNlcyBoYXZlIGRlZmF1bHQgdmFsdWVzLiBUaGlzIGlzIGEgc3RyaWN0IHJ1bGUgaW4gUiBwcm9ncmFtbWluZzogYWxsIGFyZ3VtZW50cyBhZnRlciBhbiBlbGxpcHNlcyBtdXN0IGhhdmUgZGVmYXVsdCB2YWx1ZXMuIFRha2UgYSBsb29rIGF0IHRoZSBzaW1vbl9zYXlzIGZ1bmN0aW9uIGJlbG93Og0KDQpgYGBSDQpzaW1vbl9zYXlzIDwtIGZ1bmN0aW9uKC4uLil7DQogICAgcGFzdGUoIlNpbW9uIHNheXM6IiwgLi4uKQ0KfQ0KYGBgDQoNClRoZSBzaW1vbl9zYXlzIGZ1bmN0aW9uIHdvcmtzIGp1c3QgbGlrZSB0aGUgcGFzdGUgZnVuY3Rpb24sIGV4Y2VwdCB0aGUgYmVnaW5pbmcgb2YgZXZlcnkgc3RyaW5nIGlzIHByZXBlbmRlZCBieSB0aGUgc3RyaW5nICJTaW1vbiBzYXlzOiINCg0KVGVsZWdyYW1zIHVzZWQgdG8gYmUgcGVwcGVyZWQgd2l0aCB0aGUgd29yZHMgU1RBUlQgYW5kIFNUT1AgaW4gb3JkZXIgdG8gZGVtYXJjYXRlIHRoZSBiZWdpbm5pbmcgYW5kIGVuZCBvZiBzZW50ZW5jZXMuIFdyaXRlIGEgZnVuY3Rpb24gYmVsb3cgY2FsbGVkICB0ZWxlZ3JhbSB0aGF0IGZvcm1hdHMgc2VudGVuY2VzIGZvciB0ZWxlZ3JhbXMuIEZvciBleGFtcGxlIHRoZSBleHByZXNzaW9uIGB0ZWxlZ3JhbSgiR29vZCIsICJtb3JuaW5nIilgIHNob3VsZCBldmFsdWF0ZSB0bzoNCg0KIlNUQVJUIEdvb2QgbW9ybmluZyBTVE9QIg0KDQpgYGB7cn0NCnRlbGVncmFtIDwtIGZ1bmN0aW9uKC4uLil7DQogICBwYXN0ZSgiU1RBUlQiLCAuLi4sICJTVE9QIikNCn0NCmBgYA0KDQpOb3cgbGV0J3MgdGVzdCBvdXQgeW91ciB0ZWxlZ3JhbSBmdW5jdGlvbi4gVXNlIHlvdXIgbmV3IHRlbGVncmFtIGZ1bmN0aW9uIHBhc3NpbmcgaW4gd2hhdGV2ZXIgYXJndW1lbnRzIHlvdSB3aXNoIQ0KDQpgYGB7cn0NCnRlbGVncmFtKCJIZWxsbyIpDQpgYGANCg0KTGV0J3MgZXhwbG9yZSBob3cgdG8gInVucGFjayIgYXJndW1lbnRzIGZyb20gYW4gZWxsaXBzZXMgd2hlbiB5b3UgdXNlIHRoZSBlbGxpcHNlcyBhcyBhbiBhcmd1bWVudCBpbiBhIGZ1bmN0aW9uLiBCZWxvdyB3ZSBoYXZlIGFuIGV4YW1wbGUgZnVuY3Rpb24gdGhhdCBpcyBzdXBwb3NlZCB0byBhZGQgdHdvIGV4cGxpY2l0bHkgbmFtZWQgYXJndW1lbnRzIGNhbGxlZCBhbHBoYSBhbmQgYmV0YS4NCg0KYGBgUg0KYWRkX2FscGhhX2FuZF9iZXRhIDwtIGZ1bmN0aW9uKC4uLil7DQogICAgIyBGaXJzdCB3ZSBtdXN0IGNhcHR1cmUgdGhlIGVsbGlwc2lzIGluc2lkZSBvZiBhIGxpc3QNCiAgICAjIGFuZCB0aGVuIGFzc2lnbiB0aGUgbGlzdCB0byBhIHZhcmlhYmxlLiBMZXQncyBuYW1lIHRoaXMNCiAgICAjIHZhcmlhYmxlIGBhcmdzYC4NCiAgICANCiAgICBhcmdzIDwtIGxpc3QoLi4uKQ0KICAgIA0KICAgICMgV2UncmUgbm93IGdvaW5nIHRvIGFzc3VtZSB0aGF0IHRoZXJlIGFyZSB0d28gbmFtZWQgYXJndW1lbnRzIHdpdGhpbiBhcmdzDQogICAgIyB3aXRoIHRoZSBuYW1lcyBgYWxwaGFgIGFuZCBgYmV0YS5gIFdlIGNhbiBleHRyYWN0IG5hbWVkIGFyZ3VtZW50cyBmcm9tDQogICAgIyB0aGUgYXJncyBsaXN0IGJ5IHVzaW5nIHRoZSBuYW1lIG9mIHRoZSBhcmd1bWVudCBhbmQgZG91YmxlIGJyYWNrZXRzLiBUaGUNCiAgICAjIGBhcmdzYCB2YXJpYWJsZSBpcyBqdXN0IGEgcmVndWxhciBsaXN0IGFmdGVyIGFsbCENCiAgICANCiAgICBhbHBoYSA8LSBhcmdzW1siYWxwaGEiXV0NCiAgICBiZXRhICA8LSBhcmdzW1siYmV0YSJdXQ0KICAgIA0KICAgICMgVGhlbiB3ZSByZXR1cm4gdGhlIHN1bSBvZiBhbHBoYSBhbmQgYmV0YS4NCiAgICANCiAgICBhbHBoYSArIGJldGEgDQp9DQpgYGANCg0KSGF2ZSB5b3UgZXZlciBwbGF5ZWQgTWFkIExpYnMgYmVmb3JlPyBUaGUgZnVuY3Rpb24gYmVsb3cgd2lsbCBjb25zdHJ1Y3QgYSBzZW50ZW5jZSBmcm9tIHBhcnRzIG9mIHNwZWVjaCB0aGF0IHlvdSBwcm92aWRlIGFzIGFyZ3VtZW50cy4gV2UnbGwgd3JpdGUgbW9zdCBvZiB0aGUgZnVuY3Rpb24sIGJ1dCB5b3UnbGwgbmVlZCB0byB1bnBhY2sgdGhlIGFwcHJvcHJpYXRlIGFyZ3VtZW50cyBmcm9tIHRoZSBlbGxpcHNlcy4NCg0KYGBge3J9DQptYWRfbGlicyA8LSBmdW5jdGlvbiguLi4pew0KICAgICMgRG8geW91ciBhcmd1bWVudCB1bnBhY2tpbmcgaGVyZSENCiAgICBhcmdzIDwtIGxpc3QoLi4uKQ0KICAgIHBsYWNlIDwtIGFyZ3NbWyJwbGFjZSJdXQ0KICAgIGFkamVjdGl2ZSA8LSBhcmdzW1siYWRqZWN0aXZlIl1dDQogICAgbm91biA8LSBhcmdzW1sibm91biJdXQ0KDQogICAgIyBEb24ndCBtb2RpZnkgYW55IGNvZGUgYmVsb3cgdGhpcyBjb21tZW50Lg0KICAgICMgTm90aWNlIHRoZSB2YXJpYWJsZXMgeW91J2xsIG5lZWQgdG8gY3JlYXRlIGluIG9yZGVyIGZvciB0aGUgY29kZSBiZWxvdyB0bw0KICAgICMgYmUgZnVuY3Rpb25hbCENCiAgICBwYXN0ZSgiTmV3cyBmcm9tIiwgcGxhY2UsICJ0b2RheSB3aGVyZSIsIGFkamVjdGl2ZSwgInN0dWRlbnRzIHRvb2sgdG8gdGhlIHN0cmVldHMgaW4gcHJvdGVzdCBvZiB0aGUgbmV3Iiwgbm91biwgImJlaW5nIGluc3RhbGxlZCBvbiBjYW1wdXMuIikNCn0NCmBgYA0KDQpUaW1lIHRvIHVzZSB5b3VyIG1hZF9saWJzIGZ1bmN0aW9uLiBNYWtlIHN1cmUgdG8gbmFtZSB0aGUgcGxhY2UsIGFkamVjdGl2ZSwgYW5kIG5vdW4gYXJndW1lbnRzIGluIG9yZGVyIGZvciB5b3VyIGZ1bmN0aW9uIHRvIHdvcmsuDQoNCmBgYHtyfQ0KbWFkX2xpYnMoYWRqZWN0aXZlPSJzbWFydCIsIHBsYWNlPSJNZXhpY28iLCBub3VuPSJpbnRlcm5ldCIpDQpgYGANCg0KV2UncmUgY29taW5nIHRvIHRoZSBlbmQgb2YgdGhpcyBsZXNzb24sIGJ1dCB0aGVyZSdzIHN0aWxsIG9uZSBtb3JlIGlkZWEgeW91IHNob3VsZCBiZSBtYWRlIGF3YXJlIG9mLg0KDQpZb3UncmUgZmFtaWxpYXIgd2l0aCBhZGRpbmcsIHN1YnRyYWN0aW5nLCBtdWx0aXBseWluZywgYW5kIGRpdmlkaW5nIG51bWJlcnMgaW4gUi4gVG8gZG8gdGhpcyB5b3UgdXNlIHRoZSArLCAtLCAqLCBhbmQgLyBzeW1ib2xzLiBUaGVzZSBzeW1ib2xzIGFyZSBjYWxsZWQgYmluYXJ5IG9wZXJhdG9ycyBiZWNhdXNlIHRoZXkgdGFrZSB0d28gaW5wdXRzLCBhbiBpbnB1dCBmcm9tIHRoZSBsZWZ0IGFuZCBhbiBpbnB1dCBmcm9tIHRoZSByaWdodC4NCg0KSW4gUiB5b3UgY2FuIGRlZmluZSB5b3VyIG93biBiaW5hcnkgb3BlcmF0b3JzLiBJbiB0aGUgbmV4dCBzY3JpcHQgd2UnbGwgc2hvdyB5b3UgaG93Lg0KDQpUaGUgc3ludGF4IGZvciBjcmVhdGluZyBuZXcgYmluYXJ5IG9wZXJhdG9ycyBpbiBSIGlzIHVubGlrZSBhbnl0aGluZyBlbHNlIGluIFIsIGJ1dCBpdCBhbGxvd3MgeW91IHRvIGRlZmluZSBhIG5ldyBzeW50YXggZm9yIHlvdXIgZnVuY3Rpb24uIEkgd291bGQgb25seSByZWNvbW1lbmQgbWFraW5nIHlvdXIgb3duIGJpbmFyeSBvcGVyYXRvciBpZiB5b3UgcGxhbiBvbiB1c2luZyBpdCBvZnRlbiENCg0KVXNlci1kZWZpbmVkIGJpbmFyeSBvcGVyYXRvcnMgaGF2ZSB0aGUgZm9sbG93aW5nIHN5bnRheDoNCg0KICAgICVbd2hhdGV2ZXJdJSANCg0Kd2hlcmUgW3doYXRldmVyXSByZXByZXNlbnRzIGFueSB2YWxpZCB2YXJpYWJsZSBuYW1lLg0KDQpMZXQncyBzYXkgSSB3YW50ZWQgdG8gZGVmaW5lIGEgYmluYXJ5IG9wZXJhdG9yIHRoYXQgbXVsdGlwbGllZCB0d28gbnVtYmVycyBhbmQgdGhlbiBhZGRlZCBvbmUgdG8gdGhlIHByb2R1Y3QuIEFuIGltcGxlbWVudGF0aW9uIG9mIHRoYXQgb3BlcmF0b3IgaXMgYmVsb3c6DQoNCmBgYFINCiIlbXVsdF9hZGRfb25lJSIgPC0gZnVuY3Rpb24obGVmdCwgcmlnaHQpeyBOb3RpY2UgdGhlIHF1b3RhdGlvbiBtYXJrcyENCiAgICBsZWZ0ICogcmlnaHQgKyAxDQp9DQpgYGANCg0KSSBjb3VsZCB0aGVuIHVzZSB0aGlzIGJpbmFyeSBvcGVyYXRvciBsaWtlIGA0ICVtdWx0X2FkZF9vbmUlIDVgIHdoaWNoIHdvdWxkIGV2YWx1YXRlIHRvIDIxLg0KDQpXcml0ZSB5b3VyIG93biBiaW5hcnkgb3BlcmF0b3IgYmVsb3cgZnJvbSBhYnNvbHV0ZSBzY3JhdGNoISBZb3VyIGJpbmFyeSBvcGVyYXRvciBtdXN0IGJlIGNhbGxlZCAlcCUgc28gdGhhdCB0aGUgZXhwcmVzc2lvbjoNCg0KICAgICJHb29kIiAlcCUgImpvYiEiDQogICAgDQp3aWxsIGV2YWx1YXRlIHRvOiAiR29vZCBqb2IhIg0KDQpgYGB7cn0NCiIlcCUiIDwtIGZ1bmN0aW9uKGxlZnQsIHJpZ2h0KXsgIyBSZW1lbWJlciB0byBhZGQgYXJndW1lbnRzIQ0KICAgIHBhc3RlKGxlZnQsIHJpZ2h0KQ0KfQ0KYGBgDQoNCllvdSBtYWRlIHlvdXIgb3duIGJpbmFyeSBvcGVyYXRvciEgTGV0J3MgdGVzdCBpdCBvdXQuIFBhc3RlIHRvZ2V0aGVyIHRoZSBzdHJpbmdzOiAnSScsICdsb3ZlJywgJ1IhJyB1c2luZyB5b3VyIG5ldyBiaW5hcnkgb3BlcmF0b3IuDQoNCmBgYHtyfQ0KJ0knICVwJSAnbG92ZScgJXAlICdSIScNCmBgYA0KDQpXZSd2ZSBjb21lIHRvIHRoZSBlbmQgb2Ygb3VyIGxlc3NvbiEgR28gb3V0IHRoZXJlIGFuZCB3cml0ZSBzb21lIGdyZWF0IGZ1bmN0aW9ucyENCg==</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAnc3dpcmwgTGVzc29uIDI6IEsgTWVhbnMgQ2x1c3RlcmluZycKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKIktfTWVhbnNfQ2x1c3RlcmluZy4gKFNsaWRlcyBmb3IgdGhpcyBhbmQgb3RoZXIgRGF0YSBTY2llbmNlIGNvdXJzZXMgbWF5IGJlIGZvdW5kIGF0IGdpdGh1YiBodHRwczovL2dpdGh1Yi5jb20vRGF0YVNjaWVuY2VTcGVjaWFsaXphdGlvbi9jb3Vyc2VzLy4gSWYgeW91IGNhcmUgdG8gdXNlIHRoZW0sIHRoZXkgbXVzdCBiZSBkb3dubG9hZGVkIGFzIGEgemlwIGZpbGUgYW5kIHZpZXdlZCBsb2NhbGx5LiBUaGlzIGxlc3NvbiBjb3JyZXNwb25kcyB0byAwNF9FeHBsb3JhdG9yeUFuYWx5c2lzL2ttZWFuc0NsdXN0ZXJpbmcuKSIKCkluIHRoaXMgbGVzc29uIHdlJ2xsIGxlYXJuIGFib3V0IGstbWVhbnMgY2x1c3RlcmluZywgYW5vdGhlciBzaW1wbGUgd2F5IG9mIGV4YW1pbmluZyBhbmQgb3JnYW5pemluZyBtdWx0aS1kaW1lbnNpb25hbCBkYXRhLiBBcyB3aXRoIGhpZXJhcmNoaWNhbCBjbHVzdGVyaW5nLCB0aGlzIHRlY2huaXF1ZSBpcyAgbW9zdCB1c2VmdWwgaW4gdGhlIGVhcmx5IHN0YWdlcyBvZiBhbmFseXNpcyB3aGVuIHlvdSdyZSB0cnlpbmcgdG8gZ2V0IGFuIHVuZGVyc3RhbmRpbmcgb2YgdGhlIGRhdGEsIGUuZy4sIGZpbmRpbmcgc29tZSBwYXR0ZXJuIG9yIHJlbGF0aW9uc2hpcCBiZXR3ZWVuIGRpZmZlcmVudCBmYWN0b3JzIG9yIHZhcmlhYmxlcy4gCgpSIGRvY3VtZW50YXRpb24gdGVsbHMgdXMgdGhhdCB0aGUgay1tZWFucyBtZXRob2QgImFpbXMgdG8gcGFydGl0aW9uIHRoZSBwb2ludHMgaW50byBrIGdyb3VwcyBzdWNoIHRoYXQgdGhlIHN1bSBvZiBzcXVhcmVzIGZyb20gcG9pbnRzIHRvIHRoZSBhc3NpZ25lZCBjbHVzdGVyIGNlbnRyZXMgaXMgbWluaW1pemVkLiIgCgpTaW5jZSBjbHVzdGVyaW5nIG9yZ2FuaXplcyBkYXRhIHBvaW50cyB0aGF0IGFyZSBjbG9zZSBpbnRvIGdyb3VwcyB3ZSdsbCBhc3N1bWUgd2UndmUgZGVjaWRlZCBvbiBhIG1lYXN1cmUgb2YgZGlzdGFuY2UsIGUuZy4sIEV1Y2xpZGVhbi4gCgpUbyBpbGx1c3RyYXRlIHRoZSBtZXRob2QsIHdlJ2xsIHVzZSB0aGVzZSByYW5kb20gcG9pbnRzIHdlIGdlbmVyYXRlZCwgZmFtaWxpYXIgdG8geW91IGlmIHlvdSd2ZSBhbHJlYWR5IGdvbmUgdGhyb3VnaCB0aGUgaGllcmFyY2hpY2FsIGNsdXN0ZXJpbmcgbGVzc29uLiBXZSdsbCAgZGVtb25zdHJhdGUgay1tZWFucyBjbHVzdGVyaW5nIGluIHNldmVyYWwgc3RlcHMsIGJ1dCBmaXJzdCB3ZSdsbCBleHBsYWluIHRoZSBnZW5lcmFsIGlkZWEuCgpgYGB7cn0Kc2V0LnNlZWQoMTIzNCk7CnggPC0gcm5vcm0oMTIsIG1lYW49cmVwKDE6MyxlYWNoPTQpLCBzZD0wLjIpCnkgPC0gcm5vcm0oMTIsIG1lYW49cmVwKGMoMSwgMiwgMSksIGVhY2g9NCksIHNkPTAuMikKYGBgCgoKYGBge3J9CnBhcihtYXI9YygwLCAwLCAwLCAwKSkKcGxvdCh4LCB5LCBjb2w9ImJsdWUiLCBwY2g9MTksIGNleD0yLCBhc3A9MSkKdGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSkKYGBgCgpBcyB3ZSBzYWlkLCBrLW1lYW5zIGlzIGEgcGFydGlvbmluZyBhcHByb2FjaCB3aGljaCByZXF1aXJlcyB0aGF0IHlvdSBmaXJzdCBndWVzcyBob3cgbWFueSBjbHVzdGVycyB5b3UgaGF2ZSAob3Igd2FudCkuIE9uY2UgeW91IGZpeCB0aGlzIG51bWJlciwgeW91IHJhbmRvbWx5IGNyZWF0ZSBhICJjZW50cm9pZCIgKGEgcGhhbnRvbSBwb2ludCkgZm9yIGVhY2ggY2x1c3RlciBhbmQgYXNzaWduIGVhY2ggcG9pbnQgb3Igb2JzZXJ2YXRpb24gaW4geW91ciBkYXRhc2V0IHRvIHRoZSBjZW50cm9pZCB0byB3aGljaCBpdCBpcyBjbG9zZXN0LiBPbmNlIGVhY2ggcG9pbnQgaXMgYXNzaWduZWQgYSBjZW50cm9pZCwgeW91IHJlYWRqdXN0IHRoZSBjZW50cm9pZCdzIHBvc2l0aW9uIGJ5IG1ha2luZyBpdCB0aGUgYXZlcmFnZSBvZiB0aGUgcG9pbnRzIGFzc2lnbmVkIHRvIGl0LiAKCk9uY2UgeW91IGhhdmUgcmVwb3NpdGlvbmVkIHRoZSBjZW50cm9pZHMsIHlvdSBtdXN0IHJlY2FsY3VsYXRlIHRoZSBkaXN0YW5jZSBvZiB0aGUgb2JzZXJ2YXRpb25zIHRvIHRoZSBjZW50cm9pZHMgYW5kIHJlYXNzaWduIGFueSwgaWYgbmVjZXNzYXJ5LCB0byB0aGUgY2VudHJvaWQgY2xvc2VzdCB0byB0aGVtLiBBZ2Fpbiwgb25jZSB0aGUgcmVhc3NpZ25tZW50cyBhcmUgZG9uZSwgcmVhZGp1c3QgdGhlIHBvc2l0aW9ucyBvZiB0aGUgY2VudHJvaWRzIGJhc2VkIG9uIHRoZSBuZXcgY2x1c3RlciBtZW1iZXJzaGlwLiBUaGUgcHJvY2VzcyBzdG9wcyBvbmNlIHlvdSByZWFjaCBhbiBpdGVyYXRpb24gaW4gd2hpY2ggbm8gYWRqdXN0bWVudHMgYXJlIG1hZGUgb3Igd2hlbiB5b3UndmUgcmVhY2hlZCBzb21lIHByZWRldGVybWluZWQgbWF4aW11bSBudW1iZXIgb2YgaXRlcmF0aW9ucy4gCgpBcyBkZXNjcmliZWQsIHdoYXQgZG9lcyB0aGlzIHByb2Nlc3MgcmVxdWlyZT8KCmBgYHtyfQoiQWxsIG9mIHRoZSBvdGhlcnMiCmBgYAoKU28gay1tZWFucyBjbHVzdGVyaW5nIHJlcXVpcmVzIHNvbWUgZGlzdGFuY2UgbWV0cmljIChzYXkgRXVjbGlkZWFuKSwgYSBoeXBvdGhlc2l6ZWQgZml4ZWQgbnVtYmVyIG9mIGNsdXN0ZXJzLCBhbmQgYW4gaW5pdGlhbCBndWVzcyBhcyB0byBjbHVzdGVyIGNlbnRyb2lkcy4gQXMgZGVzY3JpYmVkLCB3aGF0IGRvZXMgdGhpcyBwcm9jZXNzIHByb2R1Y2U/CgpgYGB7cn0KIkFsbCBvZiB0aGUgb3RoZXJzIgpgYGAKCldoZW4gaXQncyBmaW5pc2hlZCBrLW1lYW5zIGNsdXN0ZXJpbmcgcmV0dXJucyBhIGZpbmFsIHBvc2l0aW9uIG9mIGVhY2ggY2x1c3RlcidzIGNlbnRyb2lkIGFzIHdlbGwgYXMgdGhlIGFzc2lnbm1lbnQgb2YgZWFjaCBkYXRhIHBvaW50IG9yIG9ic2VydmF0aW9uIHRvIGEgY2x1c3Rlci4KCk5vdyB3ZSdsbCBzdGVwIHRocm91Z2ggdGhpcyBwcm9jZXNzIHVzaW5nIG91ciByYW5kb20gcG9pbnRzIGFzIG91ciBkYXRhLiBUaGUgY29vcmRpbmF0ZXMgb2YgdGhlc2UgYXJlIHN0b3JlZCBpbiAyIHZlY3RvcnMsIHggYW5kIHkuIFdlIGV5ZWJhbGwgdGhlIGRpc3BsYXkgYW5kIGd1ZXNzIHRoYXQgdGhlcmUgYXJlIDMgY2x1c3RlcnMuIFdlJ2xsIHBpY2sgMyBwb3NpdGlvbnMgb2YgY2VudHJvaWRzLCBvbmUgZm9yIGVhY2ggY2x1c3Rlci4KCldlJ3ZlIGNyZWF0ZWQgdHdvIDMtbG9uZyB2ZWN0b3JzIGZvciB5b3UsIGN4IGFuZCBjeS4gVGhlc2UgcmVzcGVjdGl2ZWx5IGhvbGQgdGhlIHgtIGFuZCB5LSBjb29yZGluYXRlcyBmb3IgMyBwcm9wb3NlZCBjZW50cm9pZHMuIEZvciBjb252ZW5pZW5jZSwgd2UndmUgYWxzbyBzdG9yZWQgdGhlbSBpbiBhIDIgYnkgMyBtYXRyaXggY21hdC4gVGhlIHggY29vcmRpbmF0ZXMgYXJlIGluIHRoZSBmaXJzdCByb3cgYW5kIHRoZSB5IGNvb3JkaW5hdGVzIGluIHRoZSBzZWNvbmQuIExvb2sgYXQgY21hdCBub3cuCgpgYGB7cn0KY3ggPC0gYygxLCAxLjgsIDIuNSkKY3kgPC0gYygyLCAxLCAxLjUpCmNtYXQgPC0gbWF0cml4KGMoY3gsIGN5KSwgbnJvdz0yLCBieXJvdz1UUlVFKSAKYGBgCgoKYGBge3J9CmNtYXQKYGBgCgpUaGUgY29vcmRpbmF0ZXMgb2YgdGhlc2UgcG9pbnRzIGFyZSAoMSwyKSwgKDEuOCwxKSBhbmQgKDIuNSwxLjUpLiBXZSdsbCBhZGQgdGhlc2UgY2VudHJvaWRzIHRvIHRoZSBwbG90IG9mIG91ciBwb2ludHMuIERvIHRoaXMgYnkgY2FsbGluZyB0aGUgUiBjb21tYW5kIHBvaW50cyB3aXRoIDYgYXJndW1lbnRzLiBUaGUgZmlyc3QgMiBhcmUgY3ggYW5kIGN5LCBhbmQgdGhlIHRoaXJkIGlzIGNvbCBzZXQgZXF1YWwgdG8gdGhlIGNvbmNhdGVuYXRpb24gb2YgMyBjb2xvcnMsICJyZWQiLCAib3JhbmdlIiwgYW5kICJwdXJwbGUiLiBUaGUgZm91cnRoIGFyZ3VtZW50IGlzIHBjaCBzZXQgZXF1YWwgdG8gMyAoYSBwbHVzIHNpZ24pLCB0aGUgZmlmdGggaXMgY2V4IHNldCBlcXVhbCB0byAyIChleHBhbnNpb24gb2YgY2hhcmFjdGVyKSwgYW5kIHRoZSBmaW5hbCBpcyBsd2QgKGxpbmUgd2lkdGgpIGFsc28gc2V0IGVxdWFsIHRvIDIuCgpgYGB7cn0KcGFyKG1hcj1jKDAsIDAsIDAsIDApKQpwbG90KHgsIHksIGNvbD0iYmx1ZSIsIHBjaD0xOSwgY2V4PTIsIGFzcD0xKQp0ZXh0KHgrMC4wNSwgeSswLjA1LCBsYWJlbHM9YXMuY2hhcmFjdGVyKDE6MTIpKQpwb2ludHMoY3gsIGN5LCBjb2w9YygicmVkIiwgIm9yYW5nZSIsInB1cnBsZSIpLCBwY2g9MywgY2V4PTIsIGx3ZD0yKQpgYGAKCldlIHNlZSB0aGUgZmlyc3QgY2VudHJvaWQgKDEsMikgaXMgaW4gcmVkLiBUaGUgc2Vjb25kICgxLjgsMSksIHRvIHRoZSByaWdodCBhbmQgYmVsb3cgdGhlIGZpcnN0LCBpcyBvcmFuZ2UsIGFuZCB0aGUgZmluYWwgY2VudHJvaWQgKDIuNSwxLjUpLCB0aGUgZnVydGhlc3QgdG8gdGhlIHJpZ2h0LCBpcyBwdXJwbGUuCgpOb3cgd2UgaGF2ZSB0byBjYWxjdWxhdGUgZGlzdGFuY2VzIGJldHdlZW4gZWFjaCBwb2ludCBhbmQgZXZlcnkgY2VudHJvaWQuIFRoZXJlIGFyZSAxMiBkYXRhIHBvaW50cyBhbmQgMyBjZW50cm9pZHMuIEhvdyBtYW55IGRpc3RhbmNlcyBkbyB3ZSBoYXZlIHRvIGNhbGN1bGF0ZT8KCmBgYHtyfQoiMzYiCmBgYAoKV2UndmUgd3JpdHRlbiBhIGZ1bmN0aW9uIGZvciB5b3UgY2FsbGVkIG1kaXN0IHdoaWNoIHRha2VzIDQgYXJndW1lbnRzLiBUaGUgdmVjdG9ycyBvZiBkYXRhIHBvaW50cyAoeCBhbmQgeSkgYXJlIHRoZSBmaXJzdCB0d28gYW5kIHRoZSB0d28gdmVjdG9ycyBvZiBjZW50cm9pZCBjb29yZGluYXRlcyAoY3ggYW5kIGN5KSBhcmUgdGhlIGxhc3QgdHdvLiBDYWxsIG1kaXN0IG5vdyB3aXRoIHRoZXNlIGFyZ3VtZW50cy4gCgpgYGB7cn0KbWRpc3QgPC0gZnVuY3Rpb24oeCwgeSwgY3gsIGN5KXsKICAgIGRpc3RUbXAgPC0gbWF0cml4KE5BLCBucm93PTMsIG5jb2w9MTIpCiAgICBkaXN0VG1wWzEsXSA8LSAoeCAtIGN4WzFdKV4yICsgKHkgLSBjeVsxXSleMgogICAgZGlzdFRtcFsyLF0gPC0gKHggLSBjeFsyXSleMiArICh5IC0gY3lbMl0pXjIKICAgIGRpc3RUbXBbMyxdIDwtICh4IC0gY3hbM10pXjIgKyAoeSAtIGN5WzNdKV4yICAKICAgIHJldHVybihkaXN0VG1wKQp9CmBgYAoKCmBgYHtyfQptZGlzdCh4LCB5LCBjeCwgY3kpCmBgYAoKV2UndmUgc3RvcmVkIHRoZXNlIGRpc3RhbmNlcyBpbiB0aGUgbWF0cml4IGRpc3RUbXAgZm9yIHlvdS4gTm93IHdlIGhhdmUgdG8gYXNzaWduIGEgY2x1c3RlciB0byBlYWNoIHBvaW50LiBUbyBkbyB0aGF0IHdlJ2xsIGxvb2sgYXQgZWFjaCBjb2x1bW4gYW5kID8KCmBgYHtyfQoicGljayB0aGUgbWluaW11bSBlbnRyeSIKYGBgCgpGcm9tIHRoZSBkaXN0VG1wIGVudHJpZXMsIHdoaWNoIGNsdXN0ZXIgd291bGQgcG9pbnQgNiBiZSBhc3NpZ25lZCB0bz8KCmBgYHtyfQoiMyIKYGBgCgpSIGhhcyBhIGhhbmR5IGZ1bmN0aW9uIHdoaWNoLm1pbiB3aGljaCB5b3UgY2FuIGFwcGx5IHRvIEFMTCB0aGUgY29sdW1ucyBvZiBkaXN0VG1wIHdpdGggb25lIGNhbGwuIFNpbXBseSBjYWxsIHRoZSBSIGZ1bmN0aW9uIGFwcGx5IHdpdGggMyBhcmd1bWVudHMuIFRoZSBmaXJzdCBpcyBkaXN0VG1wLCB0aGUgc2Vjb25kIGlzIDIgbWVhbmluZyB0aGUgY29sdW1ucyBvZiBkaXN0VG1wLCBhbmQgdGhlIHRoaXJkIGlzIHdoaWNoLm1pbiwgdGhlIGZ1bmN0aW9uIHlvdSB3YW50IHRvIGFwcGx5IHRvIHRoZSBjb2x1bW5zIG9mIGRpc3RUbXAuIFRyeSB0aGlzIG5vdy4KCmBgYHtyfQpkaXN0VG1wIDwtIG1kaXN0KHgsIHksIGN4LCBjeSkKYGBgCgoKYGBge3J9CmFwcGx5KGRpc3RUbXAsIDIsIHdoaWNoLm1pbikKYGBgCgpZb3UgY2FuIHNlZSB0aGF0IHlvdSB3ZXJlIHJpZ2h0IGFuZCB0aGUgNnRoIGVudHJ5IGlzIGluZGVlZCAzIGFzIHlvdSBhbnN3ZXJlZCBiZWZvcmUuIFdlIHNlZSB0aGUgZmlyc3QgMyBlbnRyaWVzIHdlcmUgYXNzaWduZWQgdG8gdGhlIHNlY29uZCAob3JhbmdlKSBjbHVzdGVyIGFuZCBvbmx5IDIgcG9pbnRzICg0IGFuZCA4KSB3ZXJlIGFzc2lnbmVkIHRvIHRoZSBmaXJzdCAocmVkKSBjbHVzdGVyLgoKV2UndmUgc3RvcmVkIHRoZSB2ZWN0b3Igb2YgY2x1c3RlciBjb2xvcnMgKCJyZWQiLCJvcmFuZ2UiLCJwdXJwbGUiKSBpbiB0aGUgYXJyYXkgY29sczEgZm9yIHlvdSBhbmQgd2UndmUgYWxzbyBzdG9yZWQgdGhlIGNsdXN0ZXIgYXNzaWdubWVudHMgaW4gdGhlIGFycmF5IG5ld0NsdXN0LiBMZXQncyBjb2xvciB0aGUgMTIgZGF0YSBwb2ludHMgIGFjY29yZGluZyB0byB0aGVpciBhc3NpZ25tZW50cy4gQWdhaW4sIHVzZSB0aGUgY29tbWFuZCBwb2ludHMgd2l0aCA1IGFyZ3VtZW50cy4gVGhlIGZpcnN0IDIgYXJlIHggYW5kIHkuIFRoZSB0aGlyZCBpcyBwY2ggc2V0IHRvIDE5LCB0aGUgZm91cnRoIGlzIGNleCBzZXQgdG8gMiwgYW5kIHRoZSBsYXN0LCBjb2wgaXMgc2V0IHRvIGNvbHMxW25ld0NsdXN0XS4KCmBgYHtyfQpuZXdDbHVzdCA8LSBhcHBseShkaXN0VG1wLCAyLCB3aGljaC5taW4pCmNvbHMxIDwtIGMoInJlZCIsICJvcmFuZ2UiLCAicHVycGxlIikKYGBgCgoKYGBge3J9CnBhcihtYXI9YygwLCAwLCAwLCAwKSkKcGxvdCh4LCB5LCBjb2w9ImJsdWUiLCBwY2g9MTksIGNleD0yLCBhc3A9MSkKdGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSkKcG9pbnRzKGN4LCBjeSwgY29sPWMoInJlZCIsICJvcmFuZ2UiLCJwdXJwbGUiKSwgcGNoPTMsIGNleD0yLCBsd2Q9MikKcG9pbnRzKHgsIHksIHBjaD0xOSwgY2V4PTIsIGNvbD1jb2xzMVtuZXdDbHVzdF0pCmBgYAoKTm93IHdlIGhhdmUgdG8gcmVjYWxjdWxhdGUgb3VyIGNlbnRyb2lkcyBzbyB0aGV5IGFyZSB0aGUgYXZlcmFnZSAoY2VudGVyIG9mIGdyYXZpdHkpIG9mIHRoZSBjbHVzdGVyIG9mIHBvaW50cyBhc3NpZ25lZCB0byB0aGVtLiBXZSBoYXZlIHRvIGRvIHRoZSB4IGFuZCB5IGNvb3JkaW5hdGVzIHNlcGFyYXRlbHkuIFdlJ2xsIGRvIHRoZSB4IGNvb3JkaW5hdGUgZmlyc3QuIFJlY2FsbCB0aGF0IHRoZSB2ZWN0b3JzIHggYW5kIHkgaG9sZCB0aGUgcmVzcGVjdGl2ZSBjb29yZGluYXRlcyBvZiBvdXIgMTIgZGF0YSBwb2ludHMuCgpXZSBjYW4gdXNlIHRoZSBSIGZ1bmN0aW9uIHRhcHBseSB3aGljaCBhcHBsaWVzICJhIGZ1bmN0aW9uIG92ZXIgYSByYWdnZWQgYXJyYXkiLiBUaGlzIG1lYW5zIHRoYXQgZXZlcnkgZWxlbWVudCBvZiB0aGUgYXJyYXkgaXMgYXNzaWduZWQgYSBmYWN0b3IgYW5kIHRoZSBmdW5jdGlvbiBpcyBhcHBsaWVkIHRvICBzdWJzZXRzIG9mIHRoZSBhcnJheSAoaWRlbnRpZmllZCBieSB0aGUgZmFjdG9yIHZlY3RvcikuIFRoaXMgYWxsb3dzIHVzIHRvIHRha2UgYWR2YW50YWdlIG9mIHRoZSBmYWN0b3IgdmVjdG9yIG5ld0NsdXN0IHdlIGNhbGN1bGF0ZWQuIENhbGwgdGFwcGx5IG5vdyB3aXRoIDMgYXJndW1lbnRzLCB4ICh0aGUgZGF0YSksIG5ld0NsdXN0ICh0aGUgZmFjdG9yIGFycmF5KSwgYW5kIG1lYW4gKHRoZSBmdW5jdGlvbiB0byBhcHBseSkuIAoKYGBge3J9CnRhcHBseSh4LCBuZXdDbHVzdCwgbWVhbikKYGBgCgpSZXBlYXQgdGhlIGNhbGwsIGV4Y2VwdCBub3cgYXBwbHkgaXQgdG8gdGhlIHZlY3RvciB5IGluc3RlYWQgb2YgeC4KCmBgYHtyfQp0YXBwbHkoeSwgbmV3Q2x1c3QsIG1lYW4pCmBgYAoKTm93IHRoYXQgd2UgaGF2ZSAgbmV3IHggYW5kIG5ldyB5IGNvb3JkaW5hdGVzIGZvciB0aGUgMyBjZW50cm9pZHMgd2UgY2FuIHBsb3QgdGhlbS4gV2UndmUgc3RvcmVkIG9mZiB0aGUgY29vcmRpbmF0ZXMgZm9yIHlvdSBpbiB2YXJpYWJsZXMgbmV3Q3ggYW5kIG5ld0N5LiBVc2UgdGhlIFIgY29tbWFuZCBwb2ludHMgd2l0aCB0aGVzZSBhcyB0aGUgZmlyc3QgMiBhcmd1bWVudHMuIEluIGFkZGl0aW9uLCB1c2UgdGhlIGFyZ3VtZW50cyBjb2wgc2V0IGVxdWFsIHRvIGNvbHMxLCBwY2ggZXF1YWwgdG8gOCwgY2V4IGVxdWFsIHRvIDIgYW5kIGx3ZCBhbHNvIGVxdWFsIHRvIDIuCgpgYGB7cn0KbmV3Q3ggPC0gdGFwcGx5KHgsIG5ld0NsdXN0LCBtZWFuKQpuZXdDeSA8LSB0YXBwbHkoeSwgbmV3Q2x1c3QsIG1lYW4pCmBgYAoKYGBge3J9CnBhcihtYXI9YygwLCAwLCAwLCAwKSkKcGxvdCh4LCB5LCBjb2w9ImJsdWUiLCBwY2g9MTksIGNleD0yLCBhc3A9MSkKdGV4dCh4KzAuMDUsIHkrMC4wNSwgbGFiZWxzPWFzLmNoYXJhY3RlcigxOjEyKSkKcG9pbnRzKGN4LCBjeSwgY29sPWMoInJlZCIsICJvcmFuZ2UiLCJwdXJwbGUiKSwgcGNoPTMsIGNleD0yLCBsd2Q9MikKcG9pbnRzKHgsIHksIHBjaD0xOSwgY2V4PTIsIGNvbD1jb2xzMVtuZXdDbHVzdF0pCnBvaW50cyhuZXdDeCwgbmV3Q3ksIGNvbD1jb2xzMSwgcGNoPTgsIGNleD0yLCBsd2Q9MikKYGBgCgpXZSBzZWUgaG93IHRoZSBjZW50cm9pZHMgaGF2ZSBtb3ZlZCBjbG9zZXIgdG8gdGhlaXIgcmVzcGVjdGl2ZSBjbHVzdGVycy4gVGhpcyBpcyBlc3BlY2lhbGx5IHRydWUgb2YgdGhlIHNlY29uZCAob3JhbmdlKSBjbHVzdGVyLiBOb3cgY2FsbCB0aGUgZGlzdGFuY2UgZnVuY3Rpb24gbWRpc3Qgd2l0aCB0aGUgNCBhcmd1bWVudHMgeCwgeSwgbmV3Q3gsIGFuZCBuZXdDeS4gVGhpcyB3aWxsIGFsbG93IHVzIHRvIHJlYXNzaWduIHRoZSBkYXRhIHBvaW50cyB0byBuZXcgY2x1c3RlcnMgaWYgbmVjZXNzYXJ5LgoKYGBge3J9Cm1kaXN0KHgsIHksIG5ld0N4LCBuZXdDeSkKYGBgCgpXZSd2ZSBzdG9yZWQgb2ZmIHRoaXMgbmV3IG1hdHJpeCBvZiBkaXN0YW5jZXMgaW4gdGhlIG1hdHJpeCBkaXN0VG1wMiBmb3IgeW91LiBSZWNhbGwgdGhhdCB0aGUgZmlyc3QgY2x1c3RlciBpcyByZWQsIHRoZSBzZWNvbmQgb3JhbmdlIGFuZCB0aGUgdGhpcmQgcHVycGxlLiBMb29rIGNsb3NlbHkgYXQgY29sdW1ucyA0IGFuZCA3IG9mIGRpc3RUbXAyLiBXaGF0IHdpbGwgaGFwcGVuIHRvIHBvaW50cyA0IGFuZCA3PwoKYGBge3J9CiJUaGV5IHdpbGwgYm90aCBjaGFuZ2UgY2x1c3RlcnMiCmBgYAoKTm93IGNhbGwgYXBwbHkgd2l0aCAzIGFyZ3VtZW50cywgZGlzdFRtcDIsIDIsIGFuZCB3aGljaC5taW4gdG8gZmluZCB0aGUgbmV3IGNsdXN0ZXIgYXNzaWdubWVudHMgZm9yIHRoZSBwb2ludHMuCgpgYGB7cn0KZGlzdFRtcDIgPC0gbWRpc3QoeCwgeSwgbmV3Q3gsIG5ld0N5KQpgYGAKCmBgYHtyfQphcHBseShkaXN0VG1wMiwgMiwgd2hpY2gubWluKQpgYGAKCldlJ3ZlIHN0b3JlZCBvZmYgdGhlIG5ldyBjbHVzdGVyIGFzc2lnbm1lbnRzIGluIGEgdmVjdG9yIG9mIGZhY3RvcnMgY2FsbGVkIG5ld0NsdXN0Mi4gVXNlIHRoZSBSIGZ1bmN0aW9uIHBvaW50cyB0byByZWNvbG9yIHRoZSBwb2ludHMgd2l0aCB0aGVpciBuZXcgYXNzaWdubWVudHMuIEFnYWluLCB0aGVyZSBhcmUgNSBhcmd1bWVudHMsIHggYW5kIHkgYXJlIGZpcnN0LCBmb2xsb3dlZCBieSBwY2ggc2V0IHRvIDE5LCBjZXggdG8gMiwgYW5kIGNvbCB0byBjb2xzMVtuZXdDbHVzdDJdLgoKYGBge3J9Cm5ld0NsdXN0MiA8LSBhcHBseShkaXN0VG1wMiwgMiwgd2hpY2gubWluKQpgYGAKCmBgYHtyfQpwYXIobWFyPWMoMCwgMCwgMCwgMCkpCnBsb3QoeCwgeSwgY29sPSJibHVlIiwgcGNoPTE5LCBjZXg9MiwgYXNwPTEpCnRleHQoeCswLjA1LCB5KzAuMDUsIGxhYmVscz1hcy5jaGFyYWN0ZXIoMToxMikpCnBvaW50cyhjeCwgY3ksIGNvbD1jKCJyZWQiLCAib3JhbmdlIiwicHVycGxlIiksIHBjaD0zLCBjZXg9MiwgbHdkPTIpCnBvaW50cyh4LCB5LCBwY2g9MTksIGNleD0yLCBjb2w9Y29sczFbbmV3Q2x1c3RdKQpwb2ludHMobmV3Q3gsIG5ld0N5LCBjb2w9Y29sczEsIHBjaD04LCBjZXg9MiwgbHdkPTIpCnBvaW50cyh4LCB5LCBwY2g9MTksIGNleD0yLCBjb2w9Y29sczFbbmV3Q2x1c3QyXSkKYGBgCgpOb3RpY2UgdGhhdCBwb2ludHMgNCBhbmQgNyBib3RoIGNoYW5nZWQgY2x1c3RlcnMsIDQgbW92ZWQgZnJvbSAxIHRvIDIgKHJlZCB0byBvcmFuZ2UpLCBhbmQgcG9pbnQgNyBzd2l0Y2hlZCBmcm9tIDMgdG8gMiAocHVycGxlIHRvIHJlZCkuCgpOb3cgdXNlIHRhcHBseSB0byBmaW5kIHRoZSB4IGNvb3JkaW5hdGUgb2YgdGhlIG5ldyBjZW50cm9pZC4gUmVjYWxsIHRoZXJlIGFyZSAzIGFyZ3VtZW50cywgeCwgbmV3Q2x1c3QyLCBhbmQgbWVhbi4KCmBgYHtyfQp0YXBwbHkoeCwgbmV3Q2x1c3QyLCBtZWFuKQpgYGAKCkRvIHRoZSBzYW1lIHRvIGZpbmQgdGhlIG5ldyB5IGNvb3JkaW5hdGUuCgpgYGB7cn0KdGFwcGx5KHksIG5ld0NsdXN0MiwgbWVhbikKYGBgCgpXZSd2ZSBzdG9yZWQgb2ZmIHRoZXNlIGNvb3JkaW5hdGVzIGZvciB5b3UgaW4gdGhlIHZhcmlhYmxlcyBmaW5hbEN4IGFuZCBmaW5hbEN5LiBQbG90IHRoZXNlIG5ldyBjZW50cm9pZHMgdXNpbmcgdGhlIHBvaW50cyBmdW5jdGlvbiB3aXRoIDYgYXJndW1lbnRzLiBUaGUgZmlyc3QgMiBhcmUgZmluYWxDeCBhbmQgZmluYWxDeS4gVGhlIGFyZ3VtZW50IGNvbCBzaG91bGQgZXF1YWwgY29sczEsIHBjaCBzaG91bGQgZXF1YWwgOSwgY2V4IDIgYW5kIGx3ZCAyLgoKYGBge3J9CmZpbmFsQ3ggPC0gdGFwcGx5KHgsIG5ld0NsdXN0MiwgbWVhbikKZmluYWxDeSA8LSB0YXBwbHkoeSwgbmV3Q2x1c3QyLCBtZWFuKQpgYGAKCmBgYHtyfQpwYXIobWFyPWMoMCwgMCwgMCwgMCkpCnBsb3QoeCwgeSwgY29sPSJibHVlIiwgcGNoPTE5LCBjZXg9MiwgYXNwPTEpCnRleHQoeCswLjA1LCB5KzAuMDUsIGxhYmVscz1hcy5jaGFyYWN0ZXIoMToxMikpCnBvaW50cyhjeCwgY3ksIGNvbD1jKCJyZWQiLCAib3JhbmdlIiwicHVycGxlIiksIHBjaD0zLCBjZXg9MiwgbHdkPTIpCnBvaW50cyh4LCB5LCBwY2g9MTksIGNleD0yLCBjb2w9Y29sczFbbmV3Q2x1c3RdKQpwb2ludHMobmV3Q3gsIG5ld0N5LCBjb2w9Y29sczEsIHBjaD04LCBjZXg9MiwgbHdkPTIpCnBvaW50cyh4LCB5LCBwY2g9MTksIGNleD0yLCBjb2w9Y29sczFbbmV3Q2x1c3QyXSkKcG9pbnRzKGZpbmFsQ3gsIGZpbmFsQ3ksIGNvbD1jb2xzMSwgcGNoPTksIGNleD0yLCBsd2Q9MikKYGBgCgpJdCBzaG91bGQgYmUgb2J2aW91cyB0aGF0IGlmIHdlIGNvbnRpbnVlZCB0aGlzIHByb2Nlc3MgcG9pbnRzIDUgdGhyb3VnaCA4IHdvdWxkIGFsbCB0dXJuIHJlZCwgd2hpbGUgcG9pbnRzIDEgdGhyb3VnaCA0IHN0YXkgb3JhbmdlLCBhbmQgcG9pbnRzIDkgdGhyb3VnaCAxMiBwdXJwbGUuCgpOb3cgdGhhdCB5b3UndmUgZ29uZSB0aHJvdWdoIGFuIGV4YW1wbGUgc3RlcCBieSBzdGVwLCB5b3UnbGwgYmUgcmVsaWV2ZWQgdG8gaGVhciB0aGF0IFIgcHJvdmlkZXMgYSBjb21tYW5kIHRvIGRvIGFsbCB0aGlzIHdvcmsgZm9yIHlvdS4gVW5zdXJwcmlzaW5nbHkgaXQncyBjYWxsZWQga21lYW5zIGFuZCwgYWx0aG91Z2ggaXQgaGFzIHNldmVyYWwgcGFyYW1ldGVycywgd2UnbGwganVzdCBtZW50aW9uIGZvdXIuIFRoZXNlIGFyZSB4LCAodGhlIG51bWVyaWMgbWF0cml4IG9mIGRhdGEpLCBjZW50ZXJzLCBpdGVyLm1heCwgYW5kIG5zdGFydC4gVGhlIHNlY29uZCBvZiB0aGVzZSAoY2VudGVycykgY2FuIGJlIGVpdGhlciBhIG51bWJlciBvZiBjbHVzdGVycyBvciBhIHNldCBvZiBpbml0aWFsIGNlbnRyb2lkcy4gVGhlIHRoaXJkLCBpdGVyLm1heCwgc3BlY2lmaWVzIHRoZSBtYXhpbXVtIG51bWJlciBvZiBpdGVyYXRpb25zIHRvIGdvIHRocm91Z2gsIGFuZCBuc3RhcnQgaXMgdGhlIG51bWJlciBvZiByYW5kb20gc3RhcnRzIHlvdSB3YW50IHRvIHRyeSBpZiB5b3Ugc3BlY2lmeSBjZW50ZXJzIGFzIGEgbnVtYmVyLgoKQ2FsbCBrbWVhbnMgbm93IHdpdGggMiBhcmd1bWVudHMsIGRhdGFGcmFtZSAod2hpY2ggaG9sZHMgdGhlIHggYW5kIHkgY29vcmRpbmF0ZXMgb2Ygb3VyIDEyIHBvaW50cykgYW5kIGNlbnRlcnMgc2V0IGVxdWFsIHRvIDMuCgpgYGB7cn0KZGF0YUZyYW1lIDwtIGRhdGEuZnJhbWUoeD14LCB5PXkpCmBgYAoKCmBgYHtyfQprbWVhbnMoZGF0YUZyYW1lLCBjZW50ZXJzPTMpCmBgYAoKVGhlIHByb2dyYW0gcmV0dXJucyB0aGUgaW5mb3JtYXRpb24gdGhhdCB0aGUgZGF0YSBjbHVzdGVyZWQgaW50byAzIGNsdXN0ZXJzIGVhY2ggb2Ygc2l6ZSA0LiBJdCBhbHNvIHJldHVybnMgdGhlIGNvb3JkaW5hdGVzIG9mIHRoZSAzIGNsdXN0ZXIgbWVhbnMsIGEgdmVjdG9yIG5hbWVkIGNsdXN0ZXIgaW5kaWNhdGluZyBob3cgdGhlIDEyIHBvaW50cyB3ZXJlIHBhcnRpdGlvbmVkIGludG8gdGhlIGNsdXN0ZXJzLCBhbmQgdGhlIHN1bSBvZiBzcXVhcmVzIHdpdGhpbiBlYWNoIGNsdXN0ZXIuIEl0IGFsc28gc2hvd3MgYWxsIHRoZSBhdmFpbGFibGUgY29tcG9uZW50cyByZXR1cm5lZCBieSB0aGUgZnVuY3Rpb24uIFdlJ3ZlIHN0b3JlZCBvZmYgdGhpcyBkYXRhIGZvciB5b3UgaW4gYSBrbWVhbnMgb2JqZWN0IGNhbGxlZCBrbU9iai4gTG9vayBhdCBrbU9iaiRpdGVyIHRvIHNlZSBob3cgbWFueSBpdGVyYXRpb25zIHRoZSBhbGdvcml0aG0gd2VudCB0aHJvdWdoLgoKYGBge3J9CmttT2JqIDwtIGttZWFucyhkYXRhRnJhbWUsIDMpCmBgYAoKCmBgYHtyfQprbU9iaiRpdGVyCmBgYAoKVHdvIGl0ZXJhdGlvbnMgYXMgd2UgZGlkIGJlZm9yZS4gV2UganVzdCB3YW50IHRvIGVtcGhhc2l6ZSBob3cgeW91IGNhbiBhY2Nlc3MgdGhlIGluZm9ybWF0aW9uIGF2YWlsYWJsZSB0byB5b3UuIExldCdzIHBsb3QgdGhlIGRhdGEgcG9pbnRzIGNvbG9yIGNvZGVkIGFjY29yZGluZyB0byB0aGVpciBjbHVzdGVyLiBUaGlzIHdhcyBzdG9yZWQgaW4ga21PYmokY2x1c3Rlci4gUnVuIHBsb3Qgd2l0aCA1IGFyZ3VtZW50cy4gVGhlIGRhdGEsIHggYW5kIHksIGFyZSB0aGUgZmlyc3QgdHdvOyB0aGUgdGhpcmQsIGNvbCBpcyBzZXQgZXF1YWwgdG8ga21PYmokY2x1c3RlciwgYW5kIHRoZSBsYXN0IHR3byBhcmUgcGNoIGFuZCBjZXguIFRoZSBmaXJzdCBvZiB0aGVzZSBzaG91bGQgYmUgc2V0IHRvIDE5IGFuZCB0aGUgbGFzdCB0byAyLiAKCmBgYHtyfQpwbG90KHgsIHksIGNvbD1rbU9iaiRjbHVzdGVyLCBwY2g9MTksIGNleD0yKQpgYGAKCk5vdyBhZGQgdGhlIGNlbnRyb2lkcyB3aGljaCBhcmUgc3RvcmVkIGluIGttT2JqJGNlbnRlcnMuIFVzZSB0aGUgcG9pbnRzIGZ1bmN0aW9uIHdpdGggNSBhcmd1bWVudHMuIFRoZSBmaXJzdCB0d28gYXJlICBrbU9iaiRjZW50ZXJzIGFuZCAgY29sPWMoImJsYWNrIiwicmVkIiwiZ3JlZW4iKS4gVGhlIGxhc3QgdGhyZWUsIHBjaCwgY2V4LCBhbmQgbHdkLCBzaG91bGQgYWxsIGVxdWFsIDMuCgpgYGB7cn0KcGxvdCh4LCB5LCBjb2w9a21PYmokY2x1c3RlciwgcGNoPTE5LCBjZXg9MikKcG9pbnRzKGttT2JqJGNlbnRlcnMsIGNvbD1jKCJibGFjayIsICJyZWQiLCAiZ3JlZW4iKSwgcGNoPTMsIGNleD0zLCBsd2Q9MykKYGBgCgpOb3cgZm9yIHNvbWUgZnVuISBXZSB3YW50IHRvIHNob3cgeW91IGhvdyB0aGUgb3V0cHV0IG9mIHRoZSBrbWVhbnMgZnVuY3Rpb24gaXMgYWZmZWN0ZWQgYnkgaXRzIHJhbmRvbSBzdGFydCAod2hlbiB5b3UganVzdCBhc2sgZm9yIGEgbnVtYmVyIG9mIGNsdXN0ZXJzKS4gV2l0aCByYW5kb20gc3RhcnRzIHlvdSBtaWdodCB3YW50IHRvIHJ1biB0aGUgZnVuY3Rpb24gc2V2ZXJhbCB0aW1lcyB0byBnZXQgYW4gaWRlYSBvZiB0aGUgcmVsYXRpb25zaGlwcyBiZXR3ZWVuIHlvdXIgb2JzZXJ2YXRpb25zLiBXZSdsbCBjYWxsIGttZWFucyB3aXRoIHRoZSBzYW1lIGRhdGEgcG9pbnRzIChzdG9yZWQgaW4gZGF0YUZyYW1lKSwgYnV0IGFzayBmb3IgNiBjbHVzdGVycyBpbnN0ZWFkIG9mIDMuCgpXZSdsbCBwbG90IG91ciBkYXRhIHBvaW50cyBzZXZlcmFsIHRpbWVzIGFuZCBlYWNoIHRpbWUgd2UnbGwganVzdCBjaGFuZ2UgdGhlIGFyZ3VtZW50IGNvbCB3aGljaCB3aWxsIHNob3cgdXMgaG93IHRoZSBSIGZ1bmN0aW9uIGttZWFucyBpcyBjbHVzdGVyaW5nIHRoZW0uIFNvLCBjYWxsIHBsb3Qgbm93IHdpdGggNSBhcmd1bWVudHMuIFRoZSBmaXJzdCAyIGFyZSB4IGFuZCB5LiBUaGUgdGhpcmQgaXMgY29sIHNldCBlcXVhbCB0byB0aGUgY2FsbCBrbWVhbnMoZGF0YUZyYW1lLDYpJGNsdXN0ZXIuIFRoZSBsYXN0IHR3byAocGNoIGFuZCBjZXgpIGFyZSBzZXQgdG8gMTkgYW5kIDIgcmVzcGVjdGl2ZWx5LgoKYGBge3J9CnBsb3QoeCwgeSwgY29sPWttZWFucyhkYXRhRnJhbWUsIDYpJGNsdXN0ZXIsIHBjaD0xOSwgY2V4PTIpCmBgYAoKU2VlIGhvdyB0aGUgcG9pbnRzIGNsdXN0ZXI/IE5vdyByZWNhbGwgeW91ciBsYXN0IGNvbW1hbmQgYW5kIHJlcnVuIGl0LgoKYGBge3J9CnBsb3QoeCwgeSwgY29sPWttZWFucyhkYXRhRnJhbWUsIDYpJGNsdXN0ZXIsIHBjaD0xOSwgY2V4PTIpCmBgYAoKU2VlIGhvdyB0aGUgY2x1c3RlcmluZyBoYXMgY2hhbmdlZD8gQXMgdGhlIFRlbGV0dWJiaWVzIHdvdWxkIHNheSwgIkFnYWluISBBZ2FpbiEiIAoKYGBge3J9CnBsb3QoeCwgeSwgY29sPWttZWFucyhkYXRhRnJhbWUsIDYpJGNsdXN0ZXIsIHBjaD0xOSwgY2V4PTIpCmBgYAoKU28gdGhlIGNsdXN0ZXJpbmcgY2hhbmdlcyB3aXRoIGRpZmZlcmVudCBzdGFydHMuIFBlcmhhcHMgNiBpcyB0b28gbWFueSBjbHVzdGVycz8KClRydWUgb3IgRmFsc2U/IEstbWVhbnMgY2x1c3RlcmluZyAgcmVxdWlyZXMgeW91IHRvIHNwZWNpZnkgYSBudW1iZXIgb2YgY2x1c3RlcnMgYmVmb3JlIHlvdSBiZWdpbi4KCmBgYHtyfQoiVHJ1ZSIKYGBgCgpUcnVlIG9yIEZhbHNlPyBLLW1lYW5zIGNsdXN0ZXJpbmcgIHJlcXVpcmVzIHlvdSB0byBzcGVjaWZ5IGEgbnVtYmVyIG9mIGl0ZXJhdGlvbnMgYmVmb3JlIHlvdSBiZWdpbi4KCmBgYHtyfQoiRmFsc2UiCmBgYAoKVHJ1ZSBvciBGYWxzZT8gRXZlcnkgZGF0YSBzZXQgaGFzIGEgc2luZ2xlIGZpeGVkIG51bWJlciBvZiBjbHVzdGVycy4KCmBgYHtyfQoiRmFsc2UiCmBgYAoKVHJ1ZSBvciBGYWxzZT8gSy1tZWFucyBjbHVzdGVyaW5nIHdpbGwgYWx3YXlzIHN0b3AgaW4gMyBpdGVyYXRpb25zCgpgYGB7cn0KIkZhbHNlIgpgYGAKClRydWUgb3IgRmFsc2U/IFdoZW4gc3RhcnRpbmcga21lYW5zIHdpdGggcmFuZG9tIGNlbnRyb2lkcywgeW91J2xsIGFsd2F5cyBlbmQgdXAgd2l0aCB0aGUgc2FtZSBmaW5hbCBjbHVzdGVyaW5nLgoKYGBge3J9CiJGYWxzZSIKYGBgCg==</div>
 
 
 
@@ -2346,7 +2339,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("swirl_Lesson_3-Functions.Rmd");
+  window.initializeSourceEmbed("swirl_Lesson_2-K_Means_Clustering.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>

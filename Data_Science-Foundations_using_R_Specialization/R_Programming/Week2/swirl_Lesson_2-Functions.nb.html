@@ -11,7 +11,7 @@
 
 
 
-<title>swirl Lesson 3: Dates and Times</title>
+<title>swirl Lesson 2: Functions</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -1746,398 +1746,560 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">swirl Lesson 3: Dates and Times</h1>
+<h1 class="title toc-ignore">swirl Lesson 2: Functions</h1>
 
 </div>
 
 
 <!-- rnb-text-begin -->
-<p>R has a special way of representing dates and times, which can be
-helpful if you’re working with data that show how something changes over
-time (i.e. time-series data) or if your data contain some other temporal
-information, like dates of birth.</p>
-<p>Dates are represented by the ‘Date’ class and times are represented
-by the ‘POSIXct’ and ‘POSIXlt’ classes. Internally, dates are stored as
-the number of days since 1970-01-01 and times are stored as either the
-number of seconds since 1970-01-01 (for ‘POSIXct’) or a list of seconds,
-minutes, hours, etc. (for ‘POSIXlt’)</p>
-<p>Let’s start by using d1 &lt;- Sys.Date() to get the current date and
-store it in the variable d1. (That’s the letter ‘d’ and the number
-1.)</p>
+<p>Functions are one of the fundamental building blocks of the R
+language. They are small pieces of reusable code that can be treated
+like any other R object.</p>
+<p>If you’ve worked through any other part of this course, you’ve
+probably used some functions already. Functions are usually
+characterized by the name of the function followed by parentheses.</p>
+<p>Let’s try using a few basic functions just for fun. The Sys.Date()
+function returns a string representing today’s date. Type Sys.Date()
+below and see what happens.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZDEgPC0gU3lzLkRhdGUoKVxuYGBgIn0= -->
-<pre class="r"><code>d1 &lt;- Sys.Date()</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuU3lzLkRhdGUoKVxuYGBgIn0= -->
+<pre class="r"><code>Sys.Date()</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Use the class() function to confirm d1 is a Date object.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3MoZDEpXG5gYGAifQ== -->
-<pre class="r"><code>class(d1)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiRGF0ZVwiXG4ifQ== -->
-<pre><code>[1] &quot;Date&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiMjAyNC0wMS0yNlwiXG4ifQ== -->
+<pre><code>[1] &quot;2024-01-26&quot;</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>We can use the unclass() function to see what d1 looks like
-internally. Try it out.</p>
+<p>Most functions in R return a value. Functions like Sys.Date() return
+a value based on your computer’s environment, while other functions
+manipulate input data in order to compute a return value.</p>
+<p>The mean() function takes a vector of numbers as input, and returns
+the average of all of the numbers in the input vector. Inputs to
+functions are often called arguments. Providing arguments to a function
+is also sometimes called passing arguments to that function. Arguments
+you want to pass to a function go inside the function’s parentheses. Try
+passing the argument c(2, 4, 5) to the mean() function.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudW5jbGFzcyhkMSlcbmBgYCJ9 -->
-<pre class="r"><code>unclass(d1)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWVhbihjKDIsIDQsIDUpKVxuYGBgIn0= -->
+<pre class="r"><code>mean(c(2, 4, 5))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDE5NjQ4XG4ifQ== -->
-<pre><code>[1] 19648</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMuNjY2NjY3XG4ifQ== -->
+<pre><code>[1] 3.666667</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>That’s the exact number of days since 1970-01-01!</p>
-<p>However, if you print d1 to the console, you’ll get today’s date –
-YEAR-MONTH-DAY. Give it a try.</p>
+<p>Functions usually take arguments which are variables that the
+function operates on. For example, the mean() function takes a vector as
+an argument, like in the case of mean(c(2,6,8)). The mean() function
+then adds up all of the numbers in the vector and divides that sum by
+the length of the vector.</p>
+<p>You’re about to write your first function! Just like you would assign
+a value to a variable with the assignment operator, you assign functions
+in the following way:</p>
+<pre class="r"><code>function_name &lt;- function(arg1, arg2){
+      Manipulate arguments in some way
+      Return a value
+}</code></pre>
+<p>The “variable name” you assign will become the name of your function.
+arg1 and arg2 represent the arguments of your function. You can
+manipulate the arguments you specify within the function. After sourcing
+the function, you can use the function by typing:</p>
+<pre class="r"><code>function_name(value1, value2)</code></pre>
+<p>Below we will create a function called boring_function. This function
+takes the argument <code>x</code> as input, and returns the value of x
+without modifying it. Delete the pound sign in front of the x to make
+the function work!</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZDFcbmBgYCJ9 -->
-<pre class="r"><code>d1</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYm9yaW5nX2Z1bmN0aW9uIDwtIGZ1bmN0aW9uKHgpIHtcbiAgICB4XG59XG5gYGAifQ== -->
+<pre class="r"><code>boring_function &lt;- function(x) {
+    x
+}</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiMjAyMy0xMC0xOFwiXG4ifQ== -->
-<pre><code>[1] &quot;2023-10-18&quot;</code></pre>
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Now that you’ve created your first function let’s test it! Type:
+boring_function(‘My first function!’). If your function works, it shoul
+just return the string: ‘My first function!’</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYm9yaW5nX2Z1bmN0aW9uKCdNeSBmaXJzdCBmdW5jdGlvbiEnKVxuYGBgIn0= -->
+<pre class="r"><code>boring_function(&#39;My first function!&#39;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiTXkgZmlyc3QgZnVuY3Rpb24hXCJcbiJ9 -->
+<pre><code>[1] &quot;My first function!&quot;</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>What if we need to reference a date prior to 1970-01-01? Create a
-variable d2 containing as.Date(“1969-01-01”).</p>
+<p>Congratulations on writing your first function. By writing functions,
+you can gain serious insight into how R works. As John Chambers, the
+creator of R once said:</p>
+<p>To understand computations in R, two slogans are helpful:</p>
+<ol style="list-style-type: decimal">
+<li>Everything that exists is an object.</li>
+<li>Everything that happens is a function call.</li>
+</ol>
+<p>If you want to see the source code for any function, just type the
+function name without any arguments or parentheses. Let’s try this out
+with the function you just created. Type: boring_function to view its
+source code.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZDIgPC0gYXMuRGF0ZShcIjE5NjktMDEtMDFcIilcbmBgYCJ9 -->
-<pre class="r"><code>d2 &lt;- as.Date(&quot;1969-01-01&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYm9yaW5nX2Z1bmN0aW9uXG5gYGAifQ== -->
+<pre class="r"><code>boring_function</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Now use unclass() again to see what d2 looks like internally.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudW5jbGFzcyhkMilcbmBgYCJ9 -->
-<pre class="r"><code>unclass(d2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIC0zNjVcbiJ9 -->
-<pre><code>[1] -365</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiZnVuY3Rpb24oeCkge1xuICAgIHhcbn1cbiJ9 -->
+<pre><code>function(x) {
+    x
+}</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>As you may have anticipated, you get a negative number. In this case,
-it’s -365, since 1969-01-01 is exactly one calendar year (i.e. 365 days)
-BEFORE 1970-01-01.</p>
-<p>Now, let’s take a look at how R stores times. You can access the
-current date and time using the Sys.time() function with no arguments.
-Do this and store the result in a variable called t1.</p>
+<p>Time to make a more useful function! We’re going to replicate the
+functionality of the mean() function by creating a function called:
+my_mean(). Remember that to calculate the average of all of the numbers
+in a vector you find the sum of all the numbers in the vector, and then
+divide that sum by the number of numbers in the vector.</p>
+<p>You’re free to implement the function my_mean however you want, as
+long as it returns the average of all of the numbers in
+<code>my_vector</code>.</p>
+<p>Hint #1: sum() returns the sum of a vector. Ex: sum(c(1, 2, 3))
+evaluates to 6</p>
+<p>Hint #2: length() returns the size of a vector. Ex: length(c(1, 2,
+3)) evaluates to 3</p>
+<p>Hint #3: The mean of all the numbers in a vector is equal to the sum
+of all of the numbers in the vector divided by the size of the
+vector.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDEgPC0gU3lzLnRpbWUoKVxuYGBgIn0= -->
-<pre class="r"><code>t1 &lt;- Sys.time()</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXlfbWVhbiA8LSBmdW5jdGlvbihteV92ZWN0b3IpIHtcbiAgICAjIFdyaXRlIHlvdXIgY29kZSBoZXJlIVxuICAgICMgUmVtZW1iZXI6IHRoZSBsYXN0IGV4cHJlc3Npb24gZXZhbHVhdGVkIHdpbGwgYmUgcmV0dXJuZWQhIFxuICAgIHN1bShteV92ZWN0b3IpIC8gbGVuZ3RoKG15X3ZlY3Rvcilcbn1cbmBgYCJ9 -->
+<pre class="r"><code>my_mean &lt;- function(my_vector) {
+    # Write your code here!
+    # Remember: the last expression evaluated will be returned! 
+    sum(my_vector) / length(my_vector)
+}</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>View the contents of t1.</p>
+<p>Now test out your my_mean() function by finding the mean of the
+vector c(4, 5, 10).</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDFcbmBgYCJ9 -->
-<pre class="r"><code>t1</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubXlfbWVhbihjKDQsIDUsIDEwKSlcbmBgYCJ9 -->
+<pre class="r"><code>my_mean(c(4, 5, 10))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiMjAyMy0xMC0xOCAxNToyNjozNiBDU1RcIlxuIn0= -->
-<pre><code>[1] &quot;2023-10-18 15:26:36 CST&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDYuMzMzMzMzXG4ifQ== -->
+<pre><code>[1] 6.333333</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>And check the class() of t1.</p>
+<p>Next, let’s try writing a function with default arguments. You can
+set default values for a function’s arguments, and this can be useful if
+you think someone who uses your function will set a certain argument to
+the same value most of the time.</p>
+<p>Let’s see an example of a function called increment(). Most of the
+time we want to use this function to increase the value of a number by
+one. This function will take two arguments: “number” and “by” where
+“number” is the digit we want to increment and “by” is the amount we
+want to increment “number” by. We’ve written the function below.</p>
+<pre class="r"><code>increment &lt;- function(number, by = 1){
+    number + by
+}</code></pre>
+<p>If you take a look in between the parentheses you can see that we’ve
+set “by” equal to 1. This means that the “by” argument will have the
+default value of 1.</p>
+<p>We can now use the increment function without providing a value for
+“by”: increment(5) will evaluate to 6.</p>
+<p>However if we want to provide a value for the “by” argument we still
+can! The expression: increment(5, 2) will evaluate to 7.</p>
+<p>You’re going to write a function called “remainder.” remainder() will
+take two arguments: “num” and “divisor” where “num” is divided by
+“divisor” and the remainder is returned. Imagine that you usually want
+to know the remainder when you divide by 2, so set the default value of
+“divisor” to 2. Please be sure that “num” is the first argument and
+“divisor” is the second argument.</p>
+<p>Hint #1: You can use the modulus operator %% to find the remainder.
+Ex: 7 %% 4 evaluates to 3.</p>
+<p>Remember to set appropriate default values!</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3ModDEpXG5gYGAifQ== -->
-<pre class="r"><code>class(t1)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVtYWluZGVyIDwtIGZ1bmN0aW9uKG51bSwgZGl2aXNvcj0yKSB7XG4gICAgIyBXcml0ZSB5b3VyIGNvZGUgaGVyZSFcbiAgICAjIFJlbWVtYmVyOiB0aGUgbGFzdCBleHByZXNzaW9uIGV2YWx1YXRlZCB3aWxsIGJlIHJldHVybmVkISBcbiAgICBudW0gJSUgZGl2aXNvclxufVxuYGBgIn0= -->
+<pre class="r"><code>remainder &lt;- function(num, divisor=2) {
+    # Write your code here!
+    # Remember: the last expression evaluated will be returned! 
+    num %% divisor
+}</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiUE9TSVhjdFwiIFwiUE9TSVh0XCIgXG4ifQ== -->
-<pre><code>[1] &quot;POSIXct&quot; &quot;POSIXt&quot; </code></pre>
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Let’s do some testing of the remainder function. Run remainder(5) and
+see what happens.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVtYWluZGVyKDUpXG5gYGAifQ== -->
+<pre class="r"><code>remainder(5)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDFcbiJ9 -->
+<pre><code>[1] 1</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>As mentioned earlier, POSIXct is just one of two ways that R
-represents time information. (You can ignore the second value above,
-POSIXt, which just functions as a common language between POSIXct and
-POSIXlt.) Use unclass() to see what t1 looks like internally – the
-(large) number of seconds since the beginning of 1970.</p>
+<p>Let’s take a moment to examine what just happened. You provided one
+argument to the function, and R matched that argument to ‘num’ since
+‘num’ is the first argument. The default value for ‘divisor’ is 2, so
+the function used the default value you provided.</p>
+<p>Now let’s test the remainder function by providing two arguments.
+Type: remainder(11, 5) and let’s see what happens.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudW5jbGFzcyh0MSlcbmBgYCJ9 -->
-<pre class="r"><code>unclass(t1)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVtYWluZGVyKDExLCA1KVxuYGBgIn0= -->
+<pre class="r"><code>remainder(11, 5)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDE2OTc2NjQzOTZcbiJ9 -->
-<pre><code>[1] 1697664396</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDFcbiJ9 -->
+<pre><code>[1] 1</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>By default, Sys.time() returns an object of class POSIXct, but we can
-coerce the result to POSIXlt with as.POSIXlt(Sys.time()). Give it a try
-and store the result in t2.</p>
+<p>Once again, the arguments have been matched appropriately.</p>
+<p>You can also explicitly specify arguments in a function. When you
+explicitly designate argument values by name, the ordering of the
+arguments becomes unimportant. You can try this out by typing:
+remainder(divisor = 11, num = 5).</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDIgPC0gYXMuUE9TSVhsdChTeXMudGltZSgpKVxuYGBgIn0= -->
-<pre class="r"><code>t2 &lt;- as.POSIXlt(Sys.time())</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVtYWluZGVyKGRpdmlzb3I9MTEsIG51bT01KVxuYGBgIn0= -->
+<pre class="r"><code>remainder(divisor=11, num=5)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Check the class of t2.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3ModDIpXG5gYGAifQ== -->
-<pre class="r"><code>class(t2)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiUE9TSVhsdFwiIFwiUE9TSVh0XCIgXG4ifQ== -->
-<pre><code>[1] &quot;POSIXlt&quot; &quot;POSIXt&quot; </code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDVcbiJ9 -->
+<pre><code>[1] 5</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Now view its contents.</p>
+<p>As you can see, there is a significant difference between
+remainder(11, 5) and remainder(divisor = 11, num = 5)!</p>
+<p>R can also partially match arguments. Try typing remainder(4, div =
+2) to see this feature in action.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDJcbmBgYCJ9 -->
-<pre class="r"><code>t2</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucmVtYWluZGVyKDQsIGRpdj0yKVxuYGBgIn0= -->
+<pre class="r"><code>remainder(4, div=2)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiMjAyMy0xMC0xOCAxNToyNjozNiBDU1RcIlxuIn0= -->
-<pre><code>[1] &quot;2023-10-18 15:26:36 CST&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDBcbiJ9 -->
+<pre><code>[1] 0</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>The printed format of t2 is identical to that of t1. Now unclass() t2
-to see how it is different internally.</p>
+<p>A word of warning: in general you want to make your code as easy to
+understand as possible. Switching around the orders of arguments by
+specifying their names or only using partial argument names can be
+confusing, so use these features with caution!</p>
+<p>With all of this talk about arguments, you may be wondering if there
+is a way you can see a function’s arguments (besides looking at the
+documentation). Thankfully, you can use the args() function! Type:
+args(remainder) to examine the arguments for the remainder function.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudW5jbGFzcyh0MilcbmBgYCJ9 -->
-<pre class="r"><code>unclass(t2)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYXJncyhyZW1haW5kZXIpXG5gYGAifQ== -->
+<pre class="r"><code>args(remainder)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiJHNlY1xuWzFdIDM2LjUxNDA1XG5cbiRtaW5cblsxXSAyNlxuXG4kaG91clxuWzFdIDE1XG5cbiRtZGF5XG5bMV0gMThcblxuJG1vblxuWzFdIDlcblxuJHllYXJcblsxXSAxMjNcblxuJHdkYXlcblsxXSAzXG5cbiR5ZGF5XG5bMV0gMjkwXG5cbiRpc2RzdFxuWzFdIDBcblxuJHpvbmVcblsxXSBcIkNTVFwiXG5cbiRnbXRvZmZcblsxXSAtMjE2MDBcblxuYXR0cigsXCJ0em9uZVwiKVxuWzFdIFwiXCIgICAgXCJDU1RcIiBcIkNEVFwiXG5hdHRyKCxcImJhbGFuY2VkXCIpXG5bMV0gVFJVRVxuIn0= -->
-<pre><code>$sec
-[1] 36.51405
+<!-- rnb-output-begin eyJkYXRhIjoiZnVuY3Rpb24gKG51bSwgZGl2aXNvciA9IDIpIFxuTlVMTFxuIn0= -->
+<pre><code>function (num, divisor = 2) 
+NULL</code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>You may not realize it but we just tricked you into doing something
+pretty interesting! args() is a function, remainder() is a function, yet
+remainder was an argument for args(). Yes it’s true: you can pass
+functions as arguments! This is a very powerful concept. Let’s write a
+script to see how it works.</p>
+<p>You can pass functions as arguments to other functions just like you
+can pass data to functions. Let’s say you define the following
+functions:</p>
+<pre class="r"><code>add_two_numbers &lt;- function(num1, num2){
+   num1 + num2
+}
 
-$min
-[1] 26
+multiply_two_numbers &lt;- function(num1, num2){
+    num1 * num2
+}
 
-$hour
-[1] 15
-
-$mday
-[1] 18
-
-$mon
-[1] 9
-
-$year
-[1] 123
-
-$wday
-[1] 3
-
-$yday
-[1] 290
-
-$isdst
-[1] 0
-
-$zone
-[1] &quot;CST&quot;
-
-$gmtoff
-[1] -21600
-
-attr(,&quot;tzone&quot;)
-[1] &quot;&quot;    &quot;CST&quot; &quot;CDT&quot;
-attr(,&quot;balanced&quot;)
-[1] TRUE</code></pre>
+some_function &lt;- function(func){
+   func(2, 4)
+}</code></pre>
+<p>As you can see we use the argument name “func” like a function inside
+of “some_function().” By passing functions as arguments
+some_function(add_two_numbers) will evaluate to 6, while
+some_function(multiply_two_numbers) will evaluate to 8.</p>
+<p>Finish the function definition below so that if a function is passed
+into the “func” argument and some data (like a vector) is passed into
+the dat argument the evaluate() function will return the result of dat
+being passed as an argument to func.</p>
+<p>Hints: This exercise is a little tricky so I’ll provide a few example
+of how evaluate() should act: 1. evaluate(sum, c(2, 4, 6)) should
+evaluate to 12 2. evaluate(median, c(7, 40, 9)) should evaluate to 9 3.
+evaluate(floor, 11.1) should evaluate to 11</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXZhbHVhdGUgPC0gZnVuY3Rpb24oZnVuYywgZGF0KXtcbiAgICAjIFdyaXRlIHlvdXIgY29kZSBoZXJlIVxuICAgICMgUmVtZW1iZXI6IHRoZSBsYXN0IGV4cHJlc3Npb24gZXZhbHVhdGVkIHdpbGwgYmUgcmV0dXJuZWQhIFxuICAgIGZ1bmMoZGF0KVxufVxuYGBgIn0= -->
+<pre class="r"><code>evaluate &lt;- function(func, dat){
+    # Write your code here!
+    # Remember: the last expression evaluated will be returned! 
+    func(dat)
+}</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Let’s take your new evaluate() function for a spin! Use evaluate to
+find the standard deviation of the vector c(1.4, 3.6, 7.9, 8.8).</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXZhbHVhdGUoc2QsIGMoMS40LCAzLjYsIDcuOSwgOC44KSlcbmBgYCJ9 -->
+<pre class="r"><code>evaluate(sd, c(1.4, 3.6, 7.9, 8.8))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMuNTE0MTM4XG4ifQ== -->
+<pre><code>[1] 3.514138</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>t2, like all POSIXlt objects, is just a list of values that make up
-the date and time. Use str(unclass(t2)) to have a more compact view.</p>
+<p>The idea of passing functions as arguments to other functions is an
+important and fundamental concept in programming.</p>
+<p>You may be surprised to learn that you can pass a function as an
+argument without first defining the passed function. Functions that are
+not named are appropriately known as anonymous functions.</p>
+<p>Let’s use the evaluate function to explore how anonymous functions
+work. For the first argument of the evaluate function we’re going to
+write a tiny function that fits on one line. In the second argument
+we’ll pass some data to the tiny anonymous function in the first
+argument.</p>
+<p>Type the following command and then we’ll discuss how it works:
+evaluate(function(x){x+1}, 6)</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RyKHVuY2xhc3ModDIpKVxuYGBgIn0= -->
-<pre class="r"><code>str(unclass(t2))</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXZhbHVhdGUoZnVuY3Rpb24oeCl7eCsxfSwgNilcbmBgYCJ9 -->
+<pre class="r"><code>evaluate(function(x){x+1}, 6)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiTGlzdCBvZiAxMVxuICQgc2VjICAgOiBudW0gMzYuNVxuICQgbWluICAgOiBpbnQgMjZcbiAkIGhvdXIgIDogaW50IDE1XG4gJCBtZGF5ICA6IGludCAxOFxuICQgbW9uICAgOiBpbnQgOVxuICQgeWVhciAgOiBpbnQgMTIzXG4gJCB3ZGF5ICA6IGludCAzXG4gJCB5ZGF5ICA6IGludCAyOTBcbiAkIGlzZHN0IDogaW50IDBcbiAkIHpvbmUgIDogY2hyIFwiQ1NUXCJcbiAkIGdtdG9mZjogaW50IC0yMTYwMFxuIC0gYXR0cigqLCBcInR6b25lXCIpPSBjaHIgWzE6M10gXCJcIiBcIkNTVFwiIFwiQ0RUXCJcbiAtIGF0dHIoKiwgXCJiYWxhbmNlZFwiKT0gbG9naSBUUlVFXG4ifQ== -->
-<pre><code>List of 11
- $ sec   : num 36.5
- $ min   : int 26
- $ hour  : int 15
- $ mday  : int 18
- $ mon   : int 9
- $ year  : int 123
- $ wday  : int 3
- $ yday  : int 290
- $ isdst : int 0
- $ zone  : chr &quot;CST&quot;
- $ gmtoff: int -21600
- - attr(*, &quot;tzone&quot;)= chr [1:3] &quot;&quot; &quot;CST&quot; &quot;CDT&quot;
- - attr(*, &quot;balanced&quot;)= logi TRUE</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDdcbiJ9 -->
+<pre><code>[1] 7</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>If, for example, we want just the minutes from the time stored in t2,
-we can access them with t2$min. Give it a try.</p>
+<p>The first argument is a tiny anonymous function that takes one
+argument <code>x</code> and returns <code>x+1</code>. We passed the
+number 6 into this function so the entire expression evaluates to 7.</p>
+<p>Try using evaluate() along with an anonymous function to return the
+first element of the vector c(8, 4, 0). Your anonymous function should
+only take one argument which should be a variable <code>x</code>.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDIkbWluXG5gYGAifQ== -->
-<pre class="r"><code>t2$min</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXZhbHVhdGUoZnVuY3Rpb24oeCl7eFsxXX0sIGMoOCwgNCwgMCkpXG5gYGAifQ== -->
+<pre class="r"><code>evaluate(function(x){x[1]}, c(8, 4, 0))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDI2XG4ifQ== -->
-<pre><code>[1] 26</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDhcbiJ9 -->
+<pre><code>[1] 8</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Now that we have explored all three types of date and time objects,
-let’s look at a few functions that extract useful information from any
-of these objects – weekdays(), months(), and quarters().</p>
-<p>The weekdays() function will return the day of week from any date or
-time object. Try it out on d1, which is the Date object that contains
-today’s date.</p>
+<p>Now try using evaluate() along with an anonymous function to return
+the last element of the vector c(8, 4, 0). Your anonymous function
+should only take one argument which should be a variable
+<code>x</code>.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud2Vla2RheXMoZDEpXG5gYGAifQ== -->
-<pre class="r"><code>weekdays(d1)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZXZhbHVhdGUoZnVuY3Rpb24oeCl7eFtsZW5ndGgoeCldfSwgYyg4LCA0LCAwKSlcbmBgYCJ9 -->
+<pre class="r"><code>evaluate(function(x){x[length(x)]}, c(8, 4, 0))</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwibWnDqXJjb2xlc1wiXG4ifQ== -->
-<pre><code>[1] &quot;miércoles&quot;</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDBcbiJ9 -->
+<pre><code>[1] 0</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>The months() function also works on any date or time object. Try it
-on t1, which is the POSIXct object that contains the current time (well,
-it was the current time when you created it).</p>
+<p>For the rest of the course we’re going to use the paste() function
+frequently. Type ?paste so we can take a look at the documentation for
+the paste function.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubW9udGhzKHQxKVxuYGBgIn0= -->
-<pre class="r"><code>months(t1)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuP3Bhc3RlXG5gYGAifQ== -->
+<pre class="r"><code>?paste</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwib2N0dWJyZVwiXG4ifQ== -->
-<pre><code>[1] &quot;octubre&quot;</code></pre>
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>As you can see the first argument of paste() is <code>...</code>
+which is referred to as an ellipsis or simply dot-dot-dot. The ellipsis
+allows an indefinite number of arguments to be passed into a function.
+In the case of paste() any number of strings can be passed as arguments
+and paste() will return all of the strings combined into one string.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGFzdGUoXCJQcm9ncmFtbWluZ1wiLCBcImlzXCIsIFwiZnVuIVwiKVxuYGBgIn0= -->
+<pre class="r"><code>paste(&quot;Programming&quot;, &quot;is&quot;, &quot;fun!&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiUHJvZ3JhbW1pbmcgaXMgZnVuIVwiXG4ifQ== -->
+<pre><code>[1] &quot;Programming is fun!&quot;</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>The quarters() function returns the quarter of the year (Q1-Q4) from
-any date or time object. Try it on t2, which is the POSIXlt object that
-contains the time at which you created it.</p>
+<p>Time to write our own modified version of paste().</p>
+<p>The ellipses can be used to pass on arguments to other functions that
+are used within the function you’re writing. Usually a function that has
+the ellipses as an argument has the ellipses as the last argument. The
+usage of such a function would look like:</p>
+<pre class="r"><code>ellipses_func(arg1, arg2 = TRUE, ...)</code></pre>
+<p>In the above example arg1 has no default value, so a value must be
+provided for arg1. arg2 has a default value, and other arguments can
+come after arg2 depending on how they’re defined in the ellipses_func()
+documentation. Interestingly the usage for the paste function is as
+follows:</p>
+<pre class="r"><code>paste (..., sep = &quot; &quot;, collapse = NULL)</code></pre>
+<p>Notice that the ellipses is the first argument, and all other
+arguments after the ellipses have default values. This is a strict rule
+in R programming: all arguments after an ellipses must have default
+values. Take a look at the simon_says function below:</p>
+<pre class="r"><code>simon_says &lt;- function(...){
+    paste(&quot;Simon says:&quot;, ...)
+}</code></pre>
+<p>The simon_says function works just like the paste function, except
+the begining of every string is prepended by the string “Simon
+says:”</p>
+<p>Telegrams used to be peppered with the words START and STOP in order
+to demarcate the beginning and end of sentences. Write a function below
+called telegram that formats sentences for telegrams. For example the
+expression <code>telegram(&quot;Good&quot;, &quot;morning&quot;)</code> should evaluate
+to:</p>
+<p>“START Good morning STOP”</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucXVhcnRlcnModDIpXG5gYGAifQ== -->
-<pre class="r"><code>quarters(t2)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGVsZWdyYW0gPC0gZnVuY3Rpb24oLi4uKXtcbiAgIHBhc3RlKFwiU1RBUlRcIiwgLi4uLCBcIlNUT1BcIilcbn1cbmBgYCJ9 -->
+<pre class="r"><code>telegram &lt;- function(...){
+   paste(&quot;START&quot;, ..., &quot;STOP&quot;)
+}</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiUTRcIlxuIn0= -->
-<pre><code>[1] &quot;Q4&quot;</code></pre>
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>Now let’s test out your telegram function. Use your new telegram
+function passing in whatever arguments you wish!</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudGVsZWdyYW0oXCJIZWxsb1wiKVxuYGBgIn0= -->
+<pre class="r"><code>telegram(&quot;Hello&quot;)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiU1RBUlQgSGVsbG8gU1RPUFwiXG4ifQ== -->
+<pre><code>[1] &quot;START Hello STOP&quot;</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Often, the dates and times in a dataset will be in a format that R
-does not recognize. The strptime() function can be helpful in this
-situation.</p>
-<p>strptime() converts character vectors to POSIXlt. In that sense, it
-is similar to as.POSIXlt(), except that the input doesn’t have to be in
-a particular format (YYYY-MM-DD).</p>
-<p>To see how it works, store the following character string in a
-variable called t3: “October 17, 1986 08:24” (with the quotes).</p>
+<p>Let’s explore how to “unpack” arguments from an ellipses when you use
+the ellipses as an argument in a function. Below we have an example
+function that is supposed to add two explicitly named arguments called
+alpha and beta.</p>
+<pre class="r"><code>add_alpha_and_beta &lt;- function(...){
+    # First we must capture the ellipsis inside of a list
+    # and then assign the list to a variable. Let&#39;s name this
+    # variable `args`.
+    
+    args &lt;- list(...)
+    
+    # We&#39;re now going to assume that there are two named arguments within args
+    # with the names `alpha` and `beta.` We can extract named arguments from
+    # the args list by using the name of the argument and double brackets. The
+    # `args` variable is just a regular list after all!
+    
+    alpha &lt;- args[[&quot;alpha&quot;]]
+    beta  &lt;- args[[&quot;beta&quot;]]
+    
+    # Then we return the sum of alpha and beta.
+    
+    alpha + beta 
+}</code></pre>
+<p>Have you ever played Mad Libs before? The function below will
+construct a sentence from parts of speech that you provide as arguments.
+We’ll write most of the function, but you’ll need to unpack the
+appropriate arguments from the ellipses.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDMgPC0gXCJPY3RvYmVyIDE3LCAxOTg2IDA4OjI0XCJcbmBgYCJ9 -->
-<pre class="r"><code>t3 &lt;- &quot;October 17, 1986 08:24&quot;</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWFkX2xpYnMgPC0gZnVuY3Rpb24oLi4uKXtcbiAgICAjIERvIHlvdXIgYXJndW1lbnQgdW5wYWNraW5nIGhlcmUhXG4gICAgYXJncyA8LSBsaXN0KC4uLilcbiAgICBwbGFjZSA8LSBhcmdzW1tcInBsYWNlXCJdXVxuICAgIGFkamVjdGl2ZSA8LSBhcmdzW1tcImFkamVjdGl2ZVwiXV1cbiAgICBub3VuIDwtIGFyZ3NbW1wibm91blwiXV1cblxuICAgICMgRG9uJ3QgbW9kaWZ5IGFueSBjb2RlIGJlbG93IHRoaXMgY29tbWVudC5cbiAgICAjIE5vdGljZSB0aGUgdmFyaWFibGVzIHlvdSdsbCBuZWVkIHRvIGNyZWF0ZSBpbiBvcmRlciBmb3IgdGhlIGNvZGUgYmVsb3cgdG9cbiAgICAjIGJlIGZ1bmN0aW9uYWwhXG4gICAgcGFzdGUoXCJOZXdzIGZyb21cIiwgcGxhY2UsIFwidG9kYXkgd2hlcmVcIiwgYWRqZWN0aXZlLCBcInN0dWRlbnRzIHRvb2sgdG8gdGhlIHN0cmVldHMgaW4gcHJvdGVzdCBvZiB0aGUgbmV3XCIsIG5vdW4sIFwiYmVpbmcgaW5zdGFsbGVkIG9uIGNhbXB1cy5cIilcbn1cbmBgYCJ9 -->
+<pre class="r"><code>mad_libs &lt;- function(...){
+    # Do your argument unpacking here!
+    args &lt;- list(...)
+    place &lt;- args[[&quot;place&quot;]]
+    adjective &lt;- args[[&quot;adjective&quot;]]
+    noun &lt;- args[[&quot;noun&quot;]]
+
+    # Don&#39;t modify any code below this comment.
+    # Notice the variables you&#39;ll need to create in order for the code below to
+    # be functional!
+    paste(&quot;News from&quot;, place, &quot;today where&quot;, adjective, &quot;students took to the streets in protest of the new&quot;, noun, &quot;being installed on campus.&quot;)
+}</code></pre>
 <!-- rnb-source-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Now, use strptime(t3, “%B %d, %Y %H:%M”) to help R convert our
-date/time object to a format that it understands. Assign the result to a
-new variable called t4. (You should pull up the documentation for
-strptime() if you’d like to know more about how it works.)</p>
+<p>Time to use your mad_libs function. Make sure to name the place,
+adjective, and noun arguments in order for your function to work.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDQgPC0gc3RycHRpbWUodDMsIFwiJUIgJWQsICVZICVIOiVNXCIpXG5gYGAifQ== -->
-<pre class="r"><code>t4 &lt;- strptime(t3, &quot;%B %d, %Y %H:%M&quot;)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxubWFkX2xpYnMoYWRqZWN0aXZlPVwic21hcnRcIiwgcGxhY2U9XCJNZXhpY29cIiwgbm91bj1cImludGVybmV0XCIpXG5gYGAifQ== -->
+<pre class="r"><code>mad_libs(adjective=&quot;smart&quot;, place=&quot;Mexico&quot;, noun=&quot;internet&quot;)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Print the contents of t4.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxudDRcbmBgYCJ9 -->
-<pre class="r"><code>t4</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIE5BXG4ifQ== -->
-<pre><code>[1] NA</code></pre>
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiTmV3cyBmcm9tIE1leGljbyB0b2RheSB3aGVyZSBzbWFydCBzdHVkZW50cyB0b29rIHRvIHRoZSBzdHJlZXRzIGluIHByb3Rlc3Qgb2YgdGhlIG5ldyBpbnRlcm5ldCBiZWluZyBpbnN0YWxsZWQgb24gY2FtcHVzLlwiXG4ifQ== -->
+<pre><code>[1] &quot;News from Mexico today where smart students took to the streets in protest of the new internet being installed on campus.&quot;</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>That’s the format we’ve come to expect. Now, let’s check its
-class().</p>
+<p>We’re coming to the end of this lesson, but there’s still one more
+idea you should be made aware of.</p>
+<p>You’re familiar with adding, subtracting, multiplying, and dividing
+numbers in R. To do this you use the +, -, *, and / symbols. These
+symbols are called binary operators because they take two inputs, an
+input from the left and an input from the right.</p>
+<p>In R you can define your own binary operators. In the next script
+we’ll show you how.</p>
+<p>The syntax for creating new binary operators in R is unlike anything
+else in R, but it allows you to define a new syntax for your function. I
+would only recommend making your own binary operator if you plan on
+using it often!</p>
+<p>User-defined binary operators have the following syntax:</p>
+<pre><code>%[whatever]% </code></pre>
+<p>where [whatever] represents any valid variable name.</p>
+<p>Let’s say I wanted to define a binary operator that multiplied two
+numbers and then added one to the product. An implementation of that
+operator is below:</p>
+<pre class="r"><code>&quot;%mult_add_one%&quot; &lt;- function(left, right){ Notice the quotation marks!
+    left * right + 1
+}</code></pre>
+<p>I could then use this binary operator like
+<code>4 %mult_add_one% 5</code> which would evaluate to 21.</p>
+<p>Write your own binary operator below from absolute scratch! Your
+binary operator must be called %p% so that the expression:</p>
+<pre><code>&quot;Good&quot; %p% &quot;job!&quot;</code></pre>
+<p>will evaluate to: “Good job!”</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY2xhc3ModDQpXG5gYGAifQ== -->
-<pre class="r"><code>class(t4)</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuXCIlcCVcIiA8LSBmdW5jdGlvbihsZWZ0LCByaWdodCl7ICMgUmVtZW1iZXIgdG8gYWRkIGFyZ3VtZW50cyFcbiAgICBwYXN0ZShsZWZ0LCByaWdodClcbn1cbmBgYCJ9 -->
+<pre class="r"><code>&quot;%p%&quot; &lt;- function(left, right){ # Remember to add arguments!
+    paste(left, right)
+}</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiUE9TSVhsdFwiIFwiUE9TSVh0XCIgXG4ifQ== -->
-<pre><code>[1] &quot;POSIXlt&quot; &quot;POSIXt&quot; </code></pre>
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>You made your own binary operator! Let’s test it out. Paste together
+the strings: ‘I’, ‘love’, ‘R!’ using your new binary operator.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuJ0knICVwJSAnbG92ZScgJXAlICdSISdcbmBgYCJ9 -->
+<pre class="r"><code>&#39;I&#39; %p% &#39;love&#39; %p% &#39;R!&#39;</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFwiSSBsb3ZlIFIhXCJcbiJ9 -->
+<pre><code>[1] &quot;I love R!&quot;</code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Finally, there are a number of operations that you can perform on
-dates and times, including arithmetic operations (+ and -) and
-comparisons (&lt;, ==, etc.)</p>
-<p>The variable t1 contains the time at which you created it (recall you
-used Sys.time()). Confirm that some time has passed since you created t1
-by using the ‘greater than’ operator to compare it to the current time:
-Sys.time() &gt; t1</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuU3lzLnRpbWUoKSA+IHQxXG5gYGAifQ== -->
-<pre class="r"><code>Sys.time() &gt; t1</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 -->
-<pre><code>[1] TRUE</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>So we know that some time has passed, but how much? Try subtracting
-t1 from the current time using Sys.time() - t1. Don’t forget the
-parentheses at the end of Sys.time(), since it is a function.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuU3lzLnRpbWUoKSAtIHQxXG5gYGAifQ== -->
-<pre class="r"><code>Sys.time() - t1</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGltZSBkaWZmZXJlbmNlIG9mIDAuNzc4MjUzMSBzZWNzXG4ifQ== -->
-<pre><code>Time difference of 0.7782531 secs</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The same line of thinking applies to addition and the other
-comparison operators. If you want more control over the units when
-finding the above difference in times, you can use difftime(), which
-allows you to specify a ‘units’ parameter.</p>
-<p>Use difftime(Sys.time(), t1, units = ‘days’) to find the amount of
-time in DAYS that has passed since you created t1.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGlmZnRpbWUoU3lzLnRpbWUoKSwgdDEsIHVuaXRzPSdkYXlzJylcbmBgYCJ9 -->
-<pre class="r"><code>difftime(Sys.time(), t1, units=&#39;days&#39;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiVGltZSBkaWZmZXJlbmNlIG9mIDkuMzU3ODI0ZS0wNiBkYXlzXG4ifQ== -->
-<pre><code>Time difference of 9.357824e-06 days</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>In this lesson, you learned how to work with dates and times in R.
-While it is important to understand the basics, if you find yourself
-working with dates and times often, you may want to check out the
-lubridate package by Hadley Wickham.</p>
+<p>We’ve come to the end of our lesson! Go out there and write some
+great functions!</p>
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogInN3aXJsIExlc3NvbiAzOiBEYXRlcyBhbmQgVGltZXMiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQpSIGhhcyBhIHNwZWNpYWwgd2F5IG9mIHJlcHJlc2VudGluZyBkYXRlcyBhbmQgdGltZXMsIHdoaWNoIGNhbiBiZSBoZWxwZnVsIGlmIHlvdSdyZSB3b3JraW5nIHdpdGggZGF0YSB0aGF0IHNob3cgaG93IHNvbWV0aGluZyBjaGFuZ2VzIG92ZXIgdGltZSAoaS5lLiB0aW1lLXNlcmllcyBkYXRhKSBvciBpZiB5b3VyIGRhdGEgY29udGFpbiBzb21lIG90aGVyIHRlbXBvcmFsIGluZm9ybWF0aW9uLCBsaWtlIGRhdGVzIG9mIGJpcnRoLg0KDQpEYXRlcyBhcmUgcmVwcmVzZW50ZWQgYnkgdGhlICdEYXRlJyBjbGFzcyBhbmQgdGltZXMgYXJlIHJlcHJlc2VudGVkIGJ5IHRoZSAnUE9TSVhjdCcgYW5kICdQT1NJWGx0JyBjbGFzc2VzLiBJbnRlcm5hbGx5LCBkYXRlcyBhcmUgc3RvcmVkIGFzIHRoZSBudW1iZXIgb2YgZGF5cyBzaW5jZSAxOTcwLTAxLTAxIGFuZCB0aW1lcyBhcmUgc3RvcmVkIGFzIGVpdGhlciB0aGUgbnVtYmVyIG9mIHNlY29uZHMgc2luY2UgMTk3MC0wMS0wMSAoZm9yICdQT1NJWGN0Jykgb3IgYSBsaXN0IG9mIHNlY29uZHMsIG1pbnV0ZXMsIGhvdXJzLCBldGMuIChmb3IgJ1BPU0lYbHQnKQ0KDQpMZXQncyBzdGFydCBieSB1c2luZyBkMSA8LSBTeXMuRGF0ZSgpIHRvIGdldCB0aGUgY3VycmVudCBkYXRlIGFuZCBzdG9yZSBpdCBpbiB0aGUgdmFyaWFibGUgZDEuIChUaGF0J3MgdGhlIGxldHRlciAnZCcgYW5kIHRoZSBudW1iZXIgMS4pDQoNCmBgYHtyfQ0KZDEgPC0gU3lzLkRhdGUoKQ0KYGBgDQoNClVzZSB0aGUgY2xhc3MoKSBmdW5jdGlvbiB0byBjb25maXJtIGQxIGlzIGEgRGF0ZSBvYmplY3QuDQoNCmBgYHtyfQ0KY2xhc3MoZDEpDQpgYGANCg0KV2UgY2FuIHVzZSB0aGUgdW5jbGFzcygpIGZ1bmN0aW9uIHRvIHNlZSB3aGF0IGQxIGxvb2tzIGxpa2UgaW50ZXJuYWxseS4gVHJ5IGl0IG91dC4NCg0KYGBge3J9DQp1bmNsYXNzKGQxKQ0KYGBgDQoNClRoYXQncyB0aGUgZXhhY3QgbnVtYmVyIG9mIGRheXMgc2luY2UgMTk3MC0wMS0wMSENCg0KSG93ZXZlciwgaWYgeW91IHByaW50IGQxIHRvIHRoZSBjb25zb2xlLCB5b3UnbGwgZ2V0IHRvZGF5J3MgZGF0ZSAtLSBZRUFSLU1PTlRILURBWS4gR2l2ZSBpdCBhIHRyeS4NCg0KYGBge3J9DQpkMQ0KYGBgDQoNCldoYXQgaWYgd2UgbmVlZCB0byByZWZlcmVuY2UgYSBkYXRlIHByaW9yIHRvIDE5NzAtMDEtMDE/IENyZWF0ZSBhIHZhcmlhYmxlIGQyIGNvbnRhaW5pbmcgYXMuRGF0ZSgiMTk2OS0wMS0wMSIpLg0KDQpgYGB7cn0NCmQyIDwtIGFzLkRhdGUoIjE5NjktMDEtMDEiKQ0KYGBgDQoNCk5vdyB1c2UgdW5jbGFzcygpIGFnYWluIHRvIHNlZSB3aGF0IGQyIGxvb2tzIGxpa2UgaW50ZXJuYWxseS4NCg0KYGBge3J9DQp1bmNsYXNzKGQyKQ0KYGBgDQoNCkFzIHlvdSBtYXkgaGF2ZSBhbnRpY2lwYXRlZCwgeW91IGdldCBhIG5lZ2F0aXZlIG51bWJlci4gSW4gdGhpcyBjYXNlLCBpdCdzIC0zNjUsIHNpbmNlIDE5NjktMDEtMDEgaXMgZXhhY3RseSBvbmUgY2FsZW5kYXIgeWVhciAoaS5lLiAzNjUgZGF5cykgQkVGT1JFIDE5NzAtMDEtMDEuDQoNCk5vdywgbGV0J3MgdGFrZSBhIGxvb2sgYXQgaG93IFIgc3RvcmVzIHRpbWVzLiBZb3UgY2FuIGFjY2VzcyB0aGUgY3VycmVudCBkYXRlIGFuZCB0aW1lIHVzaW5nIHRoZSBTeXMudGltZSgpIGZ1bmN0aW9uIHdpdGggbm8gYXJndW1lbnRzLiBEbyB0aGlzIGFuZCBzdG9yZSB0aGUgcmVzdWx0IGluIGEgdmFyaWFibGUgY2FsbGVkIHQxLg0KDQpgYGB7cn0NCnQxIDwtIFN5cy50aW1lKCkNCmBgYA0KDQpWaWV3IHRoZSBjb250ZW50cyBvZiB0MS4NCg0KYGBge3J9DQp0MQ0KYGBgDQoNCkFuZCBjaGVjayB0aGUgY2xhc3MoKSBvZiB0MS4NCg0KYGBge3J9DQpjbGFzcyh0MSkNCmBgYA0KDQpBcyBtZW50aW9uZWQgZWFybGllciwgUE9TSVhjdCBpcyBqdXN0IG9uZSBvZiB0d28gd2F5cyB0aGF0IFIgcmVwcmVzZW50cyB0aW1lIGluZm9ybWF0aW9uLiAoWW91IGNhbiBpZ25vcmUgdGhlIHNlY29uZCB2YWx1ZSBhYm92ZSwgUE9TSVh0LCB3aGljaCBqdXN0IGZ1bmN0aW9ucyBhcyBhIGNvbW1vbiBsYW5ndWFnZSBiZXR3ZWVuIFBPU0lYY3QgYW5kIFBPU0lYbHQuKSBVc2UgdW5jbGFzcygpIHRvIHNlZSB3aGF0IHQxIGxvb2tzIGxpa2UgaW50ZXJuYWxseSAtLSB0aGUgKGxhcmdlKSBudW1iZXIgb2Ygc2Vjb25kcyBzaW5jZSB0aGUgYmVnaW5uaW5nIG9mIDE5NzAuDQoNCmBgYHtyfQ0KdW5jbGFzcyh0MSkNCmBgYA0KDQpCeSBkZWZhdWx0LCBTeXMudGltZSgpIHJldHVybnMgYW4gb2JqZWN0IG9mIGNsYXNzIFBPU0lYY3QsIGJ1dCB3ZSBjYW4gY29lcmNlIHRoZSByZXN1bHQgdG8gUE9TSVhsdCB3aXRoIGFzLlBPU0lYbHQoU3lzLnRpbWUoKSkuIEdpdmUgaXQgYSB0cnkgYW5kIHN0b3JlIHRoZSByZXN1bHQgaW4gdDIuDQoNCmBgYHtyfQ0KdDIgPC0gYXMuUE9TSVhsdChTeXMudGltZSgpKQ0KYGBgDQoNCkNoZWNrIHRoZSBjbGFzcyBvZiB0Mi4NCg0KYGBge3J9DQpjbGFzcyh0MikNCmBgYA0KDQpOb3cgdmlldyBpdHMgY29udGVudHMuDQoNCmBgYHtyfQ0KdDINCmBgYA0KDQpUaGUgcHJpbnRlZCBmb3JtYXQgb2YgdDIgaXMgaWRlbnRpY2FsIHRvIHRoYXQgb2YgdDEuIE5vdyB1bmNsYXNzKCkgdDIgdG8gc2VlIGhvdyBpdCBpcyBkaWZmZXJlbnQgaW50ZXJuYWxseS4NCg0KYGBge3J9DQp1bmNsYXNzKHQyKQ0KYGBgDQoNCnQyLCBsaWtlIGFsbCBQT1NJWGx0IG9iamVjdHMsIGlzIGp1c3QgYSBsaXN0IG9mIHZhbHVlcyB0aGF0IG1ha2UgdXAgdGhlIGRhdGUgYW5kIHRpbWUuIFVzZSBzdHIodW5jbGFzcyh0MikpIHRvIGhhdmUgYSBtb3JlIGNvbXBhY3Qgdmlldy4NCg0KYGBge3J9DQpzdHIodW5jbGFzcyh0MikpDQpgYGANCg0KSWYsIGZvciBleGFtcGxlLCB3ZSB3YW50IGp1c3QgdGhlIG1pbnV0ZXMgZnJvbSB0aGUgdGltZSBzdG9yZWQgaW4gdDIsIHdlIGNhbiBhY2Nlc3MgdGhlbSB3aXRoIHQyJG1pbi4gR2l2ZSBpdCBhIHRyeS4NCg0KYGBge3J9DQp0MiRtaW4NCmBgYA0KDQpOb3cgdGhhdCB3ZSBoYXZlIGV4cGxvcmVkIGFsbCB0aHJlZSB0eXBlcyBvZiBkYXRlIGFuZCB0aW1lIG9iamVjdHMsIGxldCdzIGxvb2sgYXQgYSBmZXcgZnVuY3Rpb25zIHRoYXQgZXh0cmFjdCB1c2VmdWwgaW5mb3JtYXRpb24gZnJvbSBhbnkgb2YgdGhlc2Ugb2JqZWN0cyAtLSB3ZWVrZGF5cygpLCBtb250aHMoKSwgYW5kIHF1YXJ0ZXJzKCkuDQoNClRoZSB3ZWVrZGF5cygpIGZ1bmN0aW9uIHdpbGwgcmV0dXJuIHRoZSBkYXkgb2Ygd2VlayBmcm9tIGFueSBkYXRlIG9yIHRpbWUgb2JqZWN0LiBUcnkgaXQgb3V0IG9uIGQxLCB3aGljaCBpcyB0aGUgRGF0ZSBvYmplY3QgdGhhdCBjb250YWlucyB0b2RheSdzIGRhdGUuDQoNCmBgYHtyfQ0Kd2Vla2RheXMoZDEpDQpgYGANCg0KVGhlIG1vbnRocygpIGZ1bmN0aW9uIGFsc28gd29ya3Mgb24gYW55IGRhdGUgb3IgdGltZSBvYmplY3QuIFRyeSBpdCBvbiB0MSwgd2hpY2ggaXMgdGhlIFBPU0lYY3Qgb2JqZWN0IHRoYXQgY29udGFpbnMgdGhlIGN1cnJlbnQgdGltZSAod2VsbCwgaXQgd2FzIHRoZSBjdXJyZW50IHRpbWUgd2hlbiB5b3UgY3JlYXRlZCBpdCkuDQoNCmBgYHtyfQ0KbW9udGhzKHQxKQ0KYGBgDQoNClRoZSBxdWFydGVycygpIGZ1bmN0aW9uIHJldHVybnMgdGhlIHF1YXJ0ZXIgb2YgdGhlIHllYXIgKFExLVE0KSBmcm9tIGFueSBkYXRlIG9yIHRpbWUgb2JqZWN0LiBUcnkgaXQgb24gdDIsIHdoaWNoIGlzIHRoZSBQT1NJWGx0IG9iamVjdCB0aGF0IGNvbnRhaW5zIHRoZSB0aW1lIGF0IHdoaWNoIHlvdSBjcmVhdGVkIGl0Lg0KDQpgYGB7cn0NCnF1YXJ0ZXJzKHQyKQ0KYGBgDQoNCk9mdGVuLCB0aGUgZGF0ZXMgYW5kIHRpbWVzIGluIGEgZGF0YXNldCB3aWxsIGJlIGluIGEgZm9ybWF0IHRoYXQgUiBkb2VzIG5vdCByZWNvZ25pemUuIFRoZSBzdHJwdGltZSgpIGZ1bmN0aW9uIGNhbiBiZSBoZWxwZnVsIGluIHRoaXMgc2l0dWF0aW9uLg0KDQpzdHJwdGltZSgpIGNvbnZlcnRzIGNoYXJhY3RlciB2ZWN0b3JzIHRvIFBPU0lYbHQuIEluIHRoYXQgc2Vuc2UsIGl0IGlzIHNpbWlsYXIgdG8gYXMuUE9TSVhsdCgpLCBleGNlcHQgdGhhdCB0aGUgaW5wdXQgZG9lc24ndCBoYXZlIHRvIGJlIGluIGEgcGFydGljdWxhciBmb3JtYXQgKFlZWVktTU0tREQpLg0KDQpUbyBzZWUgaG93IGl0IHdvcmtzLCBzdG9yZSB0aGUgZm9sbG93aW5nIGNoYXJhY3RlciBzdHJpbmcgaW4gYSB2YXJpYWJsZSBjYWxsZWQgdDM6ICJPY3RvYmVyIDE3LCAxOTg2IDA4OjI0IiAod2l0aCB0aGUgcXVvdGVzKS4NCg0KYGBge3J9DQp0MyA8LSAiT2N0b2JlciAxNywgMTk4NiAwODoyNCINCmBgYA0KDQpOb3csIHVzZSBzdHJwdGltZSh0MywgIiVCICVkLCAlWSAlSDolTSIpIHRvIGhlbHAgUiBjb252ZXJ0IG91ciBkYXRlL3RpbWUgb2JqZWN0IHRvIGEgZm9ybWF0IHRoYXQgaXQgdW5kZXJzdGFuZHMuIEFzc2lnbiB0aGUgcmVzdWx0IHRvIGEgbmV3IHZhcmlhYmxlIGNhbGxlZCB0NC4gKFlvdSBzaG91bGQgcHVsbCB1cCB0aGUgZG9jdW1lbnRhdGlvbiBmb3Igc3RycHRpbWUoKSBpZiB5b3UnZCBsaWtlIHRvIGtub3cgbW9yZSBhYm91dCBob3cgaXQgd29ya3MuKQ0KDQpgYGB7cn0NCnQ0IDwtIHN0cnB0aW1lKHQzLCAiJUIgJWQsICVZICVIOiVNIikNCmBgYA0KDQpQcmludCB0aGUgY29udGVudHMgb2YgdDQuDQoNCmBgYHtyfQ0KdDQNCmBgYA0KDQpUaGF0J3MgdGhlIGZvcm1hdCB3ZSd2ZSBjb21lIHRvIGV4cGVjdC4gTm93LCBsZXQncyBjaGVjayBpdHMgY2xhc3MoKS4NCg0KYGBge3J9DQpjbGFzcyh0NCkNCmBgYA0KDQpGaW5hbGx5LCB0aGVyZSBhcmUgYSBudW1iZXIgb2Ygb3BlcmF0aW9ucyB0aGF0IHlvdSBjYW4gcGVyZm9ybSBvbiBkYXRlcyBhbmQgdGltZXMsIGluY2x1ZGluZyBhcml0aG1ldGljIG9wZXJhdGlvbnMgKCsgYW5kIC0pIGFuZCBjb21wYXJpc29ucyAoPCwgPT0sIGV0Yy4pDQoNClRoZSB2YXJpYWJsZSB0MSBjb250YWlucyB0aGUgdGltZSBhdCB3aGljaCB5b3UgY3JlYXRlZCBpdCAocmVjYWxsIHlvdSB1c2VkIFN5cy50aW1lKCkpLiBDb25maXJtIHRoYXQgc29tZSB0aW1lIGhhcyBwYXNzZWQgc2luY2UgeW91IGNyZWF0ZWQgdDEgYnkgdXNpbmcgdGhlICdncmVhdGVyIHRoYW4nIG9wZXJhdG9yIHRvIGNvbXBhcmUgaXQgdG8gdGhlIGN1cnJlbnQgdGltZTogU3lzLnRpbWUoKSA+IHQxDQoNCmBgYHtyfQ0KU3lzLnRpbWUoKSA+IHQxDQpgYGANCg0KU28gd2Uga25vdyB0aGF0IHNvbWUgdGltZSBoYXMgcGFzc2VkLCBidXQgaG93IG11Y2g/IFRyeSBzdWJ0cmFjdGluZyB0MSBmcm9tIHRoZSBjdXJyZW50IHRpbWUgdXNpbmcgU3lzLnRpbWUoKSAtIHQxLiBEb24ndCBmb3JnZXQgdGhlIHBhcmVudGhlc2VzIGF0IHRoZSBlbmQgb2YgU3lzLnRpbWUoKSwgc2luY2UgaXQgaXMgYSBmdW5jdGlvbi4NCg0KYGBge3J9DQpTeXMudGltZSgpIC0gdDENCmBgYA0KDQpUaGUgc2FtZSBsaW5lIG9mIHRoaW5raW5nIGFwcGxpZXMgdG8gYWRkaXRpb24gYW5kIHRoZSBvdGhlciBjb21wYXJpc29uIG9wZXJhdG9ycy4gSWYgeW91IHdhbnQgbW9yZSBjb250cm9sIG92ZXIgdGhlIHVuaXRzIHdoZW4gZmluZGluZyB0aGUgYWJvdmUgZGlmZmVyZW5jZSBpbiB0aW1lcywgeW91IGNhbiB1c2UgZGlmZnRpbWUoKSwgd2hpY2ggYWxsb3dzIHlvdSB0byBzcGVjaWZ5IGEgJ3VuaXRzJyBwYXJhbWV0ZXIuDQoNClVzZSBkaWZmdGltZShTeXMudGltZSgpLCB0MSwgdW5pdHMgPSAnZGF5cycpIHRvIGZpbmQgdGhlIGFtb3VudCBvZiB0aW1lIGluIERBWVMgdGhhdCBoYXMgcGFzc2VkIHNpbmNlIHlvdSBjcmVhdGVkIHQxLg0KDQpgYGB7cn0NCmRpZmZ0aW1lKFN5cy50aW1lKCksIHQxLCB1bml0cz0nZGF5cycpDQpgYGANCg0KSW4gdGhpcyBsZXNzb24sIHlvdSBsZWFybmVkIGhvdyB0byB3b3JrIHdpdGggZGF0ZXMgYW5kIHRpbWVzIGluIFIuIFdoaWxlIGl0IGlzIGltcG9ydGFudCB0byB1bmRlcnN0YW5kIHRoZSBiYXNpY3MsIGlmIHlvdSBmaW5kIHlvdXJzZWxmIHdvcmtpbmcgd2l0aCBkYXRlcyBhbmQgdGltZXMgb2Z0ZW4sIHlvdSBtYXkgd2FudCB0byBjaGVjayBvdXQgdGhlIGx1YnJpZGF0ZSBwYWNrYWdlIGJ5IEhhZGxleSBXaWNraGFtLg0K</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAnc3dpcmwgTGVzc29uIDI6IEZ1bmN0aW9ucycKb3V0cHV0OiBodG1sX25vdGVib29rCi0tLQoKRnVuY3Rpb25zIGFyZSBvbmUgb2YgdGhlIGZ1bmRhbWVudGFsIGJ1aWxkaW5nIGJsb2NrcyBvZiB0aGUgUiBsYW5ndWFnZS4gVGhleSBhcmUgc21hbGwgcGllY2VzIG9mIHJldXNhYmxlIGNvZGUgdGhhdCBjYW4gYmUgdHJlYXRlZCBsaWtlIGFueSBvdGhlciBSIG9iamVjdC4KCklmIHlvdSd2ZSB3b3JrZWQgdGhyb3VnaCBhbnkgb3RoZXIgcGFydCBvZiB0aGlzIGNvdXJzZSwgeW91J3ZlIHByb2JhYmx5IHVzZWQgc29tZSBmdW5jdGlvbnMgYWxyZWFkeS4gRnVuY3Rpb25zIGFyZSB1c3VhbGx5IGNoYXJhY3Rlcml6ZWQgYnkgdGhlIG5hbWUgb2YgdGhlIGZ1bmN0aW9uIGZvbGxvd2VkIGJ5IHBhcmVudGhlc2VzLgoKTGV0J3MgdHJ5IHVzaW5nIGEgZmV3IGJhc2ljIGZ1bmN0aW9ucyBqdXN0IGZvciBmdW4uIFRoZSBTeXMuRGF0ZSgpIGZ1bmN0aW9uIHJldHVybnMgYSBzdHJpbmcgcmVwcmVzZW50aW5nIHRvZGF5J3MgZGF0ZS4gVHlwZSBTeXMuRGF0ZSgpIGJlbG93IGFuZCBzZWUgd2hhdCBoYXBwZW5zLgoKYGBge3J9ClN5cy5EYXRlKCkKYGBgCgpNb3N0IGZ1bmN0aW9ucyBpbiBSIHJldHVybiBhIHZhbHVlLiBGdW5jdGlvbnMgbGlrZSBTeXMuRGF0ZSgpIHJldHVybiBhIHZhbHVlIGJhc2VkIG9uIHlvdXIgY29tcHV0ZXIncyBlbnZpcm9ubWVudCwgd2hpbGUgb3RoZXIgZnVuY3Rpb25zIG1hbmlwdWxhdGUgaW5wdXQgZGF0YSBpbiBvcmRlciB0byBjb21wdXRlIGEgcmV0dXJuIHZhbHVlLgoKVGhlIG1lYW4oKSBmdW5jdGlvbiB0YWtlcyBhIHZlY3RvciBvZiBudW1iZXJzIGFzIGlucHV0LCBhbmQgcmV0dXJucyB0aGUgYXZlcmFnZSBvZiBhbGwgb2YgdGhlIG51bWJlcnMgaW4gdGhlIGlucHV0IHZlY3Rvci4gSW5wdXRzIHRvIGZ1bmN0aW9ucyBhcmUgb2Z0ZW4gY2FsbGVkIGFyZ3VtZW50cy4gUHJvdmlkaW5nIGFyZ3VtZW50cyB0byBhIGZ1bmN0aW9uIGlzIGFsc28gc29tZXRpbWVzIGNhbGxlZCBwYXNzaW5nIGFyZ3VtZW50cyB0byB0aGF0IGZ1bmN0aW9uLiBBcmd1bWVudHMgeW91IHdhbnQgdG8gcGFzcyB0byBhIGZ1bmN0aW9uIGdvIGluc2lkZSB0aGUgZnVuY3Rpb24ncyBwYXJlbnRoZXNlcy4gVHJ5IHBhc3NpbmcgdGhlIGFyZ3VtZW50IGMoMiwgNCwgNSkgdG8gdGhlIG1lYW4oKSBmdW5jdGlvbi4KCmBgYHtyfQptZWFuKGMoMiwgNCwgNSkpCmBgYAoKRnVuY3Rpb25zIHVzdWFsbHkgdGFrZSBhcmd1bWVudHMgd2hpY2ggYXJlIHZhcmlhYmxlcyB0aGF0IHRoZSBmdW5jdGlvbiBvcGVyYXRlcyBvbi4gRm9yIGV4YW1wbGUsIHRoZSBtZWFuKCkgZnVuY3Rpb24gdGFrZXMgYSB2ZWN0b3IgYXMgYW4gYXJndW1lbnQsIGxpa2UgaW4gdGhlIGNhc2Ugb2YgbWVhbihjKDIsNiw4KSkuIFRoZSBtZWFuKCkgZnVuY3Rpb24gdGhlbiBhZGRzIHVwIGFsbCBvZiB0aGUgbnVtYmVycyBpbiB0aGUgdmVjdG9yIGFuZCBkaXZpZGVzIHRoYXQgc3VtIGJ5IHRoZSBsZW5ndGggb2YgdGhlIHZlY3Rvci4KCllvdSdyZSBhYm91dCB0byB3cml0ZSB5b3VyIGZpcnN0IGZ1bmN0aW9uISBKdXN0IGxpa2UgeW91IHdvdWxkIGFzc2lnbiBhIHZhbHVlIHRvIGEgdmFyaWFibGUgd2l0aCB0aGUgYXNzaWdubWVudCBvcGVyYXRvciwgeW91IGFzc2lnbiBmdW5jdGlvbnMgaW4gdGhlIGZvbGxvd2luZyB3YXk6CgpgYGBSCmZ1bmN0aW9uX25hbWUgPC0gZnVuY3Rpb24oYXJnMSwgYXJnMil7CiAgICAgIE1hbmlwdWxhdGUgYXJndW1lbnRzIGluIHNvbWUgd2F5CiAgICAgIFJldHVybiBhIHZhbHVlCn0KYGBgCgpUaGUgInZhcmlhYmxlIG5hbWUiIHlvdSBhc3NpZ24gd2lsbCBiZWNvbWUgdGhlIG5hbWUgb2YgeW91ciBmdW5jdGlvbi4gYXJnMSBhbmQgYXJnMiByZXByZXNlbnQgdGhlIGFyZ3VtZW50cyBvZiB5b3VyIGZ1bmN0aW9uLiBZb3UgY2FuIG1hbmlwdWxhdGUgdGhlIGFyZ3VtZW50cyB5b3Ugc3BlY2lmeSB3aXRoaW4gdGhlIGZ1bmN0aW9uLiBBZnRlciBzb3VyY2luZyB0aGUgZnVuY3Rpb24sIHlvdSBjYW4gdXNlIHRoZSBmdW5jdGlvbiBieSB0eXBpbmc6CgpgYGBSCmZ1bmN0aW9uX25hbWUodmFsdWUxLCB2YWx1ZTIpCmBgYAoKQmVsb3cgd2Ugd2lsbCBjcmVhdGUgYSBmdW5jdGlvbiBjYWxsZWQgYm9yaW5nX2Z1bmN0aW9uLiBUaGlzIGZ1bmN0aW9uIHRha2VzIHRoZSBhcmd1bWVudCBgeGAgYXMgaW5wdXQsIGFuZCByZXR1cm5zIHRoZSB2YWx1ZSBvZiB4IHdpdGhvdXQgbW9kaWZ5aW5nIGl0LiBEZWxldGUgdGhlIHBvdW5kIHNpZ24gaW4gZnJvbnQgb2YgdGhlIHggdG8gbWFrZSB0aGUgZnVuY3Rpb24gd29yayEKCmBgYHtyfQpib3JpbmdfZnVuY3Rpb24gPC0gZnVuY3Rpb24oeCkgewogICAgeAp9CmBgYAoKTm93IHRoYXQgeW91J3ZlIGNyZWF0ZWQgeW91ciBmaXJzdCBmdW5jdGlvbiBsZXQncyB0ZXN0IGl0ISBUeXBlOiBib3JpbmdfZnVuY3Rpb24oJ015IGZpcnN0IGZ1bmN0aW9uIScpLiBJZiB5b3VyIGZ1bmN0aW9uIHdvcmtzLCBpdCBzaG91bCBqdXN0IHJldHVybiB0aGUgc3RyaW5nOiAnTXkgZmlyc3QgZnVuY3Rpb24hJwoKYGBge3J9CmJvcmluZ19mdW5jdGlvbignTXkgZmlyc3QgZnVuY3Rpb24hJykKYGBgCgpDb25ncmF0dWxhdGlvbnMgb24gd3JpdGluZyB5b3VyIGZpcnN0IGZ1bmN0aW9uLiBCeSB3cml0aW5nIGZ1bmN0aW9ucywgeW91IGNhbiBnYWluIHNlcmlvdXMgaW5zaWdodCBpbnRvIGhvdyBSIHdvcmtzLiBBcyBKb2huIENoYW1iZXJzLCB0aGUgY3JlYXRvciBvZiBSIG9uY2Ugc2FpZDoKClRvIHVuZGVyc3RhbmQgY29tcHV0YXRpb25zIGluIFIsIHR3byBzbG9nYW5zIGFyZSBoZWxwZnVsOiAKCjEuIEV2ZXJ5dGhpbmcgdGhhdCBleGlzdHMgaXMgYW4gb2JqZWN0LiAKMi4gRXZlcnl0aGluZyB0aGF0IGhhcHBlbnMgaXMgYSBmdW5jdGlvbiBjYWxsLgoKSWYgeW91IHdhbnQgdG8gc2VlIHRoZSBzb3VyY2UgY29kZSBmb3IgYW55IGZ1bmN0aW9uLCBqdXN0IHR5cGUgdGhlIGZ1bmN0aW9uIG5hbWUgd2l0aG91dCBhbnkgYXJndW1lbnRzIG9yIHBhcmVudGhlc2VzLiBMZXQncyB0cnkgdGhpcyBvdXQgd2l0aCB0aGUgZnVuY3Rpb24geW91IGp1c3QgY3JlYXRlZC4gVHlwZTogYm9yaW5nX2Z1bmN0aW9uIHRvIHZpZXcgaXRzIHNvdXJjZSBjb2RlLgoKYGBge3J9CmJvcmluZ19mdW5jdGlvbgpgYGAKClRpbWUgdG8gbWFrZSBhIG1vcmUgdXNlZnVsIGZ1bmN0aW9uISBXZSdyZSBnb2luZyB0byByZXBsaWNhdGUgdGhlIGZ1bmN0aW9uYWxpdHkgb2YgdGhlIG1lYW4oKSBmdW5jdGlvbiBieSBjcmVhdGluZyBhIGZ1bmN0aW9uIGNhbGxlZDogbXlfbWVhbigpLiBSZW1lbWJlciB0aGF0IHRvIGNhbGN1bGF0ZSB0aGUgYXZlcmFnZSBvZiBhbGwgb2YgdGhlIG51bWJlcnMgaW4gYSB2ZWN0b3IgeW91IGZpbmQgdGhlIHN1bSBvZiBhbGwgdGhlIG51bWJlcnMgaW4gdGhlIHZlY3RvciwgYW5kIHRoZW4gZGl2aWRlIHRoYXQgc3VtIGJ5IHRoZSBudW1iZXIgb2YgbnVtYmVycyBpbiB0aGUgdmVjdG9yLgoKWW91J3JlIGZyZWUgdG8gaW1wbGVtZW50IHRoZSBmdW5jdGlvbiBteV9tZWFuIGhvd2V2ZXIgeW91IHdhbnQsIGFzIGxvbmcgYXMgaXQgcmV0dXJucyB0aGUgYXZlcmFnZSBvZiBhbGwgb2YgdGhlIG51bWJlcnMgaW4gYG15X3ZlY3RvcmAuCgpIaW50ICMxOiBzdW0oKSByZXR1cm5zIHRoZSBzdW0gb2YgYSB2ZWN0b3IuCglFeDogc3VtKGMoMSwgMiwgMykpIGV2YWx1YXRlcyB0byA2CgpIaW50ICMyOiBsZW5ndGgoKSByZXR1cm5zIHRoZSBzaXplIG9mIGEgdmVjdG9yLgoJRXg6IGxlbmd0aChjKDEsIDIsIDMpKSBldmFsdWF0ZXMgdG8gMwoJCkhpbnQgIzM6IFRoZSBtZWFuIG9mIGFsbCB0aGUgbnVtYmVycyBpbiBhIHZlY3RvciBpcyBlcXVhbCB0byB0aGUgc3VtIG9mIGFsbCBvZiB0aGUgbnVtYmVycyBpbiB0aGUgdmVjdG9yIGRpdmlkZWQgYnkgdGhlIHNpemUgb2YgdGhlIHZlY3Rvci4KCmBgYHtyfQpteV9tZWFuIDwtIGZ1bmN0aW9uKG15X3ZlY3RvcikgewogICAgIyBXcml0ZSB5b3VyIGNvZGUgaGVyZSEKICAgICMgUmVtZW1iZXI6IHRoZSBsYXN0IGV4cHJlc3Npb24gZXZhbHVhdGVkIHdpbGwgYmUgcmV0dXJuZWQhIAogICAgc3VtKG15X3ZlY3RvcikgLyBsZW5ndGgobXlfdmVjdG9yKQp9CmBgYAoKTm93IHRlc3Qgb3V0IHlvdXIgbXlfbWVhbigpIGZ1bmN0aW9uIGJ5IGZpbmRpbmcgdGhlIG1lYW4gb2YgdGhlIHZlY3RvciBjKDQsIDUsIDEwKS4KCmBgYHtyfQpteV9tZWFuKGMoNCwgNSwgMTApKQpgYGAKCk5leHQsIGxldCdzIHRyeSB3cml0aW5nIGEgZnVuY3Rpb24gd2l0aCBkZWZhdWx0IGFyZ3VtZW50cy4gWW91IGNhbiBzZXQgZGVmYXVsdCB2YWx1ZXMgZm9yIGEgZnVuY3Rpb24ncyBhcmd1bWVudHMsIGFuZCB0aGlzIGNhbiBiZSB1c2VmdWwgaWYgeW91IHRoaW5rIHNvbWVvbmUgd2hvIHVzZXMgeW91ciBmdW5jdGlvbiB3aWxsIHNldCBhIGNlcnRhaW4gYXJndW1lbnQgdG8gdGhlIHNhbWUgdmFsdWUgbW9zdCBvZiB0aGUgdGltZS4KCkxldCdzIHNlZSBhbiBleGFtcGxlIG9mIGEgZnVuY3Rpb24gY2FsbGVkIGluY3JlbWVudCgpLiBNb3N0IG9mIHRoZSB0aW1lIHdlIHdhbnQgdG8gdXNlIHRoaXMgZnVuY3Rpb24gdG8gaW5jcmVhc2UgdGhlIHZhbHVlIG9mIGEgbnVtYmVyIGJ5IG9uZS4gVGhpcyBmdW5jdGlvbiB3aWxsIHRha2UgdHdvIGFyZ3VtZW50czogIm51bWJlciIgYW5kICJieSIgd2hlcmUgIm51bWJlciIgaXMgdGhlIGRpZ2l0IHdlIHdhbnQgdG8gaW5jcmVtZW50IGFuZCAiYnkiIGlzIHRoZSBhbW91bnQgd2Ugd2FudCB0byBpbmNyZW1lbnQgIm51bWJlciIgYnkuIFdlJ3ZlIHdyaXR0ZW4gdGhlIGZ1bmN0aW9uIGJlbG93LiAKCmBgYFIKaW5jcmVtZW50IDwtIGZ1bmN0aW9uKG51bWJlciwgYnkgPSAxKXsKICAgIG51bWJlciArIGJ5Cn0KYGBgCgpJZiB5b3UgdGFrZSBhIGxvb2sgaW4gYmV0d2VlbiB0aGUgcGFyZW50aGVzZXMgeW91IGNhbiBzZWUgdGhhdCB3ZSd2ZSBzZXQgImJ5IiBlcXVhbCB0byAxLiBUaGlzIG1lYW5zIHRoYXQgdGhlICJieSIgYXJndW1lbnQgd2lsbCBoYXZlIHRoZSBkZWZhdWx0IHZhbHVlIG9mIDEuCgpXZSBjYW4gbm93IHVzZSB0aGUgaW5jcmVtZW50IGZ1bmN0aW9uIHdpdGhvdXQgcHJvdmlkaW5nIGEgdmFsdWUgZm9yICJieSI6IGluY3JlbWVudCg1KSB3aWxsIGV2YWx1YXRlIHRvIDYuIAoKSG93ZXZlciBpZiB3ZSB3YW50IHRvIHByb3ZpZGUgYSB2YWx1ZSBmb3IgdGhlICJieSIgYXJndW1lbnQgd2Ugc3RpbGwgY2FuISBUaGUgZXhwcmVzc2lvbjogaW5jcmVtZW50KDUsIDIpIHdpbGwgZXZhbHVhdGUgdG8gNy4gCgpZb3UncmUgZ29pbmcgdG8gd3JpdGUgYSBmdW5jdGlvbiBjYWxsZWQgInJlbWFpbmRlci4iIHJlbWFpbmRlcigpIHdpbGwgdGFrZSB0d28gYXJndW1lbnRzOiAibnVtIiBhbmQgImRpdmlzb3IiIHdoZXJlICJudW0iIGlzIGRpdmlkZWQgYnkgImRpdmlzb3IiIGFuZCB0aGUgcmVtYWluZGVyIGlzIHJldHVybmVkLiBJbWFnaW5lIHRoYXQgeW91IHVzdWFsbHkgd2FudCB0byBrbm93IHRoZSByZW1haW5kZXIgd2hlbiB5b3UgZGl2aWRlIGJ5IDIsIHNvIHNldCB0aGUgZGVmYXVsdCB2YWx1ZSBvZiAiZGl2aXNvciIgdG8gMi4gUGxlYXNlIGJlIHN1cmUgdGhhdCAibnVtIiBpcyB0aGUgZmlyc3QgYXJndW1lbnQgYW5kICJkaXZpc29yIiBpcyB0aGUgc2Vjb25kIGFyZ3VtZW50LgoKSGludCAjMTogWW91IGNhbiB1c2UgdGhlIG1vZHVsdXMgb3BlcmF0b3IgJSUgdG8gZmluZCB0aGUgcmVtYWluZGVyLgogICAgRXg6IDcgJSUgNCBldmFsdWF0ZXMgdG8gMy4gCgpSZW1lbWJlciB0byBzZXQgYXBwcm9wcmlhdGUgZGVmYXVsdCB2YWx1ZXMhCgpgYGB7cn0KcmVtYWluZGVyIDwtIGZ1bmN0aW9uKG51bSwgZGl2aXNvcj0yKSB7CiAgICAjIFdyaXRlIHlvdXIgY29kZSBoZXJlIQogICAgIyBSZW1lbWJlcjogdGhlIGxhc3QgZXhwcmVzc2lvbiBldmFsdWF0ZWQgd2lsbCBiZSByZXR1cm5lZCEgCiAgICBudW0gJSUgZGl2aXNvcgp9CmBgYAoKTGV0J3MgZG8gc29tZSB0ZXN0aW5nIG9mIHRoZSByZW1haW5kZXIgZnVuY3Rpb24uIFJ1biByZW1haW5kZXIoNSkgYW5kIHNlZSB3aGF0IGhhcHBlbnMuCgpgYGB7cn0KcmVtYWluZGVyKDUpCmBgYAoKTGV0J3MgdGFrZSBhIG1vbWVudCB0byBleGFtaW5lIHdoYXQganVzdCBoYXBwZW5lZC4gWW91IHByb3ZpZGVkIG9uZSBhcmd1bWVudCB0byB0aGUgZnVuY3Rpb24sIGFuZCBSIG1hdGNoZWQgdGhhdCBhcmd1bWVudCB0byAnbnVtJyBzaW5jZSAnbnVtJyBpcyB0aGUgZmlyc3QgYXJndW1lbnQuIFRoZSBkZWZhdWx0IHZhbHVlIGZvciAnZGl2aXNvcicgaXMgMiwgc28gdGhlIGZ1bmN0aW9uIHVzZWQgdGhlIGRlZmF1bHQgdmFsdWUgeW91IHByb3ZpZGVkLgoKTm93IGxldCdzIHRlc3QgdGhlIHJlbWFpbmRlciBmdW5jdGlvbiBieSBwcm92aWRpbmcgdHdvIGFyZ3VtZW50cy4gVHlwZTogcmVtYWluZGVyKDExLCA1KSBhbmQgbGV0J3Mgc2VlIHdoYXQgaGFwcGVucy4KCmBgYHtyfQpyZW1haW5kZXIoMTEsIDUpCmBgYAoKT25jZSBhZ2FpbiwgdGhlIGFyZ3VtZW50cyBoYXZlIGJlZW4gbWF0Y2hlZCBhcHByb3ByaWF0ZWx5LgoKWW91IGNhbiBhbHNvIGV4cGxpY2l0bHkgc3BlY2lmeSBhcmd1bWVudHMgaW4gYSBmdW5jdGlvbi4gV2hlbiB5b3UgZXhwbGljaXRseSBkZXNpZ25hdGUgYXJndW1lbnQgdmFsdWVzIGJ5IG5hbWUsIHRoZSBvcmRlcmluZyBvZiB0aGUgYXJndW1lbnRzIGJlY29tZXMgdW5pbXBvcnRhbnQuIFlvdSBjYW4gdHJ5IHRoaXMgb3V0IGJ5IHR5cGluZzogIHJlbWFpbmRlcihkaXZpc29yID0gMTEsIG51bSA9IDUpLgoKYGBge3J9CnJlbWFpbmRlcihkaXZpc29yPTExLCBudW09NSkKYGBgCgpBcyB5b3UgY2FuIHNlZSwgdGhlcmUgaXMgYSBzaWduaWZpY2FudCBkaWZmZXJlbmNlIGJldHdlZW4gcmVtYWluZGVyKDExLCA1KSBhbmQgcmVtYWluZGVyKGRpdmlzb3IgPSAxMSwgbnVtID0gNSkhCgpSIGNhbiBhbHNvIHBhcnRpYWxseSBtYXRjaCBhcmd1bWVudHMuIFRyeSB0eXBpbmcgcmVtYWluZGVyKDQsIGRpdiA9IDIpIHRvIHNlZSB0aGlzIGZlYXR1cmUgaW4gYWN0aW9uLgoKYGBge3J9CnJlbWFpbmRlcig0LCBkaXY9MikKYGBgCgpBIHdvcmQgb2Ygd2FybmluZzogaW4gZ2VuZXJhbCB5b3Ugd2FudCB0byBtYWtlIHlvdXIgY29kZSBhcyBlYXN5IHRvIHVuZGVyc3RhbmQgYXMgcG9zc2libGUuIFN3aXRjaGluZyBhcm91bmQgdGhlIG9yZGVycyBvZiBhcmd1bWVudHMgYnkgc3BlY2lmeWluZyB0aGVpciBuYW1lcyBvciBvbmx5IHVzaW5nIHBhcnRpYWwgYXJndW1lbnQgbmFtZXMgY2FuIGJlIGNvbmZ1c2luZywgc28gdXNlIHRoZXNlIGZlYXR1cmVzIHdpdGggY2F1dGlvbiEKCldpdGggYWxsIG9mIHRoaXMgdGFsayBhYm91dCBhcmd1bWVudHMsIHlvdSBtYXkgYmUgd29uZGVyaW5nIGlmIHRoZXJlIGlzIGEgd2F5IHlvdSBjYW4gc2VlIGEgZnVuY3Rpb24ncyBhcmd1bWVudHMgKGJlc2lkZXMgbG9va2luZyBhdCB0aGUgIGRvY3VtZW50YXRpb24pLiBUaGFua2Z1bGx5LCB5b3UgY2FuIHVzZSB0aGUgYXJncygpIGZ1bmN0aW9uISBUeXBlOiBhcmdzKHJlbWFpbmRlcikgdG8gZXhhbWluZSB0aGUgYXJndW1lbnRzIGZvciB0aGUgcmVtYWluZGVyIGZ1bmN0aW9uLgoKYGBge3J9CmFyZ3MocmVtYWluZGVyKQpgYGAKCllvdSBtYXkgbm90IHJlYWxpemUgaXQgYnV0IHdlIGp1c3QgdHJpY2tlZCB5b3UgaW50byBkb2luZyBzb21ldGhpbmcgcHJldHR5IGludGVyZXN0aW5nISBhcmdzKCkgaXMgYSBmdW5jdGlvbiwgcmVtYWluZGVyKCkgaXMgYSBmdW5jdGlvbiwgeWV0IHJlbWFpbmRlciB3YXMgYW4gYXJndW1lbnQgZm9yIGFyZ3MoKS4gWWVzIGl0J3MgdHJ1ZTogeW91IGNhbiBwYXNzIGZ1bmN0aW9ucyBhcyBhcmd1bWVudHMhIFRoaXMgaXMgYSB2ZXJ5IHBvd2VyZnVsIGNvbmNlcHQuIExldCdzIHdyaXRlIGEgc2NyaXB0IHRvIHNlZSBob3cgaXQgd29ya3MuCgpZb3UgY2FuIHBhc3MgZnVuY3Rpb25zIGFzIGFyZ3VtZW50cyB0byBvdGhlciBmdW5jdGlvbnMganVzdCBsaWtlIHlvdSBjYW4gcGFzcyBkYXRhIHRvIGZ1bmN0aW9ucy4gTGV0J3Mgc2F5IHlvdSBkZWZpbmUgdGhlIGZvbGxvd2luZyBmdW5jdGlvbnM6CgpgYGBSCmFkZF90d29fbnVtYmVycyA8LSBmdW5jdGlvbihudW0xLCBudW0yKXsKICAgbnVtMSArIG51bTIKfQoKbXVsdGlwbHlfdHdvX251bWJlcnMgPC0gZnVuY3Rpb24obnVtMSwgbnVtMil7CgludW0xICogbnVtMgp9Cgpzb21lX2Z1bmN0aW9uIDwtIGZ1bmN0aW9uKGZ1bmMpewogICBmdW5jKDIsIDQpCn0KYGBgCgpBcyB5b3UgY2FuIHNlZSB3ZSB1c2UgdGhlIGFyZ3VtZW50IG5hbWUgImZ1bmMiIGxpa2UgYSBmdW5jdGlvbiBpbnNpZGUgb2YgInNvbWVfZnVuY3Rpb24oKS4iIEJ5IHBhc3NpbmcgZnVuY3Rpb25zIGFzIGFyZ3VtZW50cyBzb21lX2Z1bmN0aW9uKGFkZF90d29fbnVtYmVycykgd2lsbCBldmFsdWF0ZSB0byA2LCB3aGlsZSBzb21lX2Z1bmN0aW9uKG11bHRpcGx5X3R3b19udW1iZXJzKSB3aWxsIGV2YWx1YXRlIHRvIDguCgpGaW5pc2ggdGhlIGZ1bmN0aW9uIGRlZmluaXRpb24gYmVsb3cgc28gdGhhdCBpZiBhIGZ1bmN0aW9uIGlzIHBhc3NlZCBpbnRvIHRoZSAiZnVuYyIgYXJndW1lbnQgYW5kIHNvbWUgZGF0YSAobGlrZSBhIHZlY3RvcikgaXMgcGFzc2VkIGludG8gdGhlIGRhdCBhcmd1bWVudCB0aGUgZXZhbHVhdGUoKSBmdW5jdGlvbiB3aWxsIHJldHVybiB0aGUgcmVzdWx0IG9mIGRhdCBiZWluZyBwYXNzZWQgYXMgYW4gYXJndW1lbnQgdG8gZnVuYy4KCkhpbnRzOiBUaGlzIGV4ZXJjaXNlIGlzIGEgbGl0dGxlIHRyaWNreSBzbyBJJ2xsIHByb3ZpZGUgYSBmZXcgZXhhbXBsZSBvZiBob3cgZXZhbHVhdGUoKSBzaG91bGQgYWN0OgogICAxLiBldmFsdWF0ZShzdW0sIGMoMiwgNCwgNikpIHNob3VsZCBldmFsdWF0ZSB0byAxMgogICAyLiBldmFsdWF0ZShtZWRpYW4sIGMoNywgNDAsIDkpKSBzaG91bGQgZXZhbHVhdGUgdG8gOQogICAzLiBldmFsdWF0ZShmbG9vciwgMTEuMSkgc2hvdWxkIGV2YWx1YXRlIHRvIDExCiAgIApgYGB7cn0KZXZhbHVhdGUgPC0gZnVuY3Rpb24oZnVuYywgZGF0KXsKICAgICMgV3JpdGUgeW91ciBjb2RlIGhlcmUhCiAgICAjIFJlbWVtYmVyOiB0aGUgbGFzdCBleHByZXNzaW9uIGV2YWx1YXRlZCB3aWxsIGJlIHJldHVybmVkISAKICAgIGZ1bmMoZGF0KQp9CmBgYAoKTGV0J3MgdGFrZSB5b3VyIG5ldyBldmFsdWF0ZSgpIGZ1bmN0aW9uIGZvciBhIHNwaW4hIFVzZSBldmFsdWF0ZSB0byBmaW5kIHRoZSBzdGFuZGFyZCBkZXZpYXRpb24gb2YgdGhlIHZlY3RvciBjKDEuNCwgMy42LCA3LjksIDguOCkuCgpgYGB7cn0KZXZhbHVhdGUoc2QsIGMoMS40LCAzLjYsIDcuOSwgOC44KSkKYGBgCgpUaGUgaWRlYSBvZiBwYXNzaW5nIGZ1bmN0aW9ucyBhcyBhcmd1bWVudHMgdG8gb3RoZXIgZnVuY3Rpb25zIGlzIGFuIGltcG9ydGFudCBhbmQgZnVuZGFtZW50YWwgY29uY2VwdCBpbiBwcm9ncmFtbWluZy4KCllvdSBtYXkgYmUgc3VycHJpc2VkIHRvIGxlYXJuIHRoYXQgeW91IGNhbiBwYXNzIGEgZnVuY3Rpb24gYXMgYW4gYXJndW1lbnQgd2l0aG91dCBmaXJzdCBkZWZpbmluZyB0aGUgcGFzc2VkIGZ1bmN0aW9uLiBGdW5jdGlvbnMgdGhhdCBhcmUgbm90IG5hbWVkIGFyZSBhcHByb3ByaWF0ZWx5IGtub3duIGFzIGFub255bW91cyBmdW5jdGlvbnMuCgpMZXQncyB1c2UgdGhlIGV2YWx1YXRlIGZ1bmN0aW9uIHRvIGV4cGxvcmUgaG93IGFub255bW91cyBmdW5jdGlvbnMgd29yay4gRm9yIHRoZSBmaXJzdCBhcmd1bWVudCBvZiB0aGUgZXZhbHVhdGUgZnVuY3Rpb24gd2UncmUgZ29pbmcgdG8gd3JpdGUgYSB0aW55IGZ1bmN0aW9uIHRoYXQgZml0cyBvbiBvbmUgbGluZS4gSW4gdGhlIHNlY29uZCBhcmd1bWVudCB3ZSdsbCBwYXNzIHNvbWUgZGF0YSB0byB0aGUgdGlueSBhbm9ueW1vdXMgZnVuY3Rpb24gaW4gdGhlIGZpcnN0IGFyZ3VtZW50LgoKVHlwZSB0aGUgZm9sbG93aW5nIGNvbW1hbmQgYW5kIHRoZW4gd2UnbGwgZGlzY3VzcyBob3cgaXQgd29ya3M6IGV2YWx1YXRlKGZ1bmN0aW9uKHgpe3grMX0sIDYpCgpgYGB7cn0KZXZhbHVhdGUoZnVuY3Rpb24oeCl7eCsxfSwgNikKYGBgCgpUaGUgZmlyc3QgYXJndW1lbnQgaXMgYSB0aW55IGFub255bW91cyBmdW5jdGlvbiB0aGF0IHRha2VzIG9uZSBhcmd1bWVudCBgeGAgYW5kIHJldHVybnMgYHgrMWAuIFdlIHBhc3NlZCB0aGUgbnVtYmVyIDYgaW50byB0aGlzIGZ1bmN0aW9uIHNvIHRoZSBlbnRpcmUgZXhwcmVzc2lvbiBldmFsdWF0ZXMgdG8gNy4KClRyeSB1c2luZyBldmFsdWF0ZSgpIGFsb25nIHdpdGggYW4gYW5vbnltb3VzIGZ1bmN0aW9uIHRvIHJldHVybiB0aGUgIGZpcnN0IGVsZW1lbnQgb2YgdGhlIHZlY3RvciBjKDgsIDQsIDApLiBZb3VyIGFub255bW91cyBmdW5jdGlvbiBzaG91bGQgb25seSB0YWtlIG9uZSBhcmd1bWVudCB3aGljaCBzaG91bGQgYmUgYSB2YXJpYWJsZSBgeGAuCgpgYGB7cn0KZXZhbHVhdGUoZnVuY3Rpb24oeCl7eFsxXX0sIGMoOCwgNCwgMCkpCmBgYAoKTm93IHRyeSB1c2luZyBldmFsdWF0ZSgpIGFsb25nIHdpdGggYW4gYW5vbnltb3VzIGZ1bmN0aW9uIHRvIHJldHVybiB0aGUgIGxhc3QgZWxlbWVudCBvZiB0aGUgdmVjdG9yIGMoOCwgNCwgMCkuIFlvdXIgYW5vbnltb3VzIGZ1bmN0aW9uIHNob3VsZCBvbmx5IHRha2Ugb25lIGFyZ3VtZW50IHdoaWNoIHNob3VsZCBiZSBhIHZhcmlhYmxlIGB4YC4KCmBgYHtyfQpldmFsdWF0ZShmdW5jdGlvbih4KXt4W2xlbmd0aCh4KV19LCBjKDgsIDQsIDApKQpgYGAKCkZvciB0aGUgcmVzdCBvZiB0aGUgY291cnNlIHdlJ3JlIGdvaW5nIHRvIHVzZSB0aGUgcGFzdGUoKSBmdW5jdGlvbiBmcmVxdWVudGx5LiBUeXBlID9wYXN0ZSBzbyB3ZSBjYW4gdGFrZSBhIGxvb2sgYXQgdGhlIGRvY3VtZW50YXRpb24gZm9yIHRoZSAgcGFzdGUgZnVuY3Rpb24uCgpgYGB7cn0KP3Bhc3RlCmBgYAoKQXMgeW91IGNhbiBzZWUgdGhlIGZpcnN0IGFyZ3VtZW50IG9mIHBhc3RlKCkgaXMgYC4uLmAgd2hpY2ggaXMgcmVmZXJyZWQgdG8gYXMgYW4gZWxsaXBzaXMgb3Igc2ltcGx5IGRvdC1kb3QtZG90LiBUaGUgZWxsaXBzaXMgYWxsb3dzIGFuIGluZGVmaW5pdGUgIG51bWJlciBvZiBhcmd1bWVudHMgdG8gYmUgcGFzc2VkIGludG8gYSBmdW5jdGlvbi4gSW4gdGhlIGNhc2Ugb2YgcGFzdGUoKSBhbnkgbnVtYmVyIG9mIHN0cmluZ3MgY2FuIGJlIHBhc3NlZCBhcyBhcmd1bWVudHMgYW5kIHBhc3RlKCkgd2lsbCByZXR1cm4gYWxsIG9mICB0aGUgc3RyaW5ncyBjb21iaW5lZCBpbnRvIG9uZSBzdHJpbmcuCgpgYGB7cn0KcGFzdGUoIlByb2dyYW1taW5nIiwgImlzIiwgImZ1biEiKQpgYGAKClRpbWUgdG8gd3JpdGUgb3VyIG93biBtb2RpZmllZCB2ZXJzaW9uIG9mIHBhc3RlKCkuCgpUaGUgZWxsaXBzZXMgY2FuIGJlIHVzZWQgdG8gcGFzcyBvbiBhcmd1bWVudHMgdG8gb3RoZXIgZnVuY3Rpb25zIHRoYXQgYXJlIHVzZWQgd2l0aGluIHRoZSBmdW5jdGlvbiB5b3UncmUgd3JpdGluZy4gVXN1YWxseSBhIGZ1bmN0aW9uIHRoYXQgaGFzIHRoZSBlbGxpcHNlcyBhcyBhbiBhcmd1bWVudCBoYXMgdGhlIGVsbGlwc2VzIGFzIHRoZSBsYXN0IGFyZ3VtZW50LiBUaGUgdXNhZ2Ugb2Ygc3VjaCBhIGZ1bmN0aW9uIHdvdWxkIGxvb2sgbGlrZToKCmBgYFIKZWxsaXBzZXNfZnVuYyhhcmcxLCBhcmcyID0gVFJVRSwgLi4uKQpgYGAKCkluIHRoZSBhYm92ZSBleGFtcGxlIGFyZzEgaGFzIG5vIGRlZmF1bHQgdmFsdWUsIHNvIGEgdmFsdWUgbXVzdCBiZSBwcm92aWRlZCBmb3IgYXJnMS4gYXJnMiBoYXMgYSBkZWZhdWx0IHZhbHVlLCBhbmQgb3RoZXIgYXJndW1lbnRzIGNhbiBjb21lIGFmdGVyIGFyZzIgZGVwZW5kaW5nIG9uIGhvdyB0aGV5J3JlIGRlZmluZWQgaW4gdGhlIGVsbGlwc2VzX2Z1bmMoKSBkb2N1bWVudGF0aW9uLiBJbnRlcmVzdGluZ2x5IHRoZSB1c2FnZSBmb3IgdGhlIHBhc3RlIGZ1bmN0aW9uIGlzIGFzIGZvbGxvd3M6CgpgYGBSCnBhc3RlICguLi4sIHNlcCA9ICIgIiwgY29sbGFwc2UgPSBOVUxMKQpgYGAKCk5vdGljZSB0aGF0IHRoZSBlbGxpcHNlcyBpcyB0aGUgZmlyc3QgYXJndW1lbnQsIGFuZCBhbGwgb3RoZXIgYXJndW1lbnRzIGFmdGVyIHRoZSBlbGxpcHNlcyBoYXZlIGRlZmF1bHQgdmFsdWVzLiBUaGlzIGlzIGEgc3RyaWN0IHJ1bGUgaW4gUiBwcm9ncmFtbWluZzogYWxsIGFyZ3VtZW50cyBhZnRlciBhbiBlbGxpcHNlcyBtdXN0IGhhdmUgZGVmYXVsdCB2YWx1ZXMuIFRha2UgYSBsb29rIGF0IHRoZSBzaW1vbl9zYXlzIGZ1bmN0aW9uIGJlbG93OgoKYGBgUgpzaW1vbl9zYXlzIDwtIGZ1bmN0aW9uKC4uLil7CiAgICBwYXN0ZSgiU2ltb24gc2F5czoiLCAuLi4pCn0KYGBgCgpUaGUgc2ltb25fc2F5cyBmdW5jdGlvbiB3b3JrcyBqdXN0IGxpa2UgdGhlIHBhc3RlIGZ1bmN0aW9uLCBleGNlcHQgdGhlIGJlZ2luaW5nIG9mIGV2ZXJ5IHN0cmluZyBpcyBwcmVwZW5kZWQgYnkgdGhlIHN0cmluZyAiU2ltb24gc2F5czoiCgpUZWxlZ3JhbXMgdXNlZCB0byBiZSBwZXBwZXJlZCB3aXRoIHRoZSB3b3JkcyBTVEFSVCBhbmQgU1RPUCBpbiBvcmRlciB0byBkZW1hcmNhdGUgdGhlIGJlZ2lubmluZyBhbmQgZW5kIG9mIHNlbnRlbmNlcy4gV3JpdGUgYSBmdW5jdGlvbiBiZWxvdyBjYWxsZWQgIHRlbGVncmFtIHRoYXQgZm9ybWF0cyBzZW50ZW5jZXMgZm9yIHRlbGVncmFtcy4gRm9yIGV4YW1wbGUgdGhlIGV4cHJlc3Npb24gYHRlbGVncmFtKCJHb29kIiwgIm1vcm5pbmciKWAgc2hvdWxkIGV2YWx1YXRlIHRvOgoKIlNUQVJUIEdvb2QgbW9ybmluZyBTVE9QIgoKYGBge3J9CnRlbGVncmFtIDwtIGZ1bmN0aW9uKC4uLil7CiAgIHBhc3RlKCJTVEFSVCIsIC4uLiwgIlNUT1AiKQp9CmBgYAoKTm93IGxldCdzIHRlc3Qgb3V0IHlvdXIgdGVsZWdyYW0gZnVuY3Rpb24uIFVzZSB5b3VyIG5ldyB0ZWxlZ3JhbSBmdW5jdGlvbiBwYXNzaW5nIGluIHdoYXRldmVyIGFyZ3VtZW50cyB5b3Ugd2lzaCEKCmBgYHtyfQp0ZWxlZ3JhbSgiSGVsbG8iKQpgYGAKCkxldCdzIGV4cGxvcmUgaG93IHRvICJ1bnBhY2siIGFyZ3VtZW50cyBmcm9tIGFuIGVsbGlwc2VzIHdoZW4geW91IHVzZSB0aGUgZWxsaXBzZXMgYXMgYW4gYXJndW1lbnQgaW4gYSBmdW5jdGlvbi4gQmVsb3cgd2UgaGF2ZSBhbiBleGFtcGxlIGZ1bmN0aW9uIHRoYXQgaXMgc3VwcG9zZWQgdG8gYWRkIHR3byBleHBsaWNpdGx5IG5hbWVkIGFyZ3VtZW50cyBjYWxsZWQgYWxwaGEgYW5kIGJldGEuCgpgYGBSCmFkZF9hbHBoYV9hbmRfYmV0YSA8LSBmdW5jdGlvbiguLi4pewogICAgIyBGaXJzdCB3ZSBtdXN0IGNhcHR1cmUgdGhlIGVsbGlwc2lzIGluc2lkZSBvZiBhIGxpc3QKICAgICMgYW5kIHRoZW4gYXNzaWduIHRoZSBsaXN0IHRvIGEgdmFyaWFibGUuIExldCdzIG5hbWUgdGhpcwogICAgIyB2YXJpYWJsZSBgYXJnc2AuCiAgICAKICAgIGFyZ3MgPC0gbGlzdCguLi4pCiAgICAKICAgICMgV2UncmUgbm93IGdvaW5nIHRvIGFzc3VtZSB0aGF0IHRoZXJlIGFyZSB0d28gbmFtZWQgYXJndW1lbnRzIHdpdGhpbiBhcmdzCiAgICAjIHdpdGggdGhlIG5hbWVzIGBhbHBoYWAgYW5kIGBiZXRhLmAgV2UgY2FuIGV4dHJhY3QgbmFtZWQgYXJndW1lbnRzIGZyb20KICAgICMgdGhlIGFyZ3MgbGlzdCBieSB1c2luZyB0aGUgbmFtZSBvZiB0aGUgYXJndW1lbnQgYW5kIGRvdWJsZSBicmFja2V0cy4gVGhlCiAgICAjIGBhcmdzYCB2YXJpYWJsZSBpcyBqdXN0IGEgcmVndWxhciBsaXN0IGFmdGVyIGFsbCEKICAgIAogICAgYWxwaGEgPC0gYXJnc1tbImFscGhhIl1dCiAgICBiZXRhICA8LSBhcmdzW1siYmV0YSJdXQogICAgCiAgICAjIFRoZW4gd2UgcmV0dXJuIHRoZSBzdW0gb2YgYWxwaGEgYW5kIGJldGEuCiAgICAKICAgIGFscGhhICsgYmV0YSAKfQpgYGAKCkhhdmUgeW91IGV2ZXIgcGxheWVkIE1hZCBMaWJzIGJlZm9yZT8gVGhlIGZ1bmN0aW9uIGJlbG93IHdpbGwgY29uc3RydWN0IGEgc2VudGVuY2UgZnJvbSBwYXJ0cyBvZiBzcGVlY2ggdGhhdCB5b3UgcHJvdmlkZSBhcyBhcmd1bWVudHMuIFdlJ2xsIHdyaXRlIG1vc3Qgb2YgdGhlIGZ1bmN0aW9uLCBidXQgeW91J2xsIG5lZWQgdG8gdW5wYWNrIHRoZSBhcHByb3ByaWF0ZSBhcmd1bWVudHMgZnJvbSB0aGUgZWxsaXBzZXMuCgpgYGB7cn0KbWFkX2xpYnMgPC0gZnVuY3Rpb24oLi4uKXsKICAgICMgRG8geW91ciBhcmd1bWVudCB1bnBhY2tpbmcgaGVyZSEKICAgIGFyZ3MgPC0gbGlzdCguLi4pCiAgICBwbGFjZSA8LSBhcmdzW1sicGxhY2UiXV0KICAgIGFkamVjdGl2ZSA8LSBhcmdzW1siYWRqZWN0aXZlIl1dCiAgICBub3VuIDwtIGFyZ3NbWyJub3VuIl1dCgogICAgIyBEb24ndCBtb2RpZnkgYW55IGNvZGUgYmVsb3cgdGhpcyBjb21tZW50LgogICAgIyBOb3RpY2UgdGhlIHZhcmlhYmxlcyB5b3UnbGwgbmVlZCB0byBjcmVhdGUgaW4gb3JkZXIgZm9yIHRoZSBjb2RlIGJlbG93IHRvCiAgICAjIGJlIGZ1bmN0aW9uYWwhCiAgICBwYXN0ZSgiTmV3cyBmcm9tIiwgcGxhY2UsICJ0b2RheSB3aGVyZSIsIGFkamVjdGl2ZSwgInN0dWRlbnRzIHRvb2sgdG8gdGhlIHN0cmVldHMgaW4gcHJvdGVzdCBvZiB0aGUgbmV3Iiwgbm91biwgImJlaW5nIGluc3RhbGxlZCBvbiBjYW1wdXMuIikKfQpgYGAKClRpbWUgdG8gdXNlIHlvdXIgbWFkX2xpYnMgZnVuY3Rpb24uIE1ha2Ugc3VyZSB0byBuYW1lIHRoZSBwbGFjZSwgYWRqZWN0aXZlLCBhbmQgbm91biBhcmd1bWVudHMgaW4gb3JkZXIgZm9yIHlvdXIgZnVuY3Rpb24gdG8gd29yay4KCmBgYHtyfQptYWRfbGlicyhhZGplY3RpdmU9InNtYXJ0IiwgcGxhY2U9Ik1leGljbyIsIG5vdW49ImludGVybmV0IikKYGBgCgpXZSdyZSBjb21pbmcgdG8gdGhlIGVuZCBvZiB0aGlzIGxlc3NvbiwgYnV0IHRoZXJlJ3Mgc3RpbGwgb25lIG1vcmUgaWRlYSB5b3Ugc2hvdWxkIGJlIG1hZGUgYXdhcmUgb2YuCgpZb3UncmUgZmFtaWxpYXIgd2l0aCBhZGRpbmcsIHN1YnRyYWN0aW5nLCBtdWx0aXBseWluZywgYW5kIGRpdmlkaW5nIG51bWJlcnMgaW4gUi4gVG8gZG8gdGhpcyB5b3UgdXNlIHRoZSArLCAtLCAqLCBhbmQgLyBzeW1ib2xzLiBUaGVzZSBzeW1ib2xzIGFyZSBjYWxsZWQgYmluYXJ5IG9wZXJhdG9ycyBiZWNhdXNlIHRoZXkgdGFrZSB0d28gaW5wdXRzLCBhbiBpbnB1dCBmcm9tIHRoZSBsZWZ0IGFuZCBhbiBpbnB1dCBmcm9tIHRoZSByaWdodC4KCkluIFIgeW91IGNhbiBkZWZpbmUgeW91ciBvd24gYmluYXJ5IG9wZXJhdG9ycy4gSW4gdGhlIG5leHQgc2NyaXB0IHdlJ2xsIHNob3cgeW91IGhvdy4KClRoZSBzeW50YXggZm9yIGNyZWF0aW5nIG5ldyBiaW5hcnkgb3BlcmF0b3JzIGluIFIgaXMgdW5saWtlIGFueXRoaW5nIGVsc2UgaW4gUiwgYnV0IGl0IGFsbG93cyB5b3UgdG8gZGVmaW5lIGEgbmV3IHN5bnRheCBmb3IgeW91ciBmdW5jdGlvbi4gSSB3b3VsZCBvbmx5IHJlY29tbWVuZCBtYWtpbmcgeW91ciBvd24gYmluYXJ5IG9wZXJhdG9yIGlmIHlvdSBwbGFuIG9uIHVzaW5nIGl0IG9mdGVuIQoKVXNlci1kZWZpbmVkIGJpbmFyeSBvcGVyYXRvcnMgaGF2ZSB0aGUgZm9sbG93aW5nIHN5bnRheDoKCiAgICAlW3doYXRldmVyXSUgCgp3aGVyZSBbd2hhdGV2ZXJdIHJlcHJlc2VudHMgYW55IHZhbGlkIHZhcmlhYmxlIG5hbWUuCgpMZXQncyBzYXkgSSB3YW50ZWQgdG8gZGVmaW5lIGEgYmluYXJ5IG9wZXJhdG9yIHRoYXQgbXVsdGlwbGllZCB0d28gbnVtYmVycyBhbmQgdGhlbiBhZGRlZCBvbmUgdG8gdGhlIHByb2R1Y3QuIEFuIGltcGxlbWVudGF0aW9uIG9mIHRoYXQgb3BlcmF0b3IgaXMgYmVsb3c6CgpgYGBSCiIlbXVsdF9hZGRfb25lJSIgPC0gZnVuY3Rpb24obGVmdCwgcmlnaHQpeyBOb3RpY2UgdGhlIHF1b3RhdGlvbiBtYXJrcyEKICAgIGxlZnQgKiByaWdodCArIDEKfQpgYGAKCkkgY291bGQgdGhlbiB1c2UgdGhpcyBiaW5hcnkgb3BlcmF0b3IgbGlrZSBgNCAlbXVsdF9hZGRfb25lJSA1YCB3aGljaCB3b3VsZCBldmFsdWF0ZSB0byAyMS4KCldyaXRlIHlvdXIgb3duIGJpbmFyeSBvcGVyYXRvciBiZWxvdyBmcm9tIGFic29sdXRlIHNjcmF0Y2ghIFlvdXIgYmluYXJ5IG9wZXJhdG9yIG11c3QgYmUgY2FsbGVkICVwJSBzbyB0aGF0IHRoZSBleHByZXNzaW9uOgoKICAgICJHb29kIiAlcCUgImpvYiEiCiAgICAKd2lsbCBldmFsdWF0ZSB0bzogIkdvb2Qgam9iISIKCmBgYHtyfQoiJXAlIiA8LSBmdW5jdGlvbihsZWZ0LCByaWdodCl7ICMgUmVtZW1iZXIgdG8gYWRkIGFyZ3VtZW50cyEKICAgIHBhc3RlKGxlZnQsIHJpZ2h0KQp9CmBgYAoKWW91IG1hZGUgeW91ciBvd24gYmluYXJ5IG9wZXJhdG9yISBMZXQncyB0ZXN0IGl0IG91dC4gUGFzdGUgdG9nZXRoZXIgdGhlIHN0cmluZ3M6ICdJJywgJ2xvdmUnLCAnUiEnIHVzaW5nIHlvdXIgbmV3IGJpbmFyeSBvcGVyYXRvci4KCmBgYHtyfQonSScgJXAlICdsb3ZlJyAlcCUgJ1IhJwpgYGAKCldlJ3ZlIGNvbWUgdG8gdGhlIGVuZCBvZiBvdXIgbGVzc29uISBHbyBvdXQgdGhlcmUgYW5kIHdyaXRlIHNvbWUgZ3JlYXQgZnVuY3Rpb25zIQo=</div>
 
 
 
@@ -2184,7 +2346,7 @@ $(document).ready(function () {
 <!-- code folding -->
 <script>
 $(document).ready(function () {
-  window.initializeSourceEmbed("swirl_Lesson_2-Dates_and_Times.Rmd");
+  window.initializeSourceEmbed("swirl_Lesson_2-Functions.Rmd");
   window.initializeCodeFolding("show" === "show");
 });
 </script>

@@ -1,5 +1,5 @@
 ---
-title: "swirl Lesson 3: Functions"
+title: 'swirl Lesson 2: Functions'
 output: html_notebook
 ---
 
