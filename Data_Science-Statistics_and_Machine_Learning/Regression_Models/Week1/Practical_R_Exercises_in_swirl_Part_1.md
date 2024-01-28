@@ -29,12 +29,12 @@ Every time you want to use swirl, you need to first load the package. From the R
 library(swirl)
 ```
 
-3. Install the Statistical Inference course
+3. Install the Regression Models course
 
 swirl offers a variety of interactive courses, but for our purposes, you want the one called R Programming. Type the following from the R prompt to install this course:
 
 ```R
-install_from_swirl("Statistical Inference")
+install_from_swirl("Regression Models")
 ```
 
 4. Start swirl and complete the lessons
@@ -45,4 +45,4 @@ Type the following from the R console to start swirl:
 swirl()
 ```
 
-Then, follow the menus and select the Statistical Inference course when given the option.
+Then, follow the menus and select the Regression Models course when given the option.

@@ -29,7 +29,7 @@ Every time you want to use swirl, you need to first load the package. From the R
 library(swirl)
 ```
 
-3. Install the R Progroamming course
+3. Install the Getting and Cleaning Data course
 
 swirl offers a variety of interactive courses, but for our purposes, you want the one called R Programming. Type the following from the R prompt to install this course:
 
@@ -45,4 +45,4 @@ Type the following from the R console to start swirl:
 swirl()
 ```
 
-Then, follow the menus and select the R Programming course when given the option.
+Then, follow the menus and select the Getting and Cleaning Data course when given the option.
