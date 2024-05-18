@@ -3,7 +3,7 @@ title: "swirl Lesson 5: Expectations"
 output: html_notebook
 ---
 
-"Expectations. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 06_Statistical_Inference/04_Expectations.)"
+Expectations. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 06_Statistical_Inference/04_Expectations.)
 
 In this lesson, as you might expect, we'll discuss expected values. Expected values of what, exactly? 
 

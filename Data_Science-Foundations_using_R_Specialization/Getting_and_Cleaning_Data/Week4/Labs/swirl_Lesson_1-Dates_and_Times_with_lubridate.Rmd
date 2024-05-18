@@ -52,7 +52,7 @@ We can also get the day of the week from this_day using the wday() function. It 
 wday(this_day)
 ```
 
-"Now try the same thing again, except this time add a second argument, label = TRUE, to display the *name* of the weekday (represented as an ordered factor)."
+Now try the same thing again, except this time add a second argument, label = TRUE, to display the *name* of the weekday (represented as an ordered factor).
 
 ```{r}
 wday(this_day, label = TRUE)
@@ -100,7 +100,7 @@ class(my_date)
 
 So ymd() took a character string as input and returned an object of class Date, which is how R stores date information internally.
 
-'"1989-05-17" is a fairly standard format, but lubridate is ''smart'' enough to figure out many different date-time formats. Use ymd() to parse "1989 May 17". Don''t forget to put quotes around the date!'
+"1989-05-17" is a fairly standard format, but lubridate is ''smart'' enough to figure out many different date-time formats. Use ymd() to parse "1989 May 17". Don''t forget to put quotes around the date!
 
 ```{r}
 ymd("1989 May 17")
@@ -185,7 +185,7 @@ Now parse dt2 using the appropriate lubridate function.
 ymd(dt2)
 ```
 
-"The update() function allows us to update one or more components of a date-time. For example, let's say the current time is 08:34:55 (hh:mm:ss). Update this_moment to the new time using the following command:\n\nupdate(this_moment, hours = 8, minutes = 34, seconds = 55)."
+The update() function allows us to update one or more components of a date-time. For example, let's say the current time is 08:34:55 (hh:mm:ss). Update this_moment to the new time using the following command:\n\nupdate(this_moment, hours = 8, minutes = 34, seconds = 55).
 
 ```{r}
 update(this_moment, hours = 8, minutes = 34, seconds = 55)
@@ -213,7 +213,7 @@ Now, pretend you are in New York City and you are planning to visit a friend in 
 
 Let's reconstruct your itinerary from what you can remember, starting with the full date and time of your departure. We will approach this by finding the current date in New York, adding 2 full days, then setting the time to 17:34.
 
-'To find the current date in New York, we''ll use the now() function again. This time, however, we''ll specify the time zone that we want: "America/New_York". Store the result in a variable called nyc. Check out ?now if you need help.'
+To find the current date in New York, we''ll use the now() function again. This time, however, we''ll specify the time zone that we want: "America/New_York". Store the result in a variable called nyc. Check out ?now if you need help.
 
 ```{r}
 nyc <- now("America/New_York")
@@ -227,7 +227,7 @@ View the contents of nyc, which now contains the current date and time in New Yo
 nyc
 ```
 
-"Your flight is the day after tomorrow (in New York time), so we want to add two days to nyc. One nice aspect of lubridate is that it allows you to use arithmetic operators on dates and times. In this case, we'd like to add two days to nyc, so we can use the following expression: nyc + days(2). Give it a try, storing the result in a variable called depart."
+Your flight is the day after tomorrow (in New York time), so we want to add two days to nyc. One nice aspect of lubridate is that it allows you to use arithmetic operators on dates and times. In this case, we'd like to add two days to nyc, so we can use the following expression: nyc + days(2). Give it a try, storing the result in a variable called depart.
 
 ```{r}
 depart <- nyc + days(2)
@@ -313,6 +313,6 @@ as.period(how_long)
 
 This is where things get a little tricky. Because of things like leap years, leap seconds, and daylight savings time, the length of any given minute, day, month, week, or year is relative to when it occurs. In contrast, the length of a second is always the same, regardless of when it occurs.
 
-"To address these complexities, the authors of lubridate introduce four classes of time related objects: instants, intervals, durations, and periods. These topics are beyond the scope of this lesson, but you can find a complete discussion in the 2011 Journal of Statistical Software paper titled 'Dates and Times Made Easy with lubridate'."
+To address these complexities, the authors of lubridate introduce four classes of time related objects: instants, intervals, durations, and periods. These topics are beyond the scope of this lesson, but you can find a complete discussion in the 2011 Journal of Statistical Software paper titled 'Dates and Times Made Easy with lubridate'.
 
 This concludes our introduction to working with dates and times in lubridate.

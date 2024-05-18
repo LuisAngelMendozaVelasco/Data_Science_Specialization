@@ -3,7 +3,7 @@ title: "swirl Lesson 2: MultiVar Examples3"
 output: html_notebook
 ---
 
-"MultiVar_Examples3. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to Regression_Models/02_02_multivariateExamples.)"
+MultiVar_Examples3. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to Regression_Models/02_02_multivariateExamples.)
 
 This is the third and final lesson in which we'll look at regression models with more than one independent variable or predictor. We'll begin with  WHO hunger data which we've taken the liberty to load for you. WHO is the World Health Organization and this data concerns young children from around the world and rates of hunger among them which the organization compiled over a number of years. The original csv file was very large and we've subsetted just the rows which identify the gender of the child as either male or female. We've read the data into the data frame "hunger" for you, so you can easily access it.
 

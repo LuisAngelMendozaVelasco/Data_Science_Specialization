@@ -3,13 +3,14 @@ title: "swirl Lesson 5: GGPlot2 Extras"
 output: html_notebook
 ---
 
-"GGPlot2_Extras. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/ggplot2.)"
+GGPlot2_Extras. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/ggplot2.)
 
 In this lesson we'll go through a few more qplot examples using diamond data which comes with the ggplot2 package. This data is a little more complicated than the mpg data and it contains information on various characteristics of diamonds.
 
 Run the R command str with the argument diamonds to see what the data looks like.
 
 ```{r}
+library("ggplot2")
 str(diamonds)
 ```
 

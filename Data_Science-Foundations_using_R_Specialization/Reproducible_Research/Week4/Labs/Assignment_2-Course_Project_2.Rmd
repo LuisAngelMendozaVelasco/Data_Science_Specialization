@@ -49,13 +49,13 @@ library(tidyr)
 ## Download and read bz2 file
 
 ```{r reading_data}
-if (!file.exists("./data/stormdata.csv")) {
+if (!file.exists("./stormdata.csv")) {
     url <- "https://d396qusza40orc.cloudfront.net/repdata%2Fdata%2FStormData.csv.bz2"
-    download.file(url, "./data/stormdata.csv.bz2")
-    bunzip2("./data/stormdata.csv.bz2", "./data/stormdata.csv", remove=TRUE)
+    download.file(url, "./stormdata.csv.bz2")
+    bunzip2("./stormdata.csv.bz2", "./stormdata.csv", remove=TRUE)
 }
 
-storm <- data.table::fread("./data/stormdata.csv", fill=TRUE, header=TRUE, verbose=FALSE)
+storm <- data.table::fread("./stormdata.csv", fill=TRUE, header=TRUE, verbose=FALSE)
 head(storm)
 ```
 
@@ -79,10 +79,10 @@ length(unique(storm$EVTYPE))
 ```{r}
 pop_health <- storm2 %>% select(evtype, fatalities, injuries) %>% 
             group_by(evtype) %>% 
-            summarize(fatalities = sum(fatalities), injuries = sum(injuries), .groups='drop') %>%
+            summarize(fatalities=sum(fatalities), injuries=sum(injuries), .groups='drop') %>%
             arrange(desc(fatalities), desc(injuries)) %>%
             slice(1:10) %>% 
-            gather(key = type, value = value, fatalities, injuries)
+            gather(key=type, value=value, fatalities, injuries)
 ```
 
 ## Processing data for economic consequences analysis
@@ -113,12 +113,12 @@ cost <- function(x) {
 
 ```{r}
 economic <- storm2 %>% select("evtype", "propdmg", "propdmgexp", "cropdmg", "cropdmgexp") %>% 
-            mutate(prop_dmg = propdmg*sapply(propdmgexp, FUN = cost), crop_dmg = cropdmg*sapply(cropdmgexp, FUN = cost), .keep="unused") %>%
+            mutate(prop_dmg=propdmg*sapply(propdmgexp, FUN=cost), crop_dmg= cropdmg*sapply(cropdmgexp, FUN=cost), .keep="unused") %>%
             group_by(evtype) %>% 
-            summarize(property = sum(prop_dmg), crop = sum(crop_dmg), .groups='drop') %>%
+            summarize(property=sum(prop_dmg), crop=sum(crop_dmg), .groups='drop') %>%
             arrange(desc(property), desc(crop)) %>%
             slice(1:10) %>% 
-            gather(key = type, value = value, property, crop)
+            gather(key=type, value=value, property, crop)
 ```
 
 ## Results
@@ -130,7 +130,7 @@ ggplot(data=pop_health, aes(reorder(evtype, -value), value, fill=type)) +
         geom_bar(position = "dodge", stat="identity") + 
         labs(x="Event Type", y="Count") +
         theme_bw() +
-        theme(axis.text.x = element_text(angle = 20, vjust=0.7)) + 
+        theme(axis.text.x = element_text(angle=20, vjust=0.7)) + 
         ggtitle("Total Number of Fatalities and Injuries of top 10 storm event types") +
         scale_fill_manual(values=c("red", "pink"))
 ```
@@ -139,10 +139,14 @@ ggplot(data=pop_health, aes(reorder(evtype, -value), value, fill=type)) +
 
 ```{r}
 ggplot(data=economic, aes(reorder(evtype, -value), value, fill=type)) +
-        geom_bar(position = "dodge", stat="identity") + 
+        geom_bar(position="dodge", stat="identity") + 
         labs(x="Event Type", y="Count (millions)") +
         theme_bw() +
-        theme(axis.text.x = element_text(angle = 25, vjust=0.5)) + 
+        theme(axis.text.x = element_text(angle=25, vjust=0.5)) + 
         ggtitle("Total Cost of Property and Crop Damage by top 10 storm event types") +
         scale_fill_manual(values=c("darkgreen", "grey"))
+```
+
+```{bash}
+rm ./stormdata.csv
 ```

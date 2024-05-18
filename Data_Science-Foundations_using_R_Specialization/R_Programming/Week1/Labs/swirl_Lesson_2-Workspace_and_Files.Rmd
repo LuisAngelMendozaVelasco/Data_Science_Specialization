@@ -156,3 +156,7 @@ Go back to your original working directory using setwd(). (Recall that we create
 ```{r}
 setwd(old.dir)
 ```
+
+```{bash}
+rm -rf mytest*.R testdir*
+```

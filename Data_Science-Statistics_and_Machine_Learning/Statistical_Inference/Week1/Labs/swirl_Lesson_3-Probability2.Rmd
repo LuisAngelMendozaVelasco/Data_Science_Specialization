@@ -3,7 +3,7 @@ title: "swirl Lesson 3: Probability2"
 output: html_notebook
 ---
 
-"Probability. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to Statistical_Inference/Probability.)"
+Probability. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to Statistical_Inference/Probability.)
 
 In this lesson, we'll continue to discuss probability.
 

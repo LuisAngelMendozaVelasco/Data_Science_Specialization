@@ -105,14 +105,15 @@ steps_per_day <- dt %>%
 
 with(steps_per_day,
     hist(sum_steps,
-        xlab = "Total no of steps each day",
-        main = "Histogram of Total Number of steps taken each day",
-        labels = TRUE)
+        xlab="Total no of steps each day",
+        main="Histogram of Total Number of steps taken each day",
+        labels=TRUE)
 )
 
 steps_per_day %>%
 filter(complete.cases(.)) %>%
-summarize(mean = mean(sum_steps), median = median(sum_steps))
+summarize(mean=mean(sum_steps), median=median(sum_steps))
+grid()
 ```
 
 ## What is the average daily activity pattern?
@@ -120,10 +121,9 @@ summarize(mean = mean(sum_steps), median = median(sum_steps))
 ```{r}
 mean_interval <- dt %>% group_by(interval) %>%
                 na.omit() %>%
-                summarize(avg_step = mean(steps), .groups = 'drop')
+                summarize(avg_step=mean(steps), .groups='drop')
 
-ggplot(mean_interval, aes(interval, avg_step)) + geom_line() + labs(x = "Intervals", y = "Average steps taken") +
-        ggtitle("Time series of Average steps taken during 5 minute interval") + theme_bw()
+ggplot(mean_interval, aes(interval, avg_step)) + geom_line() + labs(x="Intervals", y="Average steps taken") + ggtitle("Time series of Average steps taken during 5 minute interval") + theme_bw()
 
 mean_interval %>% filter(avg_step == max(avg_step))
 ```
@@ -149,17 +149,18 @@ for (i in 1:nrow(complete_dt)) {
 # Perform necessary transformation
 hist_complete_dt <- complete_dt %>%
                     group_by(date) %>%
-                    summarize(sum_steps = sum(steps), .groups = 'drop')
+                    summarize(sum_steps=sum(steps), .groups='drop')
 
 # Plot histogram
 with(hist_complete_dt, hist(sum_steps,
-                            xlab = "Total no of steps each day",
-                            main = "Histogram of Total Number of steps taken each day",
-                            labels = TRUE)
+                            xlab="Total no of steps each day",
+                            main="Histogram of Total Number of steps taken each day",
+                            labels=TRUE)
 )
 
 hist_complete_dt %>%
 summarize(mean = mean(sum_steps), median = median(sum_steps))
+grid()
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
@@ -168,20 +169,20 @@ summarize(mean = mean(sum_steps), median = median(sum_steps))
 library(chron) 
 
 w_complete_dt <- complete_dt %>%
-                mutate(date = chron::is.weekend(date))
+                mutate(date=chron::is.weekend(date))
 
 # Transforming data for plotting
 w_timeseries <- w_complete_dt %>% group_by(date, interval) %>%
-                summarize(avg_step = mean(steps), .groups = 'drop')
+                summarize(avg_step=mean(steps), .groups='drop')
 
 # Changing labels for more appropriate names
-labels <- as_labeller(c(`TRUE` = "Weekend", `FALSE` = "Weekday"))
+labels <- as_labeller(c(`TRUE`="Weekend", `FALSE`="Weekday"))
 
 # Plot time series with ggplot
 ggplot(w_timeseries, aes(interval, avg_step, color=date)) +
         geom_line() +
-        facet_wrap(~date, nrow=2, labeller= labels)+
-        labs(x = "Intervals", y = "Average steps taken") +
+        facet_wrap(~date, nrow=2, labeller=labels)+
+        labs(x="Intervals", y="Average steps taken") +
         ggtitle("Time series of Average steps taken Weekday vs Weekend") +
         theme_bw()
 ```

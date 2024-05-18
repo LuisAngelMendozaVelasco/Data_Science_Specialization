@@ -3,7 +3,7 @@ title: "swirl Lesson 1: Principles of Analytic Graphs"
 output: html_notebook
 ---
 
-"Principles_of_Analytic_Graphs. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/Principles_of_Analytic_Graphics.)"
+Principles_of_Analytic_Graphs. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/Principles_of_Analytic_Graphics.)
 
 In this lesson, we'll discuss  some basic principles of  presenting data effectively. These will illustrate some fundamental concepts of displaying results in order to make them more meaningful and convincing. These principles are cribbed from Edward Tufte's great 2006 book, Beautiful Evidence. You can read more about them at the www.edwardtufte.com website.
 

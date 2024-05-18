@@ -3,7 +3,7 @@ title: "swirl Lesson 1: Lattice Plotting System"
 output: html_notebook
 ---
 
-"Lattice_Plotting_System. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/PlottingLattice.)"
+Lattice_Plotting_System. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/PlottingLattice.)
 
 In another lesson, we gave you an overview of the three plotting systems in R. In this lesson we'll focus on the lattice plotting system.  As we did with the base plotting system, we'll focus on using lattice  to create graphics on the screen device rather than another graphics device.
 
@@ -39,7 +39,7 @@ Now try running xyplot with the formula Ozone~Wind as the first argument and the
 
 ```{r}
 library(lattice)
-xyplot(Ozone ~ Wind, data = airquality)
+xyplot(Ozone ~ Wind, data=airquality)
 ```
 
 Look vaguely familiar? The dots are blue, instead of black, but lattice labeled the axes for you. You can use some of the same graphical parameters (e.g., pch and col) that you used in the base package in calls to lattice functions.
@@ -47,7 +47,7 @@ Look vaguely familiar? The dots are blue, instead of black, but lattice labeled 
 Now rerun xyplot with the formula Ozone~Wind as the first argument and the second argument data set equal to airquality (use the up arrow to save typing). This time add the arguments col set equal to "red", pch set equal to 8, and main set equal to "Big Apple Data".
 
 ```{r}
-xyplot(Ozone ~ Wind, data = airquality, pch=8, col="red", main="Big Apple Data")
+xyplot(Ozone ~ Wind, data=airquality, pch=8, col="red", main="Big Apple Data")
 ```
 
 Red snowflakes are cool, right? Now that you’ve seen the basic xyplot() and some of its arguments, you might want to experiment more by yourself when you're done with the lesson to discover what other arguments and colors are available. (If you can't wait to experiment, recall that swirl has play() and nxt() functions. At a command prompt, typing play() allows you to leave swirl temporarily so  you can try different R commands at the console. Typing nxt() when you’re done playing brings you back to swirl and you can resume your lesson.) 
@@ -57,7 +57,7 @@ Now you'll see how easy it is to generate a multipanel plot using a single latti
 Run xyplot with the formula Ozone~Wind | as.factor(Month) as the first argument and the second argument data set equal to airquality (use the up arrow to save typing). So far, not much is different, right? Add a third argument, layout, set equal to c(5,1). 
 
 ```{r}
-xyplot(Ozone ~ Wind | as.factor(Month), data = airquality, layout=c(5,1))
+xyplot(Ozone ~ Wind | as.factor(Month), data=airquality, layout=c(5,1))
 ```
 
 Note that the default color and plotting character are back. What did the as.factor(Month) do?
@@ -69,7 +69,7 @@ Note that the default color and plotting character are back. What did the as.fac
 Since Month is a named column of the airquality dataframe we had to tell R to treat it as a factor. To see how this affects the plot, rerun the xyplot command you just ran, but use Ozone ~ Wind | Month instead of Ozone ~ Wind | as.factor(Month) as the first argument.  
 
 ```{r}
-xyplot(Ozone ~ Wind | Month, data = airquality, layout=c(5, 1))
+xyplot(Ozone ~ Wind | Month, data=airquality, layout=c(5, 1))
 ```
 
 Not as informative, right? The word Month in each panel really doesn't tell you much if it doesn't identify which month it's plotting. Notice that the actual data is the same between the two plots, though.
@@ -132,9 +132,9 @@ Panel functions receive the x and y coordinates of the data points in their pane
 ```{r}
 set.seed(10)
 x <- rnorm(100)
-f <- rep(0:1, each = 50)
-y <- x + f - f * x+ rnorm(100, sd = 0.5)
-f <- factor(f, labels = c("Group 1", "Group 2"))
+f <- rep(0:1, each=50)
+y <- x + f - f * x+ rnorm(100, sd=0.5)
+f <- factor(f, labels=c("Group 1", "Group 2"))
 ```
 
 ```{r}
@@ -144,7 +144,7 @@ table(f)
 The first 50 entries of f are "Group 1" and the last 50 are "Group 2". Run xyplot with two arguments. The first is the formula y~x|f, and the second is layout set equal to c(2,1). Note that we're not providing an explicit data argument, so xyplot will look in the environment and see the x and y that we've generated for you.
 
 ```{r}
-xyplot(y ~ x | f, layout = c(2, 1))
+xyplot(y ~ x | f, layout=c(2, 1))
 ```
 
 To understand this a little better look at the variable v1 we've created for you.
@@ -174,7 +174,7 @@ Again, the values match the plot. That's reassuring. We've copied some code from
 ```{r}
 p <- xyplot(y ~ x | f, panel = function(x, y, ...) {
     panel.xyplot(x, y, ...)  ## First call the default panel function for 'xyplot'
-    panel.abline(h = median(y), lty = 2)  ## Add a horizontal line at the median
+    panel.abline(h=median(y), lty = 2)  ## Add a horizontal line at the median
 })
 print(p)
 invisible()
@@ -203,9 +203,9 @@ See how the lines appear. The plot shows two panels because...?
 We've copied another piece of similar code, i.e., a call to xyplot with a custom panel function, from the slides. To see it, type myedit("plot2.R"). This will open your editor and display the R code in it.
 
 ```{r}
-p2 <- xyplot(y ~ x | f, panel = function(x, y, ...) {
+p2 <- xyplot(y ~ x | f, panel=function(x, y, ...) {
     panel.xyplot(x, y, ...)  ## First call default panel function
-    panel.lmline(x, y, col = 2)  ## Overlay a simple linear regression line
+    panel.lmline(x, y, col=2)  ## Overlay a simple linear regression line
 })
 print(p2)
 invisible()
@@ -287,6 +287,7 @@ True or False? Lattice plots are constructed by a series of calls to core functi
 ```
 
 True or False? Lattice plots are constructed with a single function call to a core lattice function (e.g. xyplot)
+
 ```{r}
 "True"
 ```

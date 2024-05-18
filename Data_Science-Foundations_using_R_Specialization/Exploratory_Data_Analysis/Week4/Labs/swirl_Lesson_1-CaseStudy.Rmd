@@ -3,7 +3,7 @@ title: "swirl Lesson 1: CaseStudy"
 output: html_notebook
 ---
 
-"CaseStudy. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/CaseStudy.)"
+CaseStudy. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/CaseStudy.)
 
 In this lesson we'll apply some of the techniques we learned in this course to study air pollution data, specifically particulate matter (we'll call it pm25 sometimes), collected by the U.S. Environmental Protection Agency. This website https://www.health.ny.gov/environmental/indoors/air/pmq_a.htm from New York State offers some basic information on this topic if you're interested. 
 
@@ -17,7 +17,7 @@ pathtofile <- function(fileName){
 }
 
 my1999 <- pathtofile("./data/airData1999.txt.gz")
-pm0 <- read.table(my1999, comment.char = "#", header = FALSE, sep = "|", na.strings = "")
+pm0 <- read.table(my1999, comment.char="#", header=FALSE, sep="|", na.strings="")
 ```
 
 
@@ -44,8 +44,9 @@ cnames
 ```
 
 We see that the 28 column names look all jumbled together even though they're separated by "|" characters, so let's fix this. Reassign to cnames the output of a call to strsplit (string split) with 3 arguments. The first is cnames, the pipe symbol '|' is the second (use the quotation marks), and the third is the argument fixed set to TRUE. Try this now. 
+
 ```{r}
-cnames <- strsplit(cnames, "|", fixed = TRUE)
+cnames <- strsplit(cnames, "|", fixed=TRUE)
 ```
 
 The variable cnames now holds a list of the column headings. Take another look at the column names. 
@@ -94,7 +95,7 @@ We'll repeat what we did for pm0, except a little more efficiently. First assign
 
 ```{r}
 my2012 <- pathtofile("./data/airData2012.txt.gz")
-pm1 <- read.table(my2012, comment.char = "#", header = FALSE, sep = "|", na.strings = "")
+pm1 <- read.table(my2012, comment.char="#", header=FALSE, sep="|", na.strings="")
 ```
 
 ```{r}
@@ -141,12 +142,14 @@ Call the boxplot function with 2 arguments, x0 and x1.
 
 ```{r}
 boxplot(x0, x1)
+grid()
 ```
 
 Huh? Did somebody step on the boxes? It's hard to see what's going on here. There are so many values outside the boxes and the range of x1 is so big that the boxes are flattened. It might be more informative to call boxplot on the logs (base 10) of x0 and x1. Do this now using log10(x0) and log10(x1) as the 2 arguments.
 
 ```{r}
 boxplot(log10(x0), log10(x1))
+grid()
 ```
 
 A bonus! Not only do we get a better looking boxplot we also get some warnings from R in Red. These let us know that some values in x0 and x1 were "unloggable", no doubt the 0 (Min) we saw in the summary of x0 and the negative values we saw in the Min of the summary of x1. 
@@ -168,13 +171,13 @@ negative <- x1 < 0
 Now run the R command sum with 2 arguments. The first is negative, and the second is na.rm set equal to TRUE. This tells sum to ignore the missing values in negative.
 
 ```{r}
-sum(negative, na.rm = TRUE)
+sum(negative, na.rm=TRUE)
 ```
 
 So there are over 26000 negative values. Sounds like a lot. Is it? Run the R command mean with same 2 arguments you just used with the call to sum. This will tell us a percentage.
 
 ```{r}
-mean(negative, na.rm = TRUE)
+mean(negative, na.rm=TRUE)
 ```
 
 We see that just 2% of the x1 values are negative. Perhaps that's a small enough percentage that we can ignore them. Before we ignore them, though, let's see if they occur during certain times of the year.
@@ -207,6 +210,7 @@ Let's plot a histogram of the months when the particulate matter measurements ar
 
 ```{r}
 hist(dates[negative], "month")
+grid()
 ```
 
 We see the bulk of the negative measurements were taken in the winter months, with a spike in May. Not many of these negative measurements occurred in summer months. We can take a guess that because particulate measures tend to be low in winter and high in summer, coupled with the fact that higher densities are easier to measure, that measurement errors occurred when the values were low. For now we'll attribute these negative measurements to errors. Also, since they account for only 2% of the 2012 data, we'll ignore them.
@@ -216,8 +220,8 @@ Now we'll change focus a bit and instead of looking at all the monitors througho
 ```{r}
 site0 <- unique(subset(pm0, State.Code == 36, c(County.Code, Site.ID)))
 site1 <- unique(subset(pm1, State.Code == 36, c(County.Code, Site.ID)))
-site0 <- paste(site0[,1], site0[,2], sep = ".")
-site1 <- paste(site1[,1], site1[,2], sep = ".")
+site0 <- paste(site0[,1], site0[,2], sep=".")
+site1 <- paste(site1[,1], site1[,2], sep=".")
 ```
 
 We subsetted off the New York State monitor identification data for 1999 and 2012  into 2 vectors, site0 and site1. Look at the structure of site0 now with the R command str.
@@ -243,8 +247,8 @@ both
 We see that 10 monitors in New York State were active in both 1999 and 2012.
 
 ```{r}
-pm0$county.site <- with(pm0, paste(County.Code, Site.ID, sep = "."))
-pm1$county.site <- with(pm1, paste(County.Code, Site.ID, sep = "."))
+pm0$county.site <- with(pm0, paste(County.Code, Site.ID, sep="."))
+pm1$county.site <- with(pm1, paste(County.Code, Site.ID, sep="."))
 ```
 
 To save you some time and typing, we modified the data frames pm0 and pm1 slightly  by adding to each of them a new component, county.site. This is just a concatenation of two original components County.Code and Site.ID. We did this to facilitate the next step which is to find out how many measurements were taken by the 10 New York monitors working in both of the years of interest. Run head on pm0 to see the first few entries now.
@@ -334,55 +338,55 @@ dates1 <- as.Date(as.character(pm1sub$Date), "%Y%m%d")
 Now we'll plot these 2 time series in the same panel using the base plotting system. Call par with 2 arguments. The first is mfrow set equal to c(1,2). This will tell the system we're plotting 2 graphs in 1 row and 2 columns. The second argument will adjust the panel's margins. It is mar set to c(4,4,2,1).
 
 ```{r}
-par(mfrow = c(1, 2), mar = c(4, 4, 2, 1))
+par(mfrow=c(1, 2), mar=c(4, 4, 2, 1))
 ```
 
 Call plot with the 3 arguments dates0, x0sub, and pch set to 20. The first two arguments are the x and y coordinates. This will show the pm25 values as functions of time.
 
 ```{r}
-plot(dates0, x0sub, pch = 20)
+plot(dates0, x0sub, pch=20)
 ```
 
 Now we'll mark the median.
 
 ```{r}
 try(dev.off(), silent=TRUE)
-par(mfrow = c(1, 2), mar = c(4, 4, 2, 1))
-plot(dates0, x0sub, pch = 20)
+par(mfrow=c(1, 2), mar=c(4, 4, 2, 1))
+plot(dates0, x0sub, pch=20)
 ```
 
 Use abline to add a horizontal line at the median of the pm25 values. Make the line width 2 (lwd is the argument), and when you call median with x0sub, specify the argument na.rm to be TRUE.
 
 ```{r}
 try(dev.off(), silent=TRUE)
-par(mfrow = c(1, 2), mar = c(4, 4, 2, 1))
-plot(dates0, x0sub, pch = 20)
-abline(h = median(x0sub, na.rm = TRUE), lwd=2)
+par(mfrow=c(1, 2), mar=c(4, 4, 2, 1))
+plot(dates0, x0sub, pch=20)
+abline(h=median(x0sub, na.rm=TRUE), lwd=2)
 ```
 
 Now we'll do the same for the 2012 data. Call plot with the 3 arguments dates1, x1sub, and pch set to 20. 
 
 ```{r}
-plot(dates1, x1sub, pch = 20)
+plot(dates1, x1sub, pch=20)
 ```
 
 As before,  we'll mark the median of this 2012 data.
 
 ```{r}
 try(dev.off(), silent=TRUE)
-par(mfrow = c(1, 2), mar = c(4, 4, 2, 1))
-plot(dates0, x0sub, pch = 20)
-plot(dates1, x1sub, pch = 20)
+par(mfrow=c(1, 2), mar=c(4, 4, 2, 1))
+plot(dates0, x0sub, pch=20)
+plot(dates1, x1sub, pch=20)
 ```
 
 Use abline to add a horizontal line at the median of the pm25 values. Make the line width 2 (lwd is the argument). Remember to  specify the argument na.rm to be TRUE when you call median on x1sub.
 
 ```{r}
 try(dev.off(), silent=TRUE)
-par(mfrow = c(1, 2), mar = c(4, 4, 2, 1))
-plot(dates0, x0sub, pch = 20)
-plot(dates1, x1sub, pch = 20)
-abline(h = median(x1sub, na.rm = TRUE), lwd=2)
+par(mfrow=c(1, 2), mar=c(4, 4, 2, 1))
+plot(dates0, x0sub, pch=20)
+plot(dates1, x1sub, pch=20)
+abline(h=median(x1sub, na.rm=TRUE), lwd=2)
 ```
 
 Which median is larger - the one for 1999 or the one for 2012?
@@ -413,10 +417,10 @@ Here a new figure we've created showing the two plots side by side with the same
 
 ```{r}
 par(mfrow=c(1, 2), mar=c(4, 4, 2, 1))
-plot(dates0, x0sub, pch = 20, ylim = rng)
-abline(h = median(x0sub, na.rm = TRUE), lwd=2)
-plot(dates1, x1sub, pch = 20, ylim = rng)
-abline(h = median(x1sub, na.rm = TRUE), lwd=2)
+plot(dates0, x0sub, pch=20, ylim=rng)
+abline(h=median(x0sub, na.rm=TRUE), lwd=2)
+plot(dates1, x1sub, pch=20, ylim=rng)
+abline(h=median(x1sub, na.rm=TRUE), lwd=2)
 par(mfrow=c(1, 1))
 ```
 
@@ -500,6 +504,7 @@ For the first column of points, call with with 2 arguments. The first is mrg, an
 
 ```{r}
 with(mrg, plot(rep(1, 52), mrg[, 2], xlim = c(.5, 2.5)))
+grid()
 ```
 
 We see a column of points at x=1 which represent the 1999 state means. For the second column of points, again call with with 2 arguments. As before, the first is mrg. The second, however,  is a call to the function points with 2 arguments. We need to do this since we're adding points to an already existing plot. The first argument to points is the set of x values, rep(2,52). The second argument is the set of y values, mrg[,3]. Of course, this is the third column of mrg. (We don't need to specify the range of x values again.)
@@ -507,14 +512,16 @@ We see a column of points at x=1 which represent the 1999 state means. For the s
 ```{r}
 with(mrg, plot(rep(1, 52), mrg[, 2], xlim = c(.5, 2.5)))
 with(mrg, points(rep(2, 52), mrg[, 3]))
+grid()
 ```
 
 We see a shorter column of points at x=2. Now let's connect the dots. Use the R function segments with 4 arguments. The first 2 are the x and y coordinates of the 1999 points and the last 2 are the x and y coordinates of the 2012 points. As in the previous calls specify the x coordinates with calls to rep and the y coordinates with references to the appropriate columns of mrg.
 
 ```{r}
-with(mrg, plot(rep(1, 52), mrg[, 2], xlim = c(.5, 2.5)))
+with(mrg, plot(rep(1, 52), mrg[, 2], xlim=c(.5, 2.5)))
 with(mrg, points(rep(2, 52), mrg[, 3]))
 segments(rep(1, 52), mrg[, 2], rep(2, 52), mrg[, 3])
+grid()
 ```
 
 We see from the plot that the vast majority of states have indeed improved their particulate matter counts so the general trend is downward. There are a few exceptions. (The topmost point in the 1999 column is actually two points that had very close measurements.)

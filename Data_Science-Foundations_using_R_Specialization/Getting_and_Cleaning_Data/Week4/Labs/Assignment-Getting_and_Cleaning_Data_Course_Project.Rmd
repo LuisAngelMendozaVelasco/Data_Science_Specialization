@@ -137,3 +137,8 @@ Write final tidy data into new file.
 ```{r}
 fwrite(testTrain, file="tidyData.txt")
 ```
+
+```{bash}
+rm ./tidyData.txt
+rm -rf ./UCI\ HAR\ Dataset
+```

@@ -3,7 +3,7 @@ title: "swirl Lesson 2: Hypothesis Testing"
 output: html_notebook
 ---
 
-"Hypothesis_Testing. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 06_Statistical_Inference/09_HT.)"
+Hypothesis_Testing. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 06_Statistical_Inference/09_HT.)
 
 In this lesson, as the name suggests, we'll discuss hypothesis testing which is concerned with making decisions about populations using observed data.
 

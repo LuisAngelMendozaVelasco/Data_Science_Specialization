@@ -55,16 +55,18 @@ t_var = t_sd^2
 ## Histogram of sample exponential distribution vs Averages of simulated exponentials.
 
 ```{r}
-par(mfrow = c(1, 2))
+par(mfrow=c(1, 2))
 hist(simdata,
-     col = "steelblue",
-     main = "Simulated exponential distribution",
-     xlab = "40 random exponentials")
+     col="steelblue",
+     main="Simulated exponential distribution",
+     xlab="40 random exponentials")
+grid()
 hist(sim_mean,
-     col = "red3",
-     main = "Averages of Simulated Exponentials",
-     xlab = "Average of 40 exponentials")
-abline(v = t_mean, col = "green", lwd = 2) # theoretical mean
+     col="red3",
+     main="Averages of Simulated Exponentials",
+     xlab="Average of 40 exponentials")
+grid()
+abline(v=t_mean, col="green", lwd=2) # theoretical mean
 ```
 
 ## Comparison between sample and theoretical statistics
@@ -74,7 +76,7 @@ Sample_stats <- c(simdata_mean, simdata_sd, simdata_var)
 Theoretical_stats <- c(t_mean, t_sd, t_var)
 diff <- c(abs(t_mean - simdata_mean), abs(t_sd - simdata_sd), t_var - simdata_var)
 names <- c("Mean", "Std", "Variance")
-data.frame(Sample_stats, Theoretical_stats, diff, row.names =  c("Mean", "Std", "Variance"))
+data.frame(Sample_stats, Theoretical_stats, diff, row.names=c("Mean", "Std", "Variance"))
 ```
 
 ## Distribution
@@ -84,14 +86,11 @@ data.frame(Sample_stats, Theoretical_stats, diff, row.names =  c("Mean", "Std", 
 ```{r}
 library(ggplot2)
 simdata_mean <- data.frame(sim_mean)
-ggplot(simdata_mean, aes(sim_mean)) + geom_histogram(binwidth = .3,
-                                                    fill = "steelblue",
-                                                    color = "black",
-                                                    aes(y = ..density..)) +
-    geom_density(color = "blue", lwd = 1) + labs(title = "Distribution of Random Exponential Values with 1000 simulations", x = "Average of 40 Exponentials", y = "Density") + stat_function( fun = dnorm,
-                                                                                args = list(mean = t_mean, sd = t_sd),
-                                                                                color = "red",
-                                                                                lwd = 1 ) + theme_bw()
+ggplot(simdata_mean, aes(sim_mean)) + geom_histogram(binwidth=.3,
+                                                    fill="steelblue",
+                                                    color="black",
+                                                    aes(y=..density..)) +
+    geom_density(color="blue", lwd=1) + labs(title="Distribution of Random Exponential Values with 1000 simulations", x="Average of 40 Exponentials", y="Density") + stat_function(fun=dnorm, args=list(mean=t_mean, sd=t_sd), color="red", lwd=1) + theme_bw()
 ```
 
 ### Q-Q plot
@@ -99,6 +98,7 @@ ggplot(simdata_mean, aes(sim_mean)) + geom_histogram(binwidth = .3,
 ```{r}
 qqnorm(sim_mean, col="black") # sample distribution
 qqline(sim_mean, col="red", lwd=3) #theoretical
+grid()
 ```
 
 # Part 2
@@ -131,7 +131,7 @@ summary(dt)
 
 ```{r}
 library(ggplot2)
-ggplot(dt, aes(x = dose, y = len, fill = supp)) + geom_boxplot() + ggtitle("Length of tooth growth based on supplement type and dose") + theme_classic()
+ggplot(dt, aes(x=dose, y=len, fill=supp)) + geom_boxplot() + ggtitle("Length of tooth growth based on supplement type and dose") + theme_classic()
 ```
 
 ```{r}
@@ -140,9 +140,9 @@ library(tidyr)
 
 dt %>%
 group_by(supp, dose) %>%
-summarize(mean = mean(len), .groups='drop') %>%
+summarize(mean=mean(len), .groups='drop') %>%
 spread(supp, mean) %>%
-mutate(diff = abs(VC - OJ))
+mutate(diff=abs(VC - OJ))
 ```
 
 ## t.test Hypothesis Testing

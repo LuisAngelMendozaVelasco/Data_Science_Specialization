@@ -149,6 +149,7 @@ And let's take a look at the distribution of our column means by plotting a hist
 
 ```{r}
 hist(cm)
+grid()
 ```
 
 Looks like our column means are almost normally distributed, right? That's the Central Limit Theorem at work, but that's a lesson for another day!

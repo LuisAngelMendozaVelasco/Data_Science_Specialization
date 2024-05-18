@@ -3,7 +3,7 @@ title: "swirl Lesson 3: Resampling"
 output: html_notebook
 ---
 
-"Resampling. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 06_Statistical_Inference/13_Resampling.)"
+Resampling. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 06_Statistical_Inference/13_Resampling.)
 
 In this lesson, you get a bonus! We'll talk about two topics in statistical inference, bootstrapping AND permutation testing. These both fall under the broader category of resampling methods. We'll start with bootstrapping.
 
@@ -42,6 +42,7 @@ For the heck of it, compute the expected die roll for a fair die.
 ```
 
 Theoretically, the average is 3.5. Here, we've run code and plotted a histogram after we took 1000 such averages, each of 50 dice rolls. Note the unusual y-axis scale. We're displaying this as a density function so the area of the salmon-colored region is theoretically 1. With this scale, though, all the heights of the bins actually add up to 5. So you have to multiply each height by .2 and add up all the results to get 1. 
+
 ```{r}
 library("ggplot2")
 nosim <- 1000
@@ -313,9 +314,9 @@ Call sample now on the array group to see what happens.
 sample(group)
 ```
 
-"The labels are all mixed up now. We'll do this permuting of labels and then we'll recalculate the difference of the means of the two \"new\" (really newly labelled) groups."
+The labels are all mixed up now. We'll do this permuting of labels and then we'll recalculate the difference of the means of the two \"new\" (really newly labelled) groups.
 
-"We'll relabel and calculate the difference of means 10000 times and store the differences (of means) in the array perms. Here's what the code looks like perms <- sapply(1 : 10000, function(i) testStat(BCcounts, sample(group))). Try it now."
+We'll relabel and calculate the difference of means 10000 times and store the differences (of means) in the array perms. Here's what the code looks like perms <- sapply(1 : 10000, function(i) testStat(BCcounts, sample(group))). Try it now.
 
 ```{r}
 perms <- sapply(1 : 10000, function(i) testStat(BCcounts, sample(group)))
@@ -359,7 +360,7 @@ We've also stored off the D and E data in DEcounts and the group labels in group
 testStat(DEcounts, group)
 ```
 
-"We've  stored off this value, 1.416667, in the variable obs for you. Now run the permutation command, with DEcounts. Here it is, perms <- sapply(1 : 10000, function(i) testStat(DEcounts, sample(group)))"
+We've  stored off this value, 1.416667, in the variable obs for you. Now run the permutation command, with DEcounts. Here it is, perms <- sapply(1 : 10000, function(i) testStat(DEcounts, sample(group)))
 
 ```{r}
 perms <- sapply(1 : 10000, function(i) testStat(DEcounts, sample(group)))
