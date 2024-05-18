@@ -3,7 +3,7 @@ title: "swirl Lesson 2: Probability1"
 output: html_notebook
 ---
 
-"Probability. (Slides for this and other Data Science courses may be found at github <https://github.com/DataScienceSpecialization/courses>. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to Statistical_Inference/Probability.)"
+Probability. (Slides for this and other Data Science courses may be found at github <https://github.com/DataScienceSpecialization/courses>. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to Statistical_Inference/Probability.)
 
 In this lesson, we'll review basic ideas of probability, the study of quantifying the likelihood of particular events occurring. Note the similarity between the words probability and probably. Every time you use the latter word you're implying that an event is more likely than not to occur.
 

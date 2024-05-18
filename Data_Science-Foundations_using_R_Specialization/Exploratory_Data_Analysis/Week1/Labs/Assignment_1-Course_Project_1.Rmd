@@ -71,6 +71,10 @@ The four plots that you will need to construct are shown below.
 
 ![](./data/unnamed-chunk-5.png) 
 
+```{bash}
+gunzip -k ./data/household_power_consumption.txt.gz
+```
+
 # Plot 1
 
 ```{r}
@@ -78,7 +82,7 @@ library(data.table)
 library(lubridate)
 
 # Read in data
-dt <- fread("./data/household_power_consumption.txt", na.strings = "?")
+dt <- fread("./data/household_power_consumption.txt", na.strings="?")
 
 # Filtering dates
 dt <- dt[dt$Date %in% c("1/2/2007", "2/2/2007"), ]
@@ -87,11 +91,12 @@ dt <- dt[dt$Date %in% c("1/2/2007", "2/2/2007"), ]
 # png("plot1.png", width = 480, height = 480)
 
 # histogram
-hist(   dt$Global_active_power,
-        xlab = "Global Active Power (kilowatts)",
-        ylab = "Frequency",
-        main = "Global Active Power",
-        col = "red")
+hist(dt$Global_active_power,
+     xlab="Global Active Power (kilowatts)",
+     ylab="Frequency",
+     main="Global Active Power",
+     col="red")
+grid()
 ```
 
 # Plot 2
@@ -101,23 +106,24 @@ library(data.table)
 library(lubridate)
 
 # Read in data
-dt <- fread("./data/household_power_consumption.txt", na.strings = "?")
+dt <- fread("./data/household_power_consumption.txt", na.strings="?")
 
 # Filtering dates
 dt <- dt[dt$Date %in% c("1/2/2007", "2/2/2007"), ]
 
 # Converting date column to date time
-dateTime <- dmy_hms(paste(dt$Date, dt$Time, sep = " "), tz = "UTC")
+dateTime <- dmy_hms(paste(dt$Date, dt$Time, sep=" "), tz="UTC")
 
 # png graphics device
 # png("plot2.png", width = 480, height = 480)
 
 # Plot
-plot(   dateTime,
-        dt$Global_active_power,
-        type = "l",
-        xlab = "",
-        ylab = "Global Active Power (kilowatts)")
+plot(dateTime,
+     dt$Global_active_power,
+     type="l",
+     xlab="",
+     ylab="Global Active Power (kilowatts)")
+grid()
 ```
 
 # Plot 3
@@ -127,30 +133,31 @@ library(data.table)
 library(lubridate)
 
 # Read in data
-dt <- fread("./data/household_power_consumption.txt", na.strings = "?")
+dt <- fread("./data/household_power_consumption.txt", na.strings="?")
 
 # Filtering dates
-dt <- dt[dt$Date %in% c("1/2/2007", "2/2/2007"), ]
+dt <- dt[dt$Date %in% c("1/2/2007", "2/2/2007"),]
 
 # Converting date column to date time
-dateTime <- dmy_hms(paste(dt$Date, dt$Time, sep = " "), tz = "UTC")
+dateTime <- dmy_hms(paste(dt$Date, dt$Time, sep=" "), tz="UTC")
 
 # png graphics device
 # png("plot3.png", width = 480, height = 480)
 
 # Plot
-plot(   dateTime,
-        dt$Sub_metering_1,
-        type = "l",
-        xlab = "",
-        ylab = "Energy sub metering")
-lines(dateTime, dt$Sub_metering_2, col = "red")
-lines(dateTime, dt$Sub_metering_3, col = "blue")
-legend( "topright",
-        c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),
-        col = c("black", "red", "blue"),
-        lty = 1,
-        lwd = 1)
+plot(dateTime,
+     dt$Sub_metering_1,
+     type="l",
+     xlab="",
+     ylab="Energy sub metering")
+lines(dateTime, dt$Sub_metering_2, col="red")
+lines(dateTime, dt$Sub_metering_3, col="blue")
+legend("topright",
+       c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),
+       col=c("black", "red", "blue"),
+       lty=1,
+       lwd=1)
+grid()
 ```
 
 # Plot 3
@@ -160,52 +167,60 @@ library(data.table)
 library(lubridate)
 
 # Read in data
-dt <- fread("./data/household_power_consumption.txt", na.strings = "?")
+dt <- fread("./data/household_power_consumption.txt", na.strings="?")
 
 # Filtering dates
-dt <- dt[dt$Date %in% c("1/2/2007", "2/2/2007"), ]
+dt <- dt[dt$Date %in% c("1/2/2007", "2/2/2007"),]
 
 # Converting date column to date time
-dateTime <- dmy_hms(paste(dt$Date, dt$Time, sep = " "), tz = "UTC")
+dateTime <- dmy_hms(paste(dt$Date, dt$Time, sep=" "), tz="UTC")
 
 # png graphics device
 # png("plot3.png", width = 480, height = 480)
 
-par(mfrow = c(2, 2))
+par(mfrow=c(2, 2))
 
 #plot1
-plot(   dateTime,
-        dt$Global_active_power,
-        type = "l",
-        xlab = "",
-        ylab = "Global Active Power")
+plot(dateTime,
+     dt$Global_active_power,
+     type="l",
+     xlab="",
+     ylab="Global Active Power")
+grid()
 
 #plot2
 plot(dateTime,
      dt$Voltage,
-     type = "l",
-     xlab = "datetime",
-     ylab = "Voltage")
+     type="l",
+     xlab="datetime",
+     ylab="Voltage")
+grid()
 
 #plot3
-plot(   dateTime,
-        dt$Sub_metering_1,
-        type = "l",
-        xlab = "",
-        ylab = "Energy sub metering")
+plot(dateTime,
+     dt$Sub_metering_1,
+     type="l",
+     xlab="",
+     ylab="Energy sub metering")
+grid()
 
-lines(dateTime, dt$Sub_metering_2, col = "red")
-lines(dateTime, dt$Sub_metering_3, col = "blue")
-legend( "topright",
-        c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),
-        col = c("black", "red", "blue"),
-        lty = 1,
-        bty = "n")
+lines(dateTime, dt$Sub_metering_2, col="red")
+lines(dateTime, dt$Sub_metering_3, col="blue")
+legend("topright",
+       c("Sub_metering_1", "Sub_metering_2", "Sub_metering_3"),
+       col=c("black", "red", "blue"),
+       lty=1,
+       bty="n")
 
 #plot4
-plot(   dateTime,
-        dt$Global_reactive_power,
-        type = "l",
-        xlab = "datetime",
-        ylab = "Global_reactive_power")
+plot(dateTime,
+     dt$Global_reactive_power,
+     type="l",
+     xlab="datetime",
+     ylab="Global_reactive_power")
+grid()
+```
+
+```{bash}
+rm ./data/household_power_consumption.txt
 ```

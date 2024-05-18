@@ -3,7 +3,7 @@ title: "swirl Lesson 5: Base Plotting System"
 output: html_notebook
 ---
 
-"Base_Plotting_System. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/PlottingBase.)"
+Base_Plotting_System. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/PlottingBase.)
 
 In another lesson, we gave you an overview of the three plotting systems in R. In this lesson we'll focus on the base plotting system and talk more about how you can exploit all its many parameters to get the plot you want.  We'll focus on using the base plotting system to create graphics on the screen device rather than another graphics device.
 
@@ -43,6 +43,7 @@ So the measurements range from 1 to 168. First we'll do a simple histogram of th
 
 ```{r}
 hist(airquality$Ozone)
+grid()
 ```
 
 Simple, right? R put a title on the histogram and labeled both axes for you. What is the most frequent count? 
@@ -61,6 +62,7 @@ We see that the data covers 5 months, May through September. We'll want a boxplo
 
 ```{r}
 boxplot(Ozone~Month, airquality)
+grid()
 ```
 
 Note that boxplot, unlike hist, did NOT specify a title and axis labels for you automatically.
@@ -69,6 +71,7 @@ Let's call boxplot again to specify labels. (Use the up arrow to recover the pre
 
 ```{r}
 boxplot(Ozone~Month, airquality, xlab="Month", ylab="Ozone (ppb)", col.axis="blue", col.lab="red")
+grid()
 ```
 
 Nice colors, but still no title. Let's add one with the R command title. Use the argument main set equal to the string "Ozone and Wind in New York City". 
@@ -76,12 +79,14 @@ Nice colors, but still no title. Let's add one with the R command title. Use the
 ```{r}
 boxplot(Ozone~Month, airquality, xlab="Month", ylab="Ozone (ppb)", col.axis="blue", col.lab="red")
 title(main="Ozone and Wind in New York City")
+grid()
 ```
 
 Now we'll show you how to plot a simple two-dimensional scatterplot using the R function plot. We'll show the relationship between Wind (x-axis) and Ozone (y-axis). We'll use the function plot with those two arguments (Wind and Ozone, in that order). To save some typing, though, we'll call the R command with using 2 arguments. The first argument of with will be airquality, the dataset containing Wind and Ozone; the second argument  will be the call to plot. Doing this allows us to avoid using the longer notation, e.g., airquality$Wind. Try this now. 
   
 ```{r}
 with(airquality, plot(Wind, Ozone))
+grid()
 ```
 
 Note that plot generated labels for the x and y axes but no title. 
@@ -91,6 +96,7 @@ Add one now with the R command title. Use the argument main set equal to the str
 ```{r}
 with(airquality, plot(Wind, Ozone))
 title(main="Ozone and Wind in New York City")
+grid()
 ```
 
 The basic plotting parameters are documented in the R help page for the function par. You can use par to set parameters OR to find out what values are already set. To see just how much flexibility you have, run the R command length with the argument par() now. 
@@ -185,6 +191,7 @@ Before we close, let's test your ability to make a somewhat complicated scatterp
 
 ```{r}
 plot(airquality$Wind, type="n", airquality$Ozone)
+grid()
 ``` 
 
 Now for the test. (You might need to check R's documentation for some of these.) Add a title with the argument main set equal to the string "Wind and Ozone in NYC"
@@ -192,6 +199,7 @@ Now for the test. (You might need to check R's documentation for some of these.)
 ```{r}
 plot(airquality$Wind, type="n", airquality$Ozone)
 title(main="Wind and Ozone in NYC")
+grid()
 ```
 
 Now create a variable called may by subsetting airquality appropriately. (Recall that the data specifies months by number and May is the fifth month of the year.)
@@ -206,6 +214,7 @@ Now use the R command points to plot May's wind and ozone (in that order) as sol
 plot(airquality$Wind, type="n", airquality$Ozone)
 title(main="Wind and Ozone in NYC")
 points(may$Wind, may$Ozone, col="blue", pch=17)
+grid()
 ```
 
 Now create the variable notmay by subsetting airquality appropriately.
@@ -221,6 +230,7 @@ plot(airquality$Wind, type="n", airquality$Ozone)
 title(main="Wind and Ozone in NYC")
 points(may$Wind, may$Ozone, col="blue", pch=17)
 points(notmay$Wind, notmay$Ozone, col="red", pch=8)
+grid()
 ```
 
 Now we'll use the R command legend to clarify the plot and explain what it means. The function  has a lot of arguments, but we'll only use 4. The first will be the string "topright" to tell R where to put the legend. The remaining 3 arguments will each be 2-long vectors created by R's concatenate  function, e.g., c(). These arguments are pch, col, and legend. The first is the vector (17,8), the second ("blue","red"), and the third ("May","Other Months"). Try it now.
@@ -231,6 +241,7 @@ title(main="Wind and Ozone in NYC")
 points(may$Wind, may$Ozone, col="blue", pch=17)
 points(notmay$Wind, notmay$Ozone, col="red", pch=8)
 legend("topright", pch=c(17, 8), col=c("blue", "red"), legend=c("May", "Other Months"))
+grid()
 ```
 
 Now add a vertical line at the median of airquality$Wind. Make it dashed (lty=2) with a width of 2.
@@ -241,7 +252,8 @@ title(main="Wind and Ozone in NYC")
 points(may$Wind, may$Ozone, col="blue", pch=17)
 points(notmay$Wind, notmay$Ozone, col="red", pch=8)
 legend("topright", pch=c(17, 8), col=c("blue", "red"), legend=c("May", "Other Months"))
-abline(v=median(airquality$Wind),lty=2,lwd=2)
+abline(v=median(airquality$Wind) ,lty=2, lwd=2)
+grid()
 ```
 
 Use par with the parameter mfrow set equal to the vector (1,2) to set up the plot window for two plots side by side. You won't see a result.
@@ -253,7 +265,8 @@ par(mfrow=c(1, 2))
 Now plot airquality$Wind and airquality$Ozone and use main to specify the title "Ozone and Wind".
 
 ```{r}
-plot(airquality$Wind, airquality$Ozone, main = "Ozone and Wind")
+plot(airquality$Wind, airquality$Ozone, main="Ozone and Wind")
+grid()
 ```
 
 Now for the second plot.
@@ -261,13 +274,15 @@ Now for the second plot.
 ```{r}
 try(dev.off(), silent=TRUE)
 par(mfrow=c(1, 2))
-plot(airquality$Wind, airquality$Ozone, main = "Ozone and Wind")
+plot(airquality$Wind, airquality$Ozone, main="Ozone and Wind")
+grid()
 ```
 
 Plot airquality$Ozone and airquality$Solar.R and use main to specify the title "Ozone and Solar Radiation".
 
 ```{r}
-plot(airquality$Ozone, airquality$Solar.R, main = "Ozone and Solar Radiation")
+plot(airquality$Ozone, airquality$Solar.R, main="Ozone and Solar Radiation")
+grid()
 ```
 
 Now for something more challenging.
@@ -275,8 +290,10 @@ Now for something more challenging.
 ```{r}
 try(dev.off(), silent=TRUE)
 par(mfrow=c(1, 2))
-plot(airquality$Wind, airquality$Ozone, main = "Ozone and Wind")
-plot(airquality$Wind, airquality$Solar.R, main = "Ozone and Solar Radiation")
+plot(airquality$Wind, airquality$Ozone, main="Ozone and Wind")
+grid()
+plot(airquality$Wind, airquality$Solar.R, main="Ozone and Solar Radiation")
+grid()
 ```
 
 This one with 3 plots, to illustrate inner and outer margins. First, set up the plot window by typing  par(mfrow = c(1, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
@@ -290,57 +307,69 @@ Margins are specified as 4-long vectors of integers. Each number tells how many 
 The first plot should be familiar. Plot airquality$Wind and airquality$Ozone with the title (argument main) as "Ozone and Wind".
 
 ```{r}
-plot(airquality$Wind, airquality$Ozone, main = "Ozone and Wind")
+plot(airquality$Wind, airquality$Ozone, main="Ozone and Wind")
+grid()
 ```
 
 The second plot is similar.
 
 ```{r}
 try(dev.off(), silent=TRUE)
-par(mfrow = c(1, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
-plot(airquality$Wind, airquality$Ozone, main = "Ozone and Wind")
+par(mfrow = c(1, 3), mar=c(4, 4, 2, 1), oma=c(0, 0, 2, 0))
+plot(airquality$Wind, airquality$Ozone, main="Ozone and Wind")
+grid()
 ```
 
 Plot airquality$Solar.R and airquality$Ozone with the title (argument main) as "Ozone and Solar Radiation".
 
 ```{r}
-plot(airquality$Solar.R, airquality$Ozone, main = "Ozone and Solar Radiation")
+plot(airquality$Solar.R, airquality$Ozone, main="Ozone and Solar Radiation")
+grid()
 ```
 
 Now for the final panel.
 
 ```{r}
 try(dev.off(), silent=TRUE)
-par(mfrow = c(1, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
-plot(airquality$Wind, airquality$Ozone, main = "Ozone and Wind")
-plot(airquality$Solar.R, airquality$Ozone, main = "Ozone and Solar Radiation")
+par(mfrow=c(1, 3), mar=c(4, 4, 2, 1), oma=c(0, 0, 2, 0))
+plot(airquality$Wind, airquality$Ozone, main="Ozone and Wind")
+grid()
+plot(airquality$Solar.R, airquality$Ozone, main="Ozone and Solar Radiation")
+grid()
 ```
 
 Plot airquality$Temp and airquality$Ozone with the title (argument main) as "Ozone and Temperature".
 
 ```{r}
-plot(airquality$Temp, airquality$Ozone, main = "Ozone and Temperature")
+plot(airquality$Temp, airquality$Ozone, main="Ozone and Temperature")
+grid()
 ```
 
 Now we'll put in a title.
 
 ```{r}
 try(dev.off(),silent=TRUE)
-par(mfrow = c(1, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
-plot(airquality$Wind, airquality$Ozone, main = "Ozone and Wind")
-plot(airquality$Solar.R, airquality$Ozone, main = "Ozone and Solar Radiation")
-plot(airquality$Temp, airquality$Ozone, main = "Ozone and Temperature")
+par(mfrow=c(1, 3), mar=c(4, 4, 2, 1), oma=c(0, 0, 2, 0))
+plot(airquality$Wind, airquality$Ozone, main="Ozone and Wind")
+grid()
+plot(airquality$Solar.R, airquality$Ozone, main="Ozone and Solar Radiation")
+grid()
+plot(airquality$Temp, airquality$Ozone, main="Ozone and Temperature")
+grid()
 ```
 
 Since this is the main title, we specify it with the R command mtext. Call mtext with the string "Ozone and Weather in New York City" and the argument outer set equal to TRUE.
 
 ```{r}
 try(dev.off(), silent=TRUE)
-par(mfrow = c(1, 3), mar = c(4, 4, 2, 1), oma = c(0, 0, 2, 0))
-plot(airquality$Wind, airquality$Ozone, main = "Ozone and Wind")
-plot(airquality$Solar.R, airquality$Ozone, main = "Ozone and Solar Radiation")
-plot(airquality$Temp, airquality$Ozone, main = "Ozone and Temperature")
-mtext("Ozone and Weather in New York City", outer = TRUE)
+par(mfrow=c(1, 3), mar=c(4, 4, 2, 1), oma=c(0, 0, 2, 0))
+plot(airquality$Wind, airquality$Ozone, main="Ozone and Wind")
+grid()
+plot(airquality$Solar.R, airquality$Ozone, main="Ozone and Solar Radiation")
+grid()
+plot(airquality$Temp, airquality$Ozone, main="Ozone and Temperature")
+grid()
+mtext("Ozone and Weather in New York City", outer=TRUE)
 ```
 
 Voila! Beautiful, right?

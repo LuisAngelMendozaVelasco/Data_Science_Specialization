@@ -3,7 +3,7 @@ title: "swirl Lesson 2: Multiple Testing"
 output: html_notebook
 ---
 
-"Multiple_Testing. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 06_Statistical_Inference/12_MultipleTesting.)"
+Multiple_Testing. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 06_Statistical_Inference/12_MultipleTesting.)
 
 In this lesson, we'll discuss multiple testing. You might ask, "What's that?"
 
@@ -200,13 +200,13 @@ Now count the number of entries in the array that are less than the value .05. U
 sum(pValues < 0.05)
 ```
 
-"So we got around 50 false positives, just as we expected (.05*1000=50). The beauty of R is that it provides a lot of built-in statistical functionality. The function p.adjust is one example. The first argument is the array of pValues. Another argument is the method of adjustment. Once again, use the R function sum and a boolean expression using p.adjust with method=\"bonferroni\" to control the FWER."
+So we got around 50 false positives, just as we expected (.05*1000=50). The beauty of R is that it provides a lot of built-in statistical functionality. The function p.adjust is one example. The first argument is the array of pValues. Another argument is the method of adjustment. Once again, use the R function sum and a boolean expression using p.adjust with method=\"bonferroni\" to control the FWER.
 
 ```{r}
 sum(p.adjust(pValues,method="bonferroni") < 0.05)
 ```
 
-"So the correction eliminated all the false positives that had passed the uncorrected alpha test. Repeat the same experiment, this time using the method \"BH\" to control the FDR."
+So the correction eliminated all the false positives that had passed the uncorrected alpha test. Repeat the same experiment, this time using the method \"BH\" to control the FDR.
 
 ```{r}
 sum(p.adjust(pValues, method="BH") < 0.05)
@@ -238,7 +238,7 @@ Once again we can use R's greatness to count and tabulate for us. We can call th
 table(pValues2 < 0.05, trueStatus)
 ```
 
-"We see that without any correction all 500 of the truly significant (nonrandom) tests were correctly identified in the \"not zero\" column. In the zero column (the truly random tests), however, 24 results were flagged as significant." 
+We see that without any correction all 500 of the truly significant (nonrandom) tests were correctly identified in the \"not zero\" column. In the zero column (the truly random tests), however, 24 results were flagged as significant.
 
 What is the percentage of false positives in this test?
 
@@ -246,9 +246,9 @@ What is the percentage of false positives in this test?
 24/500
 ```
 
-"Just as we expected - around 5% or .05*100."
+Just as we expected - around 5% or .05*100.
 
-"Now run the same table function, however, this time use the call to p.adjust with the \"bonferroni\" method in the boolean expression. This will control the FWER."
+Now run the same table function, however, this time use the call to p.adjust with the \"bonferroni\" method in the boolean expression. This will control the FWER.
 
 ```{r}
 "table(p.adjust(pValues2,method=\"bonferroni\") < 0.05, trueStatus)"
@@ -256,13 +256,13 @@ What is the percentage of false positives in this test?
 
 Since the Bonferroni correction method is more conservative than just comparing p-values to alpha all the truly random tests are correctly identified in the zero column. In other words, we have no false positives. However, the threshold has been adjusted so much that 23 of the truly significant results have been misidentified in the not zero column. 
 
-"Now run the same table function one final time. Use the call to p.adjust with \"BH\" method in the boolean expression. This will control the false discovery rate."
+Now run the same table function one final time. Use the call to p.adjust with \"BH\" method in the boolean expression. This will control the false discovery rate.
 
 ```{r}
 "table(p.adjust(pValues2,method=\"BH\") < 0.05, trueStatus)"
 ```
 
-"Again, the results are a compromise between the No Corrections and the Bonferroni. All the significant results were correctly identified in the \"not zero\" column but in the random (\"zero\") column 13 results were incorrectly identified. These are the false positives. This is roughly half the number of errors in the other two runs."
+Again, the results are a compromise between the No Corrections and the Bonferroni. All the significant results were correctly identified in the \"not zero\" column but in the random (\"zero\") column 13 results were incorrectly identified. These are the false positives. This is roughly half the number of errors in the other two runs.
 
 Here's a plot of the two sets of adjusted p-values, Bonferroni on the left and BH on the right. The x-axis indicates the original p-values. For the Bonferroni, (adjusting by multiplying by 1000, the number of tests), only a few of the adjusted values are below 1. For the BH, the adjusted values are slightly larger than the original values.
  

@@ -14,9 +14,9 @@ library(tidyr)
 library(dplyr)
 ```
 
-"The author of tidyr, Hadley Wickham, discusses his philosophy of tidy data in his 'Tidy Data' paper:\n\nhttp://vita.had.co.nz/papers/tidy-data.pdf\n\nThis paper should be required reading for anyone who works with data, but it's not required in order to complete this lesson."
+The author of tidyr, Hadley Wickham, discusses his philosophy of tidy data in his 'Tidy Data' paper:\n\nhttp://vita.had.co.nz/papers/tidy-data.pdf\n\nThis paper should be required reading for anyone who works with data, but it's not required in order to complete this lesson.
 
-"Tidy data is formatted in a standard way that facilitates exploration and analysis and works seamlessly with other tidy data tools. Specifically, tidy data satisfies three conditions:\n\n1) Each variable forms a column\n\n2) Each observation forms a row\n\n3) Each type of observational unit forms a table"
+Tidy data is formatted in a standard way that facilitates exploration and analysis and works seamlessly with other tidy data tools. Specifically, tidy data satisfies three conditions:\n\n1) Each variable forms a column\n\n2) Each observation forms a row\n\n3) Each type of observational unit forms a table
 
 Any dataset that doesn't satisfy these conditions is considered 'messy' data. Therefore, all of the following are characteristics of messy data, EXCEPT...
 Every column contains a different variable
@@ -47,7 +47,7 @@ students
 
 The first column represents each of five possible grades that students could receive for a particular class. The second and third columns give the number of male and female students, respectively, that received each grade.
 
-"This dataset actually has three variables: grade, sex, and count. The first variable, grade, is already a column, so that should remain as it is. The second variable, sex, is captured by the second and third column headings. The third variable, count, is the number of students for each combination of grade and sex."
+This dataset actually has three variables: grade, sex, and count. The first variable, grade, is already a column, so that should remain as it is. The second variable, sex, is captured by the second and third column headings. The third variable, count, is the number of students for each combination of grade and sex.
 
 To tidy the students data, we need to have one column for each of these three variables. We'll use the gather() function from tidyr to accomplish this. Pull up the documentation for this function with ?gather.
 
@@ -55,7 +55,7 @@ To tidy the students data, we need to have one column for each of these three va
 ?gather
 ```
 
-"Using the help file as a guide, call gather() with the following arguments (in order): students, sex, count, -grade. Note the minus sign before grade, which says we want to gather all columns EXCEPT grade."
+Using the help file as a guide, call gather() with the following arguments (in order): students, sex, count, -grade. Note the minus sign before grade, which says we want to gather all columns EXCEPT grade.
 
 ```{r}
 gather(students, sex, count, -grade)
@@ -111,7 +111,7 @@ That got us half way to tidy data, but we still have two different variables, se
 ?separate
 ```
 
-'Call separate() on res to split the sex_class column into sex and class. You only need to specify the first three arguments: data = res, col = sex_class, into = c("sex", "class"). You don''t have to provide the argument names as long as they are in the correct order.'
+Call separate() on res to split the sex_class column into sex and class. You only need to specify the first three arguments: data = res, col = sex_class, into = c("sex", "class"). You don''t have to provide the argument names as long as they are in the correct order.
 
 ```{r}
 separate(res, sex_class, c("sex", "class"))
@@ -262,7 +262,7 @@ students4 is almost the same as our tidy version of students3. The only differen
 
 At first glance, there doesn't seem to be much of a problem with students4. All columns are variables and all rows are observations. However, notice that each id, name, and sex is repeated twice, which seems quite redundant. This is a hint that our data contains multiple observational units in a single table.
 
-"Our solution will be to break students4 into two separate tables -- one containing basic student information (id, name, and sex) and the other containing grades (id, class, midterm, final).\n\nEdit the R script, save it, then type submit() when you are ready. Type reset() to reset the script to its original state."
+Our solution will be to break students4 into two separate tables -- one containing basic student information (id, name, and sex) and the other containing grades (id, class, midterm, final).\n\nEdit the R script, save it, then type submit() when you are ready. Type reset() to reset the script to its original state.
 
 ```{r}
 # Complete the chained command below so that we are
@@ -291,7 +291,7 @@ student_info <- students4 %>%
     print
 ```
 
-"Now, using the script I just opened for you, create a second table called gradebook using the id, class, midterm, and final columns (in that order).\n\nEdit the R script, save it, then type submit() when you are ready. Type reset() to reset the script to its original state."
+Now, using the script I just opened for you, create a second table called gradebook using the id, class, midterm, and final columns (in that order).\n\nEdit the R script, save it, then type submit() when you are ready. Type reset() to reset the script to its original state.
 
 ```{r}
 # select() the id, class, midterm, and final columns
@@ -346,7 +346,7 @@ Now, do the same for the failed table, except the status column should have the 
 failed <- failed %>% mutate(status = "failed")
 ```
 
-"Now, pass as arguments the passed and failed tables (in order) to the dplyr function bind_rows(), which will join them together into a single unit. Check ?bind_rows if you need help.\n\nNote: bind_rows() is only available in dplyr 0.4.0 or later. If you have an older version of dplyr, please quit the lesson, update dplyr, then restart the lesson where you left off. If you're not sure what version of dplyr you have, type packageVersion('dplyr')."
+Now, pass as arguments the passed and failed tables (in order) to the dplyr function bind_rows(), which will join them together into a single unit. Check ?bind_rows if you need help.\n\nNote: bind_rows() is only available in dplyr 0.4.0 or later. If you have an older version of dplyr, please quit the lesson, update dplyr, then restart the lesson where you left off. If you're not sure what version of dplyr you have, type packageVersion('dplyr').
 
 ```{r}
 bind_rows(passed, failed)
@@ -356,7 +356,7 @@ Of course, we could arrange the rows however we wish at this point, but the impo
 
 We've covered a lot in this lesson. Let's bring everything together and tidy a real dataset.
 
-"The SAT is a popular college-readiness exam in the United States that consists of three sections: critical reading, mathematics, and writing. Students can earn up to 800 points on each section. This dataset presents the total number of students, for each combination of exam section and sex, within each of six score ranges. It comes from the 'Total Group Report 2013', which can be found here:\n\nhttp://research.collegeboard.org/programs/sat/data/cb-seniors-2013"
+The SAT is a popular college-readiness exam in the United States that consists of three sections: critical reading, mathematics, and writing. Students can earn up to 800 points on each section. This dataset presents the total number of students, for each combination of exam section and sex, within each of six score ranges. It comes from the 'Total Group Report 2013', which can be found here:\n\nhttp://research.collegeboard.org/programs/sat/data/cb-seniors-2013
 
 I've created a variable called 'sat' in your workspace, which contains data on all college-bound seniors who took the SAT exam in 2013. Print the dataset now.
 

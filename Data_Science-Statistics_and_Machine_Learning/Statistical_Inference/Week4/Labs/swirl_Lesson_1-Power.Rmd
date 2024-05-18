@@ -3,7 +3,7 @@ title: "swirl Lesson 1: Power"
 output: html_notebook
 ---
 
-"Power. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 06_Statistical_Inference/11_Power.)"
+Power. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 06_Statistical_Inference/11_Power.)
 
 In this lesson, as the name suggests, we'll discuss POWER, which  is the probability of rejecting the null hypothesis when it is false, which is good and proper. 
 

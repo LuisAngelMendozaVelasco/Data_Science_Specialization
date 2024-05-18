@@ -3,7 +3,7 @@ title: 'swirl Lesson 2: K Means Clustering'
 output: html_notebook
 ---
 
-"K_Means_Clustering. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/kmeansClustering.)"
+K_Means_Clustering. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/kmeansClustering.)
 
 In this lesson we'll learn about k-means clustering, another simple way of examining and organizing multi-dimensional data. As with hierarchical clustering, this technique is  most useful in the early stages of analysis when you're trying to get an understanding of the data, e.g., finding some pattern or relationship between different factors or variables. 
 

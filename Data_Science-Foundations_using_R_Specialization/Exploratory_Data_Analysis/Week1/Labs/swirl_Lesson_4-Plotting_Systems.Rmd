@@ -3,7 +3,7 @@ title: "swirl Lesson 4: Plotting Systems"
 output: html_notebook
 ---
 
-"Plotting_Systems. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/PlottingSystems.)"
+Plotting_Systems. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/PlottingSystems.)
 
 In this lesson, we'll give you a brief overview of the three plotting systems in R, their differences, strengths, and weaknesses. We'll only cover the basics here to give you a general idea of the systems and in later lessons we'll cover each system in more depth.
 
@@ -35,6 +35,7 @@ We'll use the R command with which takes two arguments. The first  specifies a d
 
 ```{r}
 with(cars, plot(speed, dist))
+grid()
 ```
 
 Simple, right? You can see the relationship between the two variables, speed and distance. The first variable is plotted along the x-axis and the second along the y-axis.
@@ -44,6 +45,7 @@ Now we'll show you what the function text does. Run the command text with three 
 ```{r}
 with(cars, plot(speed, dist))
 text(mean(cars$speed), max(cars$dist), "SWIRL rules!")
+grid()
 ```
 
 Ain't it the truth?
@@ -57,7 +59,7 @@ The lattice system has several disadvantages. First, it is sometimes awkward to 
 As before, we've loaded some data for you in the variable state. This data comes with the lattice package and it concerns various characteristics of the 50 states in the U.S. Use the R command head to see the first few entries of  state now. 
   
 ```{r}
-state <- data.frame(state.x77, region = state.region)
+state <- data.frame(state.x77, region=state.region)
 ```
 
 ```{r}
@@ -76,7 +78,7 @@ To do this we'll give xyplot 3 arguments. The first is the most complicated. It 
 
 ```{r}
 library(lattice) 
-xyplot(Life.Exp ~ Income | region, data = state, layout = c(4, 1))
+xyplot(Life.Exp ~ Income | region, data=state, layout=c(4, 1))
 ```
 
 We see the data for each of the 4 regions plotted in one row. Based on this plot, which region of the U.S. seems to have the shortest life expectancy?
@@ -88,7 +90,7 @@ We see the data for each of the 4 regions plotted in one row. Based on this plot
 Just for fun rerun the xyplot and this time set layout to the vector c(2,2). To save typing use the up arrow to recover the previous xyplot command.
 
 ```{r}
-xyplot(Life.Exp ~ Income | region, data = state, layout = c(2,2))
+xyplot(Life.Exp ~ Income | region, data=state, layout=c(2, 2))
 ```
 
 See how the plot changed? No need for you to worry about margins or labels. The package took care of all that for you.
@@ -123,7 +125,7 @@ table(mpg$model)
 Oh, there are 38 models. We're interested in the effect engine displacement (displ) has on highway gas mileage (hwy), so we'll use the ggplot2 command qplot to display this relationship. Run qplot now with three arguments. The first two are the variables displ and hwy we want to plot, and the third is the argument data set equal to mpg. As before, this allows us to avoid using the mpg$variable notation for the first two arguments.
 
 ```{r}
-qplot(displ, hwy, data = mpg)
+qplot(displ, hwy, data=mpg)
 ```
 
 Not surprisingly we see that the bigger the engine displacement the lower the gas mileage.

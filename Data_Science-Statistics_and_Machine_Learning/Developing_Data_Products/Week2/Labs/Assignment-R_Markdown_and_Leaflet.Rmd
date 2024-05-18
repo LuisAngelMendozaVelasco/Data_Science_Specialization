@@ -28,7 +28,7 @@ starbucks %>%
 sb_loc <- starbucks %>% 
     filter(CountryCode == "US") %>% 
     select(Latitude, Longitude, Name) %>% 
-    rename(lat = Latitude, lng = Longitude)
+    rename(lat=Latitude, lng=Longitude)
 ```
 
 # Creating the map
@@ -40,12 +40,12 @@ m <- leaflet(sb_loc) %>%
     addProviderTiles(providers$Esri.NatGeoWorldMap) %>%
     addCircleMarkers(~ lng,
                     ~ lat,
-                    popup = sb_loc$Name,
-                    weight = 3,
-                    radius = 4,
-                    stroke = F,
-                    fillOpacity = 0.5,
-                    clusterOptions = markerClusterOptions())
+                    popup=sb_loc$Name,
+                    weight=3,
+                    radius=4,
+                    stroke=F,
+                    fillOpacity=0.5,
+                    clusterOptions=markerClusterOptions())
 
 m
 ```

@@ -5,10 +5,16 @@ output: html_notebook
 
 # 1. Load data
 
+```{bash}
+mkdir -p data
+wget -q https://d396qusza40orc.cloudfront.net/dsscapstone/dataset/Coursera-SwiftKey.zip -P ./data/
+unzip -q ./data/Coursera-SwiftKey.zip -d ./data/
+```
+
 ```{r}
-blog <- readLines("./data/en_US.blogs.txt", skipNul=TRUE, warn=TRUE)
-news <- readLines("./data/en_US.news.txt", skipNul=TRUE, warn=TRUE)
-twitter <- readLines("./data/en_US.twitter.txt", skipNul=TRUE, warn=TRUE)
+blog <- readLines("./data/final/en_US/en_US.blogs.txt", skipNul=TRUE, warn=TRUE)
+news <- readLines("./data/final/en_US/en_US.news.txt", skipNul=TRUE, warn=TRUE)
+twitter <- readLines("./data/final/en_US/en_US.twitter.txt", skipNul=TRUE, warn=TRUE)
 ```
 
 # 2. Data sampling
@@ -58,13 +64,13 @@ mycorpus <- tm_map(mycorpus, changetospace, "/|@|\\|")
 ```{r}
 library("RWeka")
 
-uniGramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 1, max = 1))
-biGramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 2, max = 2))
-triGramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min = 3, max = 3))
-OneT <- NGramTokenizer(mycorpus, Weka_control(min = 1, max = 1))
-oneGM <- TermDocumentMatrix(mycorpus, control = list(tokenize = uniGramTokenizer))
-twoGM <- TermDocumentMatrix(mycorpus, control = list(tokenize = biGramTokenizer))
-threeGM <- TermDocumentMatrix(mycorpus, control = list(tokenize = triGramTokenizer))
+uniGramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min=1, max=1))
+biGramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min=2, max=2))
+triGramTokenizer <- function(x) NGramTokenizer(x, Weka_control(min=3, max=3))
+OneT <- NGramTokenizer(mycorpus, Weka_control(min=1, max=1))
+oneGM <- TermDocumentMatrix(mycorpus, control=list(tokenize=uniGramTokenizer))
+twoGM <- TermDocumentMatrix(mycorpus, control=list(tokenize=biGramTokenizer))
+threeGM <- TermDocumentMatrix(mycorpus, control=list(tokenize=triGramTokenizer))
 ```
 
 # 5. Generate n-gram histograms
@@ -72,25 +78,25 @@ threeGM <- TermDocumentMatrix(mycorpus, control = list(tokenize = triGramTokeniz
 ```{r}
 library("ggplot2")
 
-freqTerms <- findFreqTerms(oneGM, lowfreq = 200)
+freqTerms <- findFreqTerms(oneGM, lowfreq=200)
 termFreq <- rowSums(as.matrix(oneGM[freqTerms,]))
 termFreq <- data.frame(unigram=names(termFreq), frequency=termFreq)
 
 g1 <- ggplot(termFreq, aes(x=reorder(unigram, frequency), y=frequency)) +
-    geom_bar(stat = "identity") +  coord_flip() +
+    geom_bar(stat="identity") + coord_flip() +
     theme(legend.title=element_blank()) +
     xlab("Unigram") + ylab("Frequency") +
-    labs(title = "Top unigrams by frequency")
+    labs(title="Top unigrams by frequency")
 print(g1)
 ```
 
 ```{r}
-freqTerms <- findFreqTerms(twoGM, lowfreq = 70)
+freqTerms <- findFreqTerms(twoGM, lowfreq=70)
 termFreq <- rowSums(as.matrix(twoGM[freqTerms,]))
 termFreq <- data.frame(bigram=names(termFreq), frequency=termFreq)
 
 g2 <- ggplot(termFreq, aes(x=reorder(bigram, frequency), y=frequency)) +
-    geom_bar(stat = "identity") +  coord_flip() +
+    geom_bar(stat = "identity") + coord_flip() +
     theme(legend.title=element_blank()) +
     xlab("Bigram") + ylab("Frequency") +
     labs(title = "Top bigrams by frequency")
@@ -98,14 +104,18 @@ print(g2)
 ```
 
 ```{r}
-freqTerms <- findFreqTerms(threeGM, lowfreq = 10)
+freqTerms <- findFreqTerms(threeGM, lowfreq=10)
 termFreq <- rowSums(as.matrix(threeGM[freqTerms,]))
 termFreq <- data.frame(trigram=names(termFreq), frequency=termFreq)
 
 g3 <- ggplot(termFreq, aes(x=reorder(trigram, frequency), y=frequency)) +
-    geom_bar(stat = "identity") +  coord_flip() +
+    geom_bar(stat="identity") + coord_flip() +
     theme(legend.title=element_blank()) +
     xlab("Trigram") + ylab("Frequency") +
-    labs(title = "Top trigrams by frequency")
+    labs(title="Top trigrams by frequency")
 print(g3)
+```
+
+```{bash}
+rm -rf ./data/
 ```

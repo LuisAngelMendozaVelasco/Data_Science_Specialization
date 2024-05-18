@@ -3,7 +3,7 @@ title: "swirl Lesson 1: T Confidence Intervals"
 output: html_notebook
 ---
 
-"T_Confidence_Intervals. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 06_Statistical_Inference/08_tCIs.)"
+T_Confidence_Intervals. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 06_Statistical_Inference/08_tCIs.)
 
 In this lesson, we'll discuss some statistical methods for dealing with small datasets, specifically the Student's or Gosset's t distribution and t confidence intervals. 
 
@@ -207,12 +207,17 @@ t.test(difference)$conf.int
 Here's code from the slides which shows four different ways of using t.test (including the two we just went through) to find the confidence interval of this data. The code also shows how to display the intervals nicely in a 4 x 2 array. 
 
 ```{r}
+t.test(extra ~ I(relevel(group, 2)), data = sleep)
+```
+
+
+```{r}
 n <- 9
 rbind(
     mn + c(-1, 1) * qt(.975, n-1) * s / sqrt(n),
     as.vector(t.test(difference)$conf.int),
     as.vector(t.test(g2, g1, paired = TRUE)$conf.int),
-    as.vector(t.test(extra ~ I(relevel(group, 2)), paired = TRUE, data = sleep)$conf.int)
+    as.vector(t.test(extra ~ I(relevel(group, 2)), data = sleep)$conf.int)
 )
 ```
 
@@ -356,7 +361,7 @@ mydf <- num/den
 Now with the R function qt(.975,mydf) compute the 95% t interval. Recall the formula. X'_{oc}-X'_{c} +/- t_df * SE. Recall that SE is the square root of the sum of the squared standard errors of the two means, (s_1)^2/n_1 + (s_2)^2/n_2 . Again our numbers are the following. X'_{oc}=132.86  s_{oc}=15.34  and n_{oc}=8 .  X'_{c}=127.44  s_{c}=18.23  and n_{c}=21. 
 
 ```{r}
-132.86-127.44 + c(-1, 1)*qt(.975, mydf)*sqrt(15.34^2/8 + 18.23^2/21)
+132.86-127.44 + c(-1, 1) * qt(.975, mydf) * sqrt(15.34^2/8 + 18.23^2/21)
 ```
 
 Don't worry about these nasty calculations. R makes things a lot easier. If you call t.test with var.equal set to FALSE, then R calculates the  degrees of freedom for you. You don't have to memorize the formula.

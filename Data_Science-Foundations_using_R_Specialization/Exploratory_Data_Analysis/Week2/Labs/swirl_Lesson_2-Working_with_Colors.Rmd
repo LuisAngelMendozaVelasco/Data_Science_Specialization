@@ -3,7 +3,7 @@ title: "swirl Lesson 2: Working with Colors"
 output: html_notebook
 ---
 
-"Working_with_Colors. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/Colors.)"
+Working_with_Colors. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/Colors.)
 
 This lesson is about using colors in R. It really supplements the lessons on plotting with the base and lattice packages which contain functions that are able to take the argument col. We'll discuss ways to set this argument more colorfully.
 
@@ -286,13 +286,13 @@ showMe(pal(20))
 Now we can use the colors in pal(20) to display topographic information on Auckland's Maunga Whau Volcano. R provides this information in a matrix called volcano which is included in the package datasets.  Call the R function image with volcano as its first argument and col set equal to pal(20) as its second.
 
 ```{r}
-image(volcano, col = pal(20))
+image(volcano, col=pal(20))
 ```
 
 We see that the colors here of the sequential palette clue us in on the topography. The darker colors are more concentrated than the lighter ones. Just for fun, recall your last command calling image and instead of pal(20), use p1(20) as the second argument.
 
 ```{r}
-image(volcano, col = p1(20))
+image(volcano, col=p1(20))
 ```
 
 Not as nice a picture since the palette isn't as well suited to this data, but that's okay.

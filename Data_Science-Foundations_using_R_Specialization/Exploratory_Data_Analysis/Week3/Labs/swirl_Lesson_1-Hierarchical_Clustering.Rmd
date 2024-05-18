@@ -3,7 +3,7 @@ title: "swirl Lesson 1: Hierarchical Clustering"
 output: html_notebook
 ---
 
-"Hierarchical_Clustering. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/hierarchicalClustering.)"
+Hierarchical_Clustering. (Slides for this and other Data Science courses may be found at github https://github.com/DataScienceSpecialization/courses/. If you care to use them, they must be downloaded as a zip file and viewed locally. This lesson corresponds to 04_ExploratoryAnalysis/hierarchicalClustering.)
 
 In this lesson we'll learn about hierarchical clustering, a simple way of quickly examining and displaying multi-dimensional data. This technique is usually most useful in the early stages of analysis when you're trying to get an understanding of the data, e.g., finding some pattern or relationship between different factors or variables. As the name suggests hierarchical clustering creates a hierarchy of clusters.
 

@@ -1939,178 +1939,360 @@ will be FALSE.</p>
 expression TRUE | c(TRUE, FALSE, FALSE).</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuVFJVRSB8IGMoVFJVRSwgRkFMU0UsIEZBTFNFKVxuYGBgIn0= -->
-<pre class="r"><code>TRUE | c(TRUE, FALSE, FALSE)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUUgVFJVRSBUUlVFXG4ifQ== -->
-<pre><code>[1] TRUE TRUE TRUE</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Now let’s try out the non-vectorized version of the OR operator. Type
-the expression TRUE || c(TRUE, FALSE, FALSE).</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuVFJVRSB8fCBjKFRSVUUsIEZBTFNFLCBGQUxTRSlcbmBgYCJ9 -->
-<pre class="r"><code>TRUE || c(TRUE, FALSE, FALSE)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 -->
-<pre><code>[1] TRUE</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Logical operators can be chained together just like arithmetic
-operators. The expressions:
-<code>6 != 10 &amp;&amp; FALSE &amp;&amp; 1 &gt;= 2</code> or
-<code>TRUE  5 &lt; 9.3  FALSE</code> are perfectly normal to see.</p>
-<p>As you may recall, arithmetic has an order of operations and so do
-logical expressions. All AND operators are evaluated before OR
-operators. Let’s look at an example of an ambiguous case. Type: 5 &gt; 8
-6 != 8 &amp;&amp; 4 &gt; 3.9</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuNSA+IDggfHwgNiAhPSA4ICYmIDQgPiAzLjlcbmBgYCJ9 -->
-<pre class="r"><code>5 &gt; 8 || 6 != 8 &amp;&amp; 4 &gt; 3.9</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 -->
-<pre><code>[1] TRUE</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Let’s walk through the order of operations in the above case. First
-the left and right operands of the AND operator are evaluated. 6 is not
-equal 8, 4 is greater than 3.9, therefore both operands are TRUE so the
-resulting expression <code>TRUE &amp;&amp; TRUE</code> evaluates to
-TRUE. Then the left operand of the OR operator is evaluated: 5 is not
-greater than 8 so the entire expression is reduced to FALSE TRUE. Since
-the right operand of this expression is TRUE the entire expression
-evaluates to TRUE.</p>
-<p>Now that you’re familiar with R’s logical operators you can take
-advantage of a few functions that R provides for dealing with logical
-expressions.</p>
-<p>The function isTRUE() takes one argument. If that argument evaluates
-to TRUE, the function will return TRUE. Otherwise, the function will
-return FALSE. Try using this function by typing: isTRUE(6 &gt; 4)</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaXNUUlVFKDYgPiA0KVxuYGBgIn0= -->
-<pre class="r"><code>isTRUE(6 &gt; 4)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 -->
-<pre><code>[1] TRUE</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The function identical() will return TRUE if the two R objects passed
-to it as arguments are identical. Try out the identical() function by
-typing: identical(‘twins’, ‘twins’)</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaWRlbnRpY2FsKCd0d2lucycsICd0d2lucycpXG5gYGAifQ== -->
-<pre class="r"><code>identical(&#39;twins&#39;, &#39;twins&#39;)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 -->
-<pre><code>[1] TRUE</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>You should also be aware of the xor() function, which takes two
-arguments. The xor() function stands for exclusive OR. If one argument
-evaluates to TRUE and one argument evaluates to FALSE, then this
-function will return TRUE, otherwise it will return FALSE. Try out the
-xor() function by typing: xor(5 == 6, !FALSE)</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxueG9yKDUgPT0gNiwgIUZBTFNFKVxuYGBgIn0= -->
-<pre class="r"><code>xor(5 == 6, !FALSE)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 -->
-<pre><code>[1] TRUE</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>5 == 6 evaluates to FALSE, !FALSE evaluates to TRUE, so xor(FALSE,
-TRUE) evaluates to TRUE. On the other hand if the first argument was
-changed to 5 == 5 and the second argument was unchanged then both
-arguments would have been TRUE, so xor(TRUE, TRUE) would have evaluated
-to FALSE.</p>
-<p>For the next few questions, we’re going to need to create a vector of
-integers called ints. Create this vector by typing: ints &lt;-
-sample(10)</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW50cyA8LSBzYW1wbGUoMTApXG5gYGAifQ== -->
-<pre class="r"><code>ints &lt;- sample(10)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Now simply display the contents of ints.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW50c1xuYGBgIn0= -->
-<pre class="r"><code>ints</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSAgMiAgNiAgOSAgMyAgNyAgOCAxMCAgMSAgNCAgNVxuIn0= -->
-<pre><code> [1]  2  6  9  3  7  8 10  1  4  5</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>The vector <code>ints</code> is a random sampling of integers from 1
-to 10 without replacement. Let’s say we wanted to ask some logical
-questions about contents of ints. If we type ints &gt; 5, we will get a
-logical vector corresponding to whether each element of ints is greater
-than 5. Try typing: ints &gt; 5</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaW50cyA+IDVcbmBgYCJ9 -->
-<pre class="r"><code>ints &gt; 5</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBGQUxTRSAgVFJVRSAgVFJVRSBGQUxTRSAgVFJVRSAgVFJVRSAgVFJVRSBGQUxTRSBGQUxTRSBGQUxTRVxuIn0= -->
-<pre><code> [1] FALSE  TRUE  TRUE FALSE  TRUE  TRUE  TRUE FALSE FALSE FALSE</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>We can use the resulting logical vector to ask other questions about
-ints. The which() function takes a logical vector as an argument and
-returns the indices of the vector that are TRUE. For example
-which(c(TRUE, FALSE, TRUE)) would return the vector c(1, 3).</p>
-<p>Use the which() function to find the indices of ints that are greater
-than 7.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud2hpY2goaW50cyA+IDcpXG5gYGAifQ== -->
-<pre class="r"><code>which(ints &gt; 7)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMgNiA3XG4ifQ== -->
-<pre><code>[1] 3 6 7</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Like the which() function, the functions any() and all() take logical
-vectors as their argument. The any() function will return TRUE if one or
-more of the elements in the logical vector is TRUE. The all() function
-will return TRUE if every element in the logical vector is TRUE.</p>
-<p>Use the any() function to see if any of the elements of ints are less
-than zero.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYW55KGludHMgPCAwKVxuYGBgIn0= -->
-<pre class="r"><code>any(ints &lt; 0)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIEZBTFNFXG4ifQ== -->
-<pre><code>[1] FALSE</code></pre>
-<!-- rnb-output-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<p>Use the all() function to see if all of the elements of ints are
-greater than zero.</p>
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYWxsKGludHMgPiAwKVxuYGBgIn0= -->
-<pre class="r"><code>all(ints &gt; 0)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 -->
-<pre><code>[1] TRUE</code></pre>
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuVFJVRSB8IGMoVFJVRSwgRkFMU0UsIEZBTFNFKVxuYGBgXG5gYGAifQ== -->
+<pre class="r"><code>```r
+TRUE | c(TRUE, FALSE, FALSE)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUUgVFJVRSBUUlVFXG4ifQ== --&gt;
+</code></pre>
+<p>[1] TRUE TRUE TRUE</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Now let&#39;s try out the non-vectorized version of the OR operator. Type the expression TRUE || c(TRUE, FALSE, FALSE).
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuVFJVRSB8fCBjKFRSVUUsIEZBTFNFLCBGQUxTRSlcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+TRUE || c(TRUE, FALSE, FALSE)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 --&gt;
+</code></pre>
+<p>[1] TRUE</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Logical operators can be chained together just like arithmetic operators. The expressions: `6 != 10 &amp;&amp; FALSE &amp;&amp; 1 &gt;= 2` or `TRUE  5 &lt; 9.3  FALSE` are perfectly normal to see.
+
+As you may recall, arithmetic has an order of operations and so do logical expressions. All AND operators are evaluated before OR operators. Let&#39;s look at an example of an ambiguous case. Type: 5 &gt; 8  6 != 8 &amp;&amp; 4 &gt; 3.9
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuNSA+IDggfHwgNiAhPSA4ICYmIDQgPiAzLjlcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+5 &gt; 8 || 6 != 8 &amp;&amp; 4 &gt; 3.9</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 --&gt;
+</code></pre>
+<p>[1] TRUE</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Let&#39;s walk through the order of operations in the above case. First the left and right operands of the AND operator are evaluated. 6 is not equal 8, 4 is greater than 3.9, therefore both operands are TRUE so the resulting expression `TRUE &amp;&amp; TRUE` evaluates to TRUE. Then the left operand of the OR operator is evaluated: 5 is not greater than 8 so the entire expression is reduced to FALSE  TRUE. Since the right operand of this expression is TRUE the entire expression evaluates to TRUE.
+
+Now that you&#39;re familiar with R&#39;s logical operators you can take advantage of a few functions that R provides for dealing with logical expressions.
+
+The function isTRUE() takes one argument. If that argument evaluates to TRUE, the function will return TRUE. Otherwise, the function will return FALSE. Try using this function by typing: isTRUE(6 &gt; 4)
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuaXNUUlVFKDYgPiA0KVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+isTRUE(6 &gt; 4)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 --&gt;
+</code></pre>
+<p>[1] TRUE</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+The function identical() will return TRUE if the two R objects passed to it as arguments are identical. Try out the identical() function by typing: identical(&#39;twins&#39;, &#39;twins&#39;)
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuaWRlbnRpY2FsKCd0d2lucycsICd0d2lucycpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+identical(&#39;twins&#39;, &#39;twins&#39;)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 --&gt;
+</code></pre>
+<p>[1] TRUE</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+You should also be aware of the xor() function, which takes two arguments. The xor() function stands for exclusive OR. If one argument evaluates to TRUE and one argument evaluates to FALSE, then this function will return TRUE, otherwise it will return FALSE. Try out the xor() function by typing: xor(5 == 6, !FALSE)
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxueG9yKDUgPT0gNiwgIUZBTFNFKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+xor(5 == 6, !FALSE)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 --&gt;
+</code></pre>
+<p>[1] TRUE</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+5 == 6 evaluates to FALSE, !FALSE evaluates to TRUE, so xor(FALSE, TRUE) evaluates to TRUE. On the other hand if the first argument was changed to 5 == 5 and the second argument was unchanged then both arguments would have been TRUE, so xor(TRUE, TRUE) would have evaluated to FALSE.
+
+For the next few questions, we&#39;re going to need to create a vector of integers called ints. Create this vector by typing: ints &lt;- sample(10)
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuaW50cyA8LSBzYW1wbGUoMTApXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+ints &lt;- sample(10)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Now simply display the contents of ints.
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuaW50c1xuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+ints</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiIFsxXSAgMiAgNiAgOSAgMyAgNyAgOCAxMCAgMSAgNCAgNVxuIn0= --&gt;
+</code></pre>
+<p>[1] 2 6 9 3 7 8 10 1 4 5</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+The vector `ints` is a random sampling of integers from 1 to 10 without replacement. Let&#39;s say we wanted to ask some logical questions about contents of ints. If we type ints &gt; 5, we will get a logical vector corresponding to whether each element of ints is greater than 5. Try typing: ints &gt; 5
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuaW50cyA+IDVcbmBgYFxuYGBgIn0= --&gt;
+
+```r
+```r
+ints &gt; 5</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBGQUxTRSAgVFJVRSAgVFJVRSBGQUxTRSAgVFJVRSAgVFJVRSAgVFJVRSBGQUxTRSBGQUxTRSBGQUxTRVxuIn0= --&gt;
+</code></pre>
+<p>[1] FALSE TRUE TRUE FALSE TRUE TRUE TRUE FALSE FALSE FALSE</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+We can use the resulting logical vector to ask other questions about ints. The which() function takes a logical vector as an argument and returns the indices of the vector that are TRUE. For example which(c(TRUE, FALSE, TRUE)) would return the vector c(1, 3).
+
+Use the which() function to find the indices of ints that are greater than 7.
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxud2hpY2goaW50cyA+IDcpXG5gYGBcbmBgYCJ9 --&gt;
+
+```r
+```r
+which(ints &gt; 7)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIDMgNiA3XG4ifQ== --&gt;
+</code></pre>
+<p>[1] 3 6 7</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Like the which() function, the functions any() and all() take logical vectors as their argument. The any() function will return TRUE if one or more of the elements in the logical vector is TRUE. The all() function will return TRUE if every element in the logical vector is TRUE.
+
+Use the any() function to see if any of the elements of ints are less than zero.
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuYW55KGludHMgPCAwKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+any(ints &lt; 0)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIEZBTFNFXG4ifQ== --&gt;
+</code></pre>
+<p>[1] FALSE</p>
+<pre><code>
+
+
+&lt;!-- rnb-output-end --&gt;
+
+&lt;!-- rnb-chunk-end --&gt;
+
+
+&lt;!-- rnb-text-begin --&gt;
+
+
+Use the all() function to see if all of the elements of ints are greater than zero.
+
+
+&lt;!-- rnb-text-end --&gt;
+
+
+&lt;!-- rnb-chunk-begin --&gt;
+
+
+&lt;!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuYGBgclxuYWxsKGludHMgPiAwKVxuYGBgXG5gYGAifQ== --&gt;
+
+```r
+```r
+all(ints &gt; 0)</code></pre>
+<pre><code>
+&lt;!-- rnb-source-end --&gt;
+
+&lt;!-- rnb-output-begin eyJkYXRhIjoiWzFdIFRSVUVcbiJ9 --&gt;
+</code></pre>
+<p>[1] TRUE ```</p>
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
@@ -2118,7 +2300,7 @@ greater than zero.</p>
 see what you can do with logic, check out the control flow lesson!</p>
 <!-- rnb-text-end -->
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogInN3aXJsIExlc3NvbiAxOiBMb2dpYyINCm91dHB1dDogaHRtbF9ub3RlYm9vaw0KLS0tDQoNClRoaXMgbGVzc29uIGlzIG1lYW50IHRvIGJlIGEgc2hvcnQgaW50cm9kdWN0aW9uIHRvIGxvZ2ljYWwgb3BlcmF0aW9ucyBpbiBSLg0KDQpUaGVyZSBhcmUgdHdvIGxvZ2ljYWwgdmFsdWVzIGluIFIsIGFsc28gY2FsbGVkIGJvb2xlYW4gdmFsdWVzLiBUaGV5IGFyZSBUUlVFIGFuZCBGQUxTRS4gSW4gUiB5b3UgY2FuIGNvbnN0cnVjdCBsb2dpY2FsIGV4cHJlc3Npb25zIHdoaWNoIHdpbGwgZXZhbHVhdGUgdG8gZWl0aGVyIFRSVUUgb3IgRkFMU0UuDQoNCk1hbnkgb2YgdGhlIHF1ZXN0aW9ucyBpbiB0aGlzIGxlc3NvbiB3aWxsIGludm9sdmUgZXZhbHVhdGluZyBsb2dpY2FsIGV4cHJlc3Npb25zLiBJdCBtYXkgYmUgdXNlZnVsIHRvIG9wZW4gdXAgYSBzZWNvbmQgUiB0ZXJtaW5hbCB3aGVyZSB5b3UgY2FuIGV4cGVyaW1lbnQgd2l0aCBzb21lIG9mIHRoZXNlIGV4cHJlc3Npb25zLg0KDQpDcmVhdGluZyBsb2dpY2FsIGV4cHJlc3Npb25zIHJlcXVpcmVzIGxvZ2ljYWwgb3BlcmF0b3JzLiBZb3UncmUgcHJvYmFibHkgZmFtaWxpYXIgd2l0aCBhcml0aG1ldGljIG9wZXJhdG9ycyBsaWtlIGArYCwgYC1gLCBgKmAsIGFuZCBgL2AuIFRoZSBmaXJzdCBsb2dpY2FsIG9wZXJhdG9yIHdlIGFyZSBnb2luZyB0byBkaXNjdXNzIGlzIHRoZSBlcXVhbGl0eSBvcGVyYXRvciwgcmVwcmVzZW50ZWQgYnkgdHdvIGVxdWFscyBzaWducyBgPT1gLiBVc2UgdGhlIGVxdWFsaXR5IG9wZXJhdG9yIGJlbG93IHRvIGZpbmQgb3V0IGlmIFRSVUUgaXMgZXF1YWwgdG8gVFJVRS4NCg0KYGBge3J9DQpUUlVFID09IFRSVUUNCmBgYA0KDQpKdXN0IGxpa2UgYXJpdGhtZXRpYywgbG9naWNhbCBleHByZXNzaW9ucyBjYW4gYmUgZ3JvdXBlZCBieSBwYXJlbnRoZXNpcyBzbyB0aGF0IHRoZSBlbnRpcmUgZXhwcmVzc2lvbiAoVFJVRSA9PSBUUlVFKSA9PSBUUlVFIGV2YWx1YXRlcyB0byBUUlVFLg0KDQpUbyB0ZXN0IG91dCB0aGlzIHByb3BlcnR5LCB0cnkgZXZhbHVhdGluZyAoRkFMU0UgPT0gVFJVRSkgPT0gRkFMU0UgLg0KDQpgYGB7cn0NCihGQUxTRSA9PSBUUlVFKSA9PSBGQUxTRQ0KYGBgDQoNClRoZSBlcXVhbGl0eSBvcGVyYXRvciBjYW4gYWxzbyBiZSB1c2VkIHRvIGNvbXBhcmUgbnVtYmVycy4gVXNlIGA9PWAgdG8gc2VlIGlmIDYgaXMgZXF1YWwgdG8gNy4NCg0KYGBge3J9DQo2ID09IDcNCmBgYA0KDQpUaGUgcHJldmlvdXMgZXhwcmVzc2lvbiBldmFsdWF0ZXMgdG8gRkFMU0UgYmVjYXVzZSA2IGlzIGxlc3MgdGhhbiA3LiBUaGFua2Z1bGx5LCB0aGVyZSBhcmUgaW5lcXVhbGl0eSBvcGVyYXRvcnMgdGhhdCBhbGxvdyB1cyB0byB0ZXN0IGlmIGEgdmFsdWUgaXMgbGVzcyB0aGFuIG9yIGdyZWF0ZXIgdGhhbiBhbm90aGVyIHZhbHVlLg0KDQpUaGUgbGVzcyB0aGFuIG9wZXJhdG9yIGA8YCB0ZXN0cyB3aGV0aGVyIHRoZSBudW1iZXIgb24gdGhlIGxlZnQgc2lkZSBvZiB0aGUgb3BlcmF0b3IgKGNhbGxlZCB0aGUgbGVmdCBvcGVyYW5kKSBpcyBsZXNzIHRoYW4gdGhlIG51bWJlciBvbiB0aGUgcmlnaHQgc2lkZSBvZiB0aGUgb3BlcmF0b3IgKGNhbGxlZCB0aGUgcmlnaHQgb3BlcmFuZCkuIFdyaXRlIGFuIGV4cHJlc3Npb24gdG8gdGVzdCB3aGV0aGVyIDYgaXMgbGVzcyB0aGFuIDcuDQoNCmBgYHtyfQ0KNiA8IDcNCmBgYA0KDQpUaGVyZSBpcyBhbHNvIGEgbGVzcy10aGFuLW9yLWVxdWFsLXRvIG9wZXJhdG9yIGA8PWAgd2hpY2ggdGVzdHMgd2hldGhlciB0aGUgbGVmdCBvcGVyYW5kIGlzIGxlc3MgdGhhbiBvciBlcXVhbCB0byB0aGUgcmlnaHQgb3BlcmFuZC4gV3JpdGUgYW4gZXhwcmVzc2lvbiB0byB0ZXN0IHdoZXRoZXIgMTAgaXMgbGVzcyB0aGFuIG9yIGVxdWFsIHRvIDEwLg0KDQpgYGB7cn0NCjEwIDw9IDEwDQpgYGANCg0KS2VlcCBpbiBtaW5kIHRoYXQgdGhlcmUgYXJlIHRoZSBjb3JyZXNwb25kaW5nIGdyZWF0ZXIgdGhhbiBgPmAgYW5kIGdyZWF0ZXItdGhhbi1vci1lcXVhbC10byBgPj1gIG9wZXJhdG9ycy4NCg0KVGhlIG5leHQgb3BlcmF0b3Igd2Ugd2lsbCBkaXNjdXNzIGlzIHRoZSAnbm90IGVxdWFscycgb3BlcmF0b3IgcmVwcmVzZW50ZWQgYnkgYCE9YC4gTm90IGVxdWFscyB0ZXN0cyB3aGV0aGVyIHR3byB2YWx1ZXMgYXJlIHVuZXF1YWwsIHNvIFRSVUUgIT0gRkFMU0UgZXZhbHVhdGVzIHRvIFRSVUUuIExpa2UgdGhlIGVxdWFsaXR5IG9wZXJhdG9yLCBgIT1gIGNhbiBhbHNvIGJlIHVzZWQgd2l0aCBudW1iZXJzLiBUcnkgd3JpdGluZyBhbiBleHByZXNzaW9uIHRvIHNlZSBpZiA1IGlzIG5vdCBlcXVhbCB0byA3Lg0KDQpgYGB7cn0NCjUgIT0gNw0KYGBgDQoNCkluIG9yZGVyIHRvIG5lZ2F0ZSBib29sZWFuIGV4cHJlc3Npb25zIHlvdSBjYW4gdXNlIHRoZSBOT1Qgb3BlcmF0b3IuIEFuIGV4Y2xhbWF0aW9uIHBvaW50IGAhYCB3aWxsIGNhdXNlICFUUlVFIChzYXk6IG5vdCB0cnVlKSB0byBldmFsdWF0ZSB0byBGQUxTRSBhbmQgIUZBTFNFIChzYXk6IG5vdCBmYWxzZSkgdG8gZXZhbHVhdGUgdG8gVFJVRS4gVHJ5IHVzaW5nIHRoZSBOT1Qgb3BlcmF0b3IgYW5kIHRoZSBlcXVhbHMgb3BlcmF0b3IgdG8gZmluZCB0aGUgb3Bwb3NpdGUgb2Ygd2hldGhlciA1IGlzIGVxdWFsIHRvIDcuDQoNCmBgYHtyfQ0KISg1ID09IDcpDQpgYGANCg0KTGV0J3MgdGFrZSBhIG1vbWVudCB0byByZXZpZXcuIFRoZSBlcXVhbHMgb3BlcmF0b3IgYD09YCB0ZXN0cyB3aGV0aGVyIHR3byBib29sZWFuIHZhbHVlcyBvciBudW1iZXJzIGFyZSBlcXVhbCwgdGhlIG5vdCBlcXVhbHMgb3BlcmF0b3IgYCE9YCB0ZXN0cyB3aGV0aGVyIHR3byBib29sZWFuIHZhbHVlcyBvciBudW1iZXJzIGFyZSB1bmVxdWFsLCBhbmQgdGhlIE5PVCBvcGVyYXRvciBgIWAgbmVnYXRlcyBsb2dpY2FsIGV4cHJlc3Npb25zIHNvIHRoYXQgVFJVRSBleHByZXNzaW9ucyBiZWNvbWUgRkFMU0UgYW5kIEZBTFNFIGV4cHJlc3Npb25zIGJlY29tZSBUUlVFLg0KDQpBdCBzb21lIHBvaW50IHlvdSBtYXkgbmVlZCB0byBleGFtaW5lIHJlbGF0aW9uc2hpcHMgYmV0d2VlbiBtdWx0aXBsZSBsb2dpY2FsIGV4cHJlc3Npb25zLiBUaGlzIGlzIHdoZXJlIHRoZSBBTkQgb3BlcmF0b3IgYW5kIHRoZSBPUiBvcGVyYXRvciBjb21lIGluLg0KDQpMZXQncyBsb29rIGF0IGhvdyB0aGUgQU5EIG9wZXJhdG9yIHdvcmtzLiBUaGVyZSBhcmUgdHdvIEFORCBvcGVyYXRvcnMgaW4gUiwgYCZgIGFuZCBgJiZgLiBCb3RoIG9wZXJhdG9ycyB3b3JrIHNpbWlsYXJseSwgaWYgdGhlIHJpZ2h0IGFuZCBsZWZ0IG9wZXJhbmRzIG9mIEFORCBhcmUgYm90aCBUUlVFIHRoZSBlbnRpcmUgZXhwcmVzc2lvbiBpcyBUUlVFLCBvdGhlcndpc2UgaXQgaXMgRkFMU0UuIEZvciBleGFtcGxlLCBUUlVFICYgVFJVRSBldmFsdWF0ZXMgdG8gVFJVRS4gVHJ5IHR5cGluZyBGQUxTRSAmIEZBTFNFIHRvIGhvdyBpdCBpcyBldmFsdWF0ZWQuDQoNCmBgYHtyfQ0KRkFMU0UgJiBGQUxTRQ0KYGBgDQoNCllvdSBjYW4gdXNlIHRoZSBgJmAgb3BlcmF0b3IgdG8gZXZhbHVhdGUgQU5EIGFjcm9zcyBhIHZlY3Rvci4gVGhlIGAmJmAgdmVyc2lvbiBvZiBBTkQgb25seSBldmFsdWF0ZXMgdGhlIGZpcnN0IG1lbWJlciBvZiBhIHZlY3Rvci4gTGV0J3MgdGVzdCBib3RoIGZvciBwcmFjdGljZS4gVHlwZSB0aGUgZXhwcmVzc2lvbiBUUlVFICYgYyhUUlVFLCBGQUxTRSwgRkFMU0UpLg0KDQpgYGB7cn0NClRSVUUgJiBjKFRSVUUsIEZBTFNFLCBGQUxTRSkNCmBgYA0KDQpXaGF0IGhhcHBlbnMgaW4gdGhpcyBjYXNlIGlzIHRoYXQgdGhlIGxlZnQgb3BlcmFuZCBgVFJVRWAgaXMgcmVjeWNsZWQgYWNyb3NzIGV2ZXJ5IGVsZW1lbnQgaW4gdGhlIHZlY3RvciBvZiB0aGUgcmlnaHQgb3BlcmFuZC4gVGhpcyBpcyB0aGUgZXF1aXZhbGVudCBzdGF0ZW1lbnQgYXMgYyhUUlVFLCBUUlVFLCBUUlVFKSAmIGMoVFJVRSwgRkFMU0UsIEZBTFNFKS4NCg0KTm93IHdlJ2xsIHR5cGUgdGhlIHNhbWUgZXhwcmVzc2lvbiBleGNlcHQgd2UnbGwgdXNlIHRoZSBgJiZgIG9wZXJhdG9yLiBUeXBlIHRoZSBleHByZXNzaW9uIFRSVUUgJiYgYyhUUlVFLCBGQUxTRSwgRkFMU0UpLg0KDQpgYGB7cn0NClRSVUUgJiYgYyhUUlVFLCBGQUxTRSwgRkFMU0UpDQpgYGANCg0KSW4gdGhpcyBjYXNlLCB0aGUgbGVmdCBvcGVyYW5kIGlzIG9ubHkgZXZhbHVhdGVkIHdpdGggdGhlIGZpcnN0IG1lbWJlciBvZiB0aGUgcmlnaHQgb3BlcmFuZCAodGhlIHZlY3RvcikuIFRoZSByZXN0IG9mIHRoZSBlbGVtZW50cyBpbiB0aGUgdmVjdG9yIGFyZW4ndCBldmFsdWF0ZWQgYXQgYWxsIGluIHRoaXMgZXhwcmVzc2lvbi4NCg0KVGhlIE9SIG9wZXJhdG9yIGZvbGxvd3MgYSBzaW1pbGFyIHNldCBvZiBydWxlcy4gVGhlIGB8YCB2ZXJzaW9uIG9mIE9SIGV2YWx1YXRlcyBPUiBhY3Jvc3MgYW4gZW50aXJlIHZlY3Rvciwgd2hpbGUgdGhlIGB8fGAgdmVyc2lvbiBvZiBPUiBvbmx5IGV2YWx1YXRlcyB0aGUgZmlyc3QgbWVtYmVyIG9mIGEgdmVjdG9yLg0KDQpBbiBleHByZXNzaW9uIHVzaW5nIHRoZSBPUiBvcGVyYXRvciB3aWxsIGV2YWx1YXRlIHRvIFRSVUUgaWYgdGhlIGxlZnQgb3BlcmFuZCBvciB0aGUgcmlnaHQgb3BlcmFuZCBpcyBUUlVFLiBJZiBib3RoIGFyZSBUUlVFLCB0aGUgZXhwcmVzc2lvbiB3aWxsIGV2YWx1YXRlIHRvIFRSVUUsIGhvd2V2ZXIgaWYgbmVpdGhlciBhcmUgVFJVRSwgdGhlbiB0aGUgZXhwcmVzc2lvbiB3aWxsIGJlIEZBTFNFLg0KDQpMZXQncyB0ZXN0IG91dCB0aGUgdmVjdG9yaXplZCB2ZXJzaW9uIG9mIHRoZSBPUiBvcGVyYXRvci4gVHlwZSB0aGUgZXhwcmVzc2lvbiBUUlVFIHwgYyhUUlVFLCBGQUxTRSwgRkFMU0UpLg0KDQpgYGB7cn0NClRSVUUgfCBjKFRSVUUsIEZBTFNFLCBGQUxTRSkNCmBgYA0KDQpOb3cgbGV0J3MgdHJ5IG91dCB0aGUgbm9uLXZlY3Rvcml6ZWQgdmVyc2lvbiBvZiB0aGUgT1Igb3BlcmF0b3IuIFR5cGUgdGhlIGV4cHJlc3Npb24gVFJVRSB8fCBjKFRSVUUsIEZBTFNFLCBGQUxTRSkuDQoNCmBgYHtyfQ0KVFJVRSB8fCBjKFRSVUUsIEZBTFNFLCBGQUxTRSkNCmBgYA0KDQpMb2dpY2FsIG9wZXJhdG9ycyBjYW4gYmUgY2hhaW5lZCB0b2dldGhlciBqdXN0IGxpa2UgYXJpdGhtZXRpYyBvcGVyYXRvcnMuIFRoZSBleHByZXNzaW9uczogYDYgIT0gMTAgJiYgRkFMU0UgJiYgMSA+PSAyYCBvciBgVFJVRSAgNSA8IDkuMyAgRkFMU0VgIGFyZSBwZXJmZWN0bHkgbm9ybWFsIHRvIHNlZS4NCg0KQXMgeW91IG1heSByZWNhbGwsIGFyaXRobWV0aWMgaGFzIGFuIG9yZGVyIG9mIG9wZXJhdGlvbnMgYW5kIHNvIGRvIGxvZ2ljYWwgZXhwcmVzc2lvbnMuIEFsbCBBTkQgb3BlcmF0b3JzIGFyZSBldmFsdWF0ZWQgYmVmb3JlIE9SIG9wZXJhdG9ycy4gTGV0J3MgbG9vayBhdCBhbiBleGFtcGxlIG9mIGFuIGFtYmlndW91cyBjYXNlLiBUeXBlOiA1ID4gOCAgNiAhPSA4ICYmIDQgPiAzLjkNCg0KYGBge3J9DQo1ID4gOCB8fCA2ICE9IDggJiYgNCA+IDMuOQ0KYGBgDQoNCkxldCdzIHdhbGsgdGhyb3VnaCB0aGUgb3JkZXIgb2Ygb3BlcmF0aW9ucyBpbiB0aGUgYWJvdmUgY2FzZS4gRmlyc3QgdGhlIGxlZnQgYW5kIHJpZ2h0IG9wZXJhbmRzIG9mIHRoZSBBTkQgb3BlcmF0b3IgYXJlIGV2YWx1YXRlZC4gNiBpcyBub3QgZXF1YWwgOCwgNCBpcyBncmVhdGVyIHRoYW4gMy45LCB0aGVyZWZvcmUgYm90aCBvcGVyYW5kcyBhcmUgVFJVRSBzbyB0aGUgcmVzdWx0aW5nIGV4cHJlc3Npb24gYFRSVUUgJiYgVFJVRWAgZXZhbHVhdGVzIHRvIFRSVUUuIFRoZW4gdGhlIGxlZnQgb3BlcmFuZCBvZiB0aGUgT1Igb3BlcmF0b3IgaXMgZXZhbHVhdGVkOiA1IGlzIG5vdCBncmVhdGVyIHRoYW4gOCBzbyB0aGUgZW50aXJlIGV4cHJlc3Npb24gaXMgcmVkdWNlZCB0byBGQUxTRSAgVFJVRS4gU2luY2UgdGhlIHJpZ2h0IG9wZXJhbmQgb2YgdGhpcyBleHByZXNzaW9uIGlzIFRSVUUgdGhlIGVudGlyZSBleHByZXNzaW9uIGV2YWx1YXRlcyB0byBUUlVFLg0KDQpOb3cgdGhhdCB5b3UncmUgZmFtaWxpYXIgd2l0aCBSJ3MgbG9naWNhbCBvcGVyYXRvcnMgeW91IGNhbiB0YWtlIGFkdmFudGFnZSBvZiBhIGZldyBmdW5jdGlvbnMgdGhhdCBSIHByb3ZpZGVzIGZvciBkZWFsaW5nIHdpdGggbG9naWNhbCBleHByZXNzaW9ucy4NCg0KVGhlIGZ1bmN0aW9uIGlzVFJVRSgpIHRha2VzIG9uZSBhcmd1bWVudC4gSWYgdGhhdCBhcmd1bWVudCBldmFsdWF0ZXMgdG8gVFJVRSwgdGhlIGZ1bmN0aW9uIHdpbGwgcmV0dXJuIFRSVUUuIE90aGVyd2lzZSwgdGhlIGZ1bmN0aW9uIHdpbGwgcmV0dXJuIEZBTFNFLiBUcnkgdXNpbmcgdGhpcyBmdW5jdGlvbiBieSB0eXBpbmc6IGlzVFJVRSg2ID4gNCkNCg0KYGBge3J9DQppc1RSVUUoNiA+IDQpDQpgYGANCg0KVGhlIGZ1bmN0aW9uIGlkZW50aWNhbCgpIHdpbGwgcmV0dXJuIFRSVUUgaWYgdGhlIHR3byBSIG9iamVjdHMgcGFzc2VkIHRvIGl0IGFzIGFyZ3VtZW50cyBhcmUgaWRlbnRpY2FsLiBUcnkgb3V0IHRoZSBpZGVudGljYWwoKSBmdW5jdGlvbiBieSB0eXBpbmc6IGlkZW50aWNhbCgndHdpbnMnLCAndHdpbnMnKQ0KDQpgYGB7cn0NCmlkZW50aWNhbCgndHdpbnMnLCAndHdpbnMnKQ0KYGBgDQoNCllvdSBzaG91bGQgYWxzbyBiZSBhd2FyZSBvZiB0aGUgeG9yKCkgZnVuY3Rpb24sIHdoaWNoIHRha2VzIHR3byBhcmd1bWVudHMuIFRoZSB4b3IoKSBmdW5jdGlvbiBzdGFuZHMgZm9yIGV4Y2x1c2l2ZSBPUi4gSWYgb25lIGFyZ3VtZW50IGV2YWx1YXRlcyB0byBUUlVFIGFuZCBvbmUgYXJndW1lbnQgZXZhbHVhdGVzIHRvIEZBTFNFLCB0aGVuIHRoaXMgZnVuY3Rpb24gd2lsbCByZXR1cm4gVFJVRSwgb3RoZXJ3aXNlIGl0IHdpbGwgcmV0dXJuIEZBTFNFLiBUcnkgb3V0IHRoZSB4b3IoKSBmdW5jdGlvbiBieSB0eXBpbmc6IHhvcig1ID09IDYsICFGQUxTRSkNCg0KYGBge3J9DQp4b3IoNSA9PSA2LCAhRkFMU0UpDQpgYGANCg0KNSA9PSA2IGV2YWx1YXRlcyB0byBGQUxTRSwgIUZBTFNFIGV2YWx1YXRlcyB0byBUUlVFLCBzbyB4b3IoRkFMU0UsIFRSVUUpIGV2YWx1YXRlcyB0byBUUlVFLiBPbiB0aGUgb3RoZXIgaGFuZCBpZiB0aGUgZmlyc3QgYXJndW1lbnQgd2FzIGNoYW5nZWQgdG8gNSA9PSA1IGFuZCB0aGUgc2Vjb25kIGFyZ3VtZW50IHdhcyB1bmNoYW5nZWQgdGhlbiBib3RoIGFyZ3VtZW50cyB3b3VsZCBoYXZlIGJlZW4gVFJVRSwgc28geG9yKFRSVUUsIFRSVUUpIHdvdWxkIGhhdmUgZXZhbHVhdGVkIHRvIEZBTFNFLg0KDQpGb3IgdGhlIG5leHQgZmV3IHF1ZXN0aW9ucywgd2UncmUgZ29pbmcgdG8gbmVlZCB0byBjcmVhdGUgYSB2ZWN0b3Igb2YgaW50ZWdlcnMgY2FsbGVkIGludHMuIENyZWF0ZSB0aGlzIHZlY3RvciBieSB0eXBpbmc6IGludHMgPC0gc2FtcGxlKDEwKQ0KDQpgYGB7cn0NCmludHMgPC0gc2FtcGxlKDEwKQ0KYGBgDQoNCk5vdyBzaW1wbHkgZGlzcGxheSB0aGUgY29udGVudHMgb2YgaW50cy4NCg0KYGBge3J9DQppbnRzDQpgYGANCg0KVGhlIHZlY3RvciBgaW50c2AgaXMgYSByYW5kb20gc2FtcGxpbmcgb2YgaW50ZWdlcnMgZnJvbSAxIHRvIDEwIHdpdGhvdXQgcmVwbGFjZW1lbnQuIExldCdzIHNheSB3ZSB3YW50ZWQgdG8gYXNrIHNvbWUgbG9naWNhbCBxdWVzdGlvbnMgYWJvdXQgY29udGVudHMgb2YgaW50cy4gSWYgd2UgdHlwZSBpbnRzID4gNSwgd2Ugd2lsbCBnZXQgYSBsb2dpY2FsIHZlY3RvciBjb3JyZXNwb25kaW5nIHRvIHdoZXRoZXIgZWFjaCBlbGVtZW50IG9mIGludHMgaXMgZ3JlYXRlciB0aGFuIDUuIFRyeSB0eXBpbmc6IGludHMgPiA1DQoNCmBgYHtyfQ0KaW50cyA+IDUNCmBgYA0KDQpXZSBjYW4gdXNlIHRoZSByZXN1bHRpbmcgbG9naWNhbCB2ZWN0b3IgdG8gYXNrIG90aGVyIHF1ZXN0aW9ucyBhYm91dCBpbnRzLiBUaGUgd2hpY2goKSBmdW5jdGlvbiB0YWtlcyBhIGxvZ2ljYWwgdmVjdG9yIGFzIGFuIGFyZ3VtZW50IGFuZCByZXR1cm5zIHRoZSBpbmRpY2VzIG9mIHRoZSB2ZWN0b3IgdGhhdCBhcmUgVFJVRS4gRm9yIGV4YW1wbGUgd2hpY2goYyhUUlVFLCBGQUxTRSwgVFJVRSkpIHdvdWxkIHJldHVybiB0aGUgdmVjdG9yIGMoMSwgMykuDQoNClVzZSB0aGUgd2hpY2goKSBmdW5jdGlvbiB0byBmaW5kIHRoZSBpbmRpY2VzIG9mIGludHMgdGhhdCBhcmUgZ3JlYXRlciB0aGFuIDcuDQoNCmBgYHtyfQ0Kd2hpY2goaW50cyA+IDcpDQpgYGANCg0KTGlrZSB0aGUgd2hpY2goKSBmdW5jdGlvbiwgdGhlIGZ1bmN0aW9ucyBhbnkoKSBhbmQgYWxsKCkgdGFrZSBsb2dpY2FsIHZlY3RvcnMgYXMgdGhlaXIgYXJndW1lbnQuIFRoZSBhbnkoKSBmdW5jdGlvbiB3aWxsIHJldHVybiBUUlVFIGlmIG9uZSBvciBtb3JlIG9mIHRoZSBlbGVtZW50cyBpbiB0aGUgbG9naWNhbCB2ZWN0b3IgaXMgVFJVRS4gVGhlIGFsbCgpIGZ1bmN0aW9uIHdpbGwgcmV0dXJuIFRSVUUgaWYgZXZlcnkgZWxlbWVudCBpbiB0aGUgbG9naWNhbCB2ZWN0b3IgaXMgVFJVRS4NCg0KVXNlIHRoZSBhbnkoKSBmdW5jdGlvbiB0byBzZWUgaWYgYW55IG9mIHRoZSBlbGVtZW50cyBvZiBpbnRzIGFyZSBsZXNzIHRoYW4gemVyby4NCg0KYGBge3J9DQphbnkoaW50cyA8IDApDQpgYGANCg0KVXNlIHRoZSBhbGwoKSBmdW5jdGlvbiB0byBzZWUgaWYgYWxsIG9mIHRoZSBlbGVtZW50cyBvZiBpbnRzIGFyZSBncmVhdGVyIHRoYW4gemVyby4NCg0KYGBge3J9DQphbGwoaW50cyA+IDApDQpgYGANCg0KVGhhdCdzIGFsbCBmb3IgdGhpcyBpbnRyb2R1Y3Rpb24gdG8gbG9naWMgaW4gUi4gSWYgeW91IHJlYWxseSB3YW50IHRvIHNlZSB3aGF0IHlvdSBjYW4gZG8gd2l0aCBsb2dpYywgY2hlY2sgb3V0IHRoZSBjb250cm9sIGZsb3cgbGVzc29uIQ0K</div>
+<div id="rmd-source-code">LS0tCnRpdGxlOiAic3dpcmwgTGVzc29uIDE6IExvZ2ljIgpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sKLS0tCgpUaGlzIGxlc3NvbiBpcyBtZWFudCB0byBiZSBhIHNob3J0IGludHJvZHVjdGlvbiB0byBsb2dpY2FsIG9wZXJhdGlvbnMgaW4gUi4KClRoZXJlIGFyZSB0d28gbG9naWNhbCB2YWx1ZXMgaW4gUiwgYWxzbyBjYWxsZWQgYm9vbGVhbiB2YWx1ZXMuIFRoZXkgYXJlIFRSVUUgYW5kIEZBTFNFLiBJbiBSIHlvdSBjYW4gY29uc3RydWN0IGxvZ2ljYWwgZXhwcmVzc2lvbnMgd2hpY2ggd2lsbCBldmFsdWF0ZSB0byBlaXRoZXIgVFJVRSBvciBGQUxTRS4KCk1hbnkgb2YgdGhlIHF1ZXN0aW9ucyBpbiB0aGlzIGxlc3NvbiB3aWxsIGludm9sdmUgZXZhbHVhdGluZyBsb2dpY2FsIGV4cHJlc3Npb25zLiBJdCBtYXkgYmUgdXNlZnVsIHRvIG9wZW4gdXAgYSBzZWNvbmQgUiB0ZXJtaW5hbCB3aGVyZSB5b3UgY2FuIGV4cGVyaW1lbnQgd2l0aCBzb21lIG9mIHRoZXNlIGV4cHJlc3Npb25zLgoKQ3JlYXRpbmcgbG9naWNhbCBleHByZXNzaW9ucyByZXF1aXJlcyBsb2dpY2FsIG9wZXJhdG9ycy4gWW91J3JlIHByb2JhYmx5IGZhbWlsaWFyIHdpdGggYXJpdGhtZXRpYyBvcGVyYXRvcnMgbGlrZSBgK2AsIGAtYCwgYCpgLCBhbmQgYC9gLiBUaGUgZmlyc3QgbG9naWNhbCBvcGVyYXRvciB3ZSBhcmUgZ29pbmcgdG8gZGlzY3VzcyBpcyB0aGUgZXF1YWxpdHkgb3BlcmF0b3IsIHJlcHJlc2VudGVkIGJ5IHR3byBlcXVhbHMgc2lnbnMgYD09YC4gVXNlIHRoZSBlcXVhbGl0eSBvcGVyYXRvciBiZWxvdyB0byBmaW5kIG91dCBpZiBUUlVFIGlzIGVxdWFsIHRvIFRSVUUuCgpgYGB7cn0KVFJVRSA9PSBUUlVFCmBgYAoKSnVzdCBsaWtlIGFyaXRobWV0aWMsIGxvZ2ljYWwgZXhwcmVzc2lvbnMgY2FuIGJlIGdyb3VwZWQgYnkgcGFyZW50aGVzaXMgc28gdGhhdCB0aGUgZW50aXJlIGV4cHJlc3Npb24gKFRSVUUgPT0gVFJVRSkgPT0gVFJVRSBldmFsdWF0ZXMgdG8gVFJVRS4KClRvIHRlc3Qgb3V0IHRoaXMgcHJvcGVydHksIHRyeSBldmFsdWF0aW5nIChGQUxTRSA9PSBUUlVFKSA9PSBGQUxTRSAuCgpgYGB7cn0KKEZBTFNFID09IFRSVUUpID09IEZBTFNFCmBgYAoKVGhlIGVxdWFsaXR5IG9wZXJhdG9yIGNhbiBhbHNvIGJlIHVzZWQgdG8gY29tcGFyZSBudW1iZXJzLiBVc2UgYD09YCB0byBzZWUgaWYgNiBpcyBlcXVhbCB0byA3LgoKYGBge3J9CjYgPT0gNwpgYGAKClRoZSBwcmV2aW91cyBleHByZXNzaW9uIGV2YWx1YXRlcyB0byBGQUxTRSBiZWNhdXNlIDYgaXMgbGVzcyB0aGFuIDcuIFRoYW5rZnVsbHksIHRoZXJlIGFyZSBpbmVxdWFsaXR5IG9wZXJhdG9ycyB0aGF0IGFsbG93IHVzIHRvIHRlc3QgaWYgYSB2YWx1ZSBpcyBsZXNzIHRoYW4gb3IgZ3JlYXRlciB0aGFuIGFub3RoZXIgdmFsdWUuCgpUaGUgbGVzcyB0aGFuIG9wZXJhdG9yIGA8YCB0ZXN0cyB3aGV0aGVyIHRoZSBudW1iZXIgb24gdGhlIGxlZnQgc2lkZSBvZiB0aGUgb3BlcmF0b3IgKGNhbGxlZCB0aGUgbGVmdCBvcGVyYW5kKSBpcyBsZXNzIHRoYW4gdGhlIG51bWJlciBvbiB0aGUgcmlnaHQgc2lkZSBvZiB0aGUgb3BlcmF0b3IgKGNhbGxlZCB0aGUgcmlnaHQgb3BlcmFuZCkuIFdyaXRlIGFuIGV4cHJlc3Npb24gdG8gdGVzdCB3aGV0aGVyIDYgaXMgbGVzcyB0aGFuIDcuCgpgYGB7cn0KNiA8IDcKYGBgCgpUaGVyZSBpcyBhbHNvIGEgbGVzcy10aGFuLW9yLWVxdWFsLXRvIG9wZXJhdG9yIGA8PWAgd2hpY2ggdGVzdHMgd2hldGhlciB0aGUgbGVmdCBvcGVyYW5kIGlzIGxlc3MgdGhhbiBvciBlcXVhbCB0byB0aGUgcmlnaHQgb3BlcmFuZC4gV3JpdGUgYW4gZXhwcmVzc2lvbiB0byB0ZXN0IHdoZXRoZXIgMTAgaXMgbGVzcyB0aGFuIG9yIGVxdWFsIHRvIDEwLgoKYGBge3J9CjEwIDw9IDEwCmBgYAoKS2VlcCBpbiBtaW5kIHRoYXQgdGhlcmUgYXJlIHRoZSBjb3JyZXNwb25kaW5nIGdyZWF0ZXIgdGhhbiBgPmAgYW5kIGdyZWF0ZXItdGhhbi1vci1lcXVhbC10byBgPj1gIG9wZXJhdG9ycy4KClRoZSBuZXh0IG9wZXJhdG9yIHdlIHdpbGwgZGlzY3VzcyBpcyB0aGUgJ25vdCBlcXVhbHMnIG9wZXJhdG9yIHJlcHJlc2VudGVkIGJ5IGAhPWAuIE5vdCBlcXVhbHMgdGVzdHMgd2hldGhlciB0d28gdmFsdWVzIGFyZSB1bmVxdWFsLCBzbyBUUlVFICE9IEZBTFNFIGV2YWx1YXRlcyB0byBUUlVFLiBMaWtlIHRoZSBlcXVhbGl0eSBvcGVyYXRvciwgYCE9YCBjYW4gYWxzbyBiZSB1c2VkIHdpdGggbnVtYmVycy4gVHJ5IHdyaXRpbmcgYW4gZXhwcmVzc2lvbiB0byBzZWUgaWYgNSBpcyBub3QgZXF1YWwgdG8gNy4KCmBgYHtyfQo1ICE9IDcKYGBgCgpJbiBvcmRlciB0byBuZWdhdGUgYm9vbGVhbiBleHByZXNzaW9ucyB5b3UgY2FuIHVzZSB0aGUgTk9UIG9wZXJhdG9yLiBBbiBleGNsYW1hdGlvbiBwb2ludCBgIWAgd2lsbCBjYXVzZSAhVFJVRSAoc2F5OiBub3QgdHJ1ZSkgdG8gZXZhbHVhdGUgdG8gRkFMU0UgYW5kICFGQUxTRSAoc2F5OiBub3QgZmFsc2UpIHRvIGV2YWx1YXRlIHRvIFRSVUUuIFRyeSB1c2luZyB0aGUgTk9UIG9wZXJhdG9yIGFuZCB0aGUgZXF1YWxzIG9wZXJhdG9yIHRvIGZpbmQgdGhlIG9wcG9zaXRlIG9mIHdoZXRoZXIgNSBpcyBlcXVhbCB0byA3LgoKYGBge3J9CiEoNSA9PSA3KQpgYGAKCkxldCdzIHRha2UgYSBtb21lbnQgdG8gcmV2aWV3LiBUaGUgZXF1YWxzIG9wZXJhdG9yIGA9PWAgdGVzdHMgd2hldGhlciB0d28gYm9vbGVhbiB2YWx1ZXMgb3IgbnVtYmVycyBhcmUgZXF1YWwsIHRoZSBub3QgZXF1YWxzIG9wZXJhdG9yIGAhPWAgdGVzdHMgd2hldGhlciB0d28gYm9vbGVhbiB2YWx1ZXMgb3IgbnVtYmVycyBhcmUgdW5lcXVhbCwgYW5kIHRoZSBOT1Qgb3BlcmF0b3IgYCFgIG5lZ2F0ZXMgbG9naWNhbCBleHByZXNzaW9ucyBzbyB0aGF0IFRSVUUgZXhwcmVzc2lvbnMgYmVjb21lIEZBTFNFIGFuZCBGQUxTRSBleHByZXNzaW9ucyBiZWNvbWUgVFJVRS4KCkF0IHNvbWUgcG9pbnQgeW91IG1heSBuZWVkIHRvIGV4YW1pbmUgcmVsYXRpb25zaGlwcyBiZXR3ZWVuIG11bHRpcGxlIGxvZ2ljYWwgZXhwcmVzc2lvbnMuIFRoaXMgaXMgd2hlcmUgdGhlIEFORCBvcGVyYXRvciBhbmQgdGhlIE9SIG9wZXJhdG9yIGNvbWUgaW4uCgpMZXQncyBsb29rIGF0IGhvdyB0aGUgQU5EIG9wZXJhdG9yIHdvcmtzLiBUaGVyZSBhcmUgdHdvIEFORCBvcGVyYXRvcnMgaW4gUiwgYCZgIGFuZCBgJiZgLiBCb3RoIG9wZXJhdG9ycyB3b3JrIHNpbWlsYXJseSwgaWYgdGhlIHJpZ2h0IGFuZCBsZWZ0IG9wZXJhbmRzIG9mIEFORCBhcmUgYm90aCBUUlVFIHRoZSBlbnRpcmUgZXhwcmVzc2lvbiBpcyBUUlVFLCBvdGhlcndpc2UgaXQgaXMgRkFMU0UuIEZvciBleGFtcGxlLCBUUlVFICYgVFJVRSBldmFsdWF0ZXMgdG8gVFJVRS4gVHJ5IHR5cGluZyBGQUxTRSAmIEZBTFNFIHRvIGhvdyBpdCBpcyBldmFsdWF0ZWQuCgpgYGB7cn0KRkFMU0UgJiBGQUxTRQpgYGAKCllvdSBjYW4gdXNlIHRoZSBgJmAgb3BlcmF0b3IgdG8gZXZhbHVhdGUgQU5EIGFjcm9zcyBhIHZlY3Rvci4gVGhlIGAmJmAgdmVyc2lvbiBvZiBBTkQgb25seSBldmFsdWF0ZXMgdGhlIGZpcnN0IG1lbWJlciBvZiBhIHZlY3Rvci4gTGV0J3MgdGVzdCBib3RoIGZvciBwcmFjdGljZS4gVHlwZSB0aGUgZXhwcmVzc2lvbiBUUlVFICYgYyhUUlVFLCBGQUxTRSwgRkFMU0UpLgoKYGBge3J9ClRSVUUgJiBjKFRSVUUsIEZBTFNFLCBGQUxTRSkKYGBgCgpXaGF0IGhhcHBlbnMgaW4gdGhpcyBjYXNlIGlzIHRoYXQgdGhlIGxlZnQgb3BlcmFuZCBgVFJVRWAgaXMgcmVjeWNsZWQgYWNyb3NzIGV2ZXJ5IGVsZW1lbnQgaW4gdGhlIHZlY3RvciBvZiB0aGUgcmlnaHQgb3BlcmFuZC4gVGhpcyBpcyB0aGUgZXF1aXZhbGVudCBzdGF0ZW1lbnQgYXMgYyhUUlVFLCBUUlVFLCBUUlVFKSAmIGMoVFJVRSwgRkFMU0UsIEZBTFNFKS4KCk5vdyB3ZSdsbCB0eXBlIHRoZSBzYW1lIGV4cHJlc3Npb24gZXhjZXB0IHdlJ2xsIHVzZSB0aGUgYCYmYCBvcGVyYXRvci4gVHlwZSB0aGUgZXhwcmVzc2lvbiBUUlVFICYmIGMoVFJVRSwgRkFMU0UsIEZBTFNFKS4KCmBgYHtyfQpUUlVFICYmIGMoVFJVRSwgRkFMU0UsIEZBTFNFKQpgYGAKCkluIHRoaXMgY2FzZSwgdGhlIGxlZnQgb3BlcmFuZCBpcyBvbmx5IGV2YWx1YXRlZCB3aXRoIHRoZSBmaXJzdCBtZW1iZXIgb2YgdGhlIHJpZ2h0IG9wZXJhbmQgKHRoZSB2ZWN0b3IpLiBUaGUgcmVzdCBvZiB0aGUgZWxlbWVudHMgaW4gdGhlIHZlY3RvciBhcmVuJ3QgZXZhbHVhdGVkIGF0IGFsbCBpbiB0aGlzIGV4cHJlc3Npb24uCgpUaGUgT1Igb3BlcmF0b3IgZm9sbG93cyBhIHNpbWlsYXIgc2V0IG9mIHJ1bGVzLiBUaGUgYHxgIHZlcnNpb24gb2YgT1IgZXZhbHVhdGVzIE9SIGFjcm9zcyBhbiBlbnRpcmUgdmVjdG9yLCB3aGlsZSB0aGUgYHx8YCB2ZXJzaW9uIG9mIE9SIG9ubHkgZXZhbHVhdGVzIHRoZSBmaXJzdCBtZW1iZXIgb2YgYSB2ZWN0b3IuCgpBbiBleHByZXNzaW9uIHVzaW5nIHRoZSBPUiBvcGVyYXRvciB3aWxsIGV2YWx1YXRlIHRvIFRSVUUgaWYgdGhlIGxlZnQgb3BlcmFuZCBvciB0aGUgcmlnaHQgb3BlcmFuZCBpcyBUUlVFLiBJZiBib3RoIGFyZSBUUlVFLCB0aGUgZXhwcmVzc2lvbiB3aWxsIGV2YWx1YXRlIHRvIFRSVUUsIGhvd2V2ZXIgaWYgbmVpdGhlciBhcmUgVFJVRSwgdGhlbiB0aGUgZXhwcmVzc2lvbiB3aWxsIGJlIEZBTFNFLgoKTGV0J3MgdGVzdCBvdXQgdGhlIHZlY3Rvcml6ZWQgdmVyc2lvbiBvZiB0aGUgT1Igb3BlcmF0b3IuIFR5cGUgdGhlIGV4cHJlc3Npb24gVFJVRSB8IGMoVFJVRSwgRkFMU0UsIEZBTFNFKS4KCmBgYHtyfQpUUlVFIHwgYyhUUlVFLCBGQUxTRSwgRkFMU0UpCmBgYAoKTm93IGxldCdzIHRyeSBvdXQgdGhlIG5vbi12ZWN0b3JpemVkIHZlcnNpb24gb2YgdGhlIE9SIG9wZXJhdG9yLiBUeXBlIHRoZSBleHByZXNzaW9uIFRSVUUgfHwgYyhUUlVFLCBGQUxTRSwgRkFMU0UpLgoKYGBge3J9ClRSVUUgfHwgYyhUUlVFLCBGQUxTRSwgRkFMU0UpCmBgYAoKTG9naWNhbCBvcGVyYXRvcnMgY2FuIGJlIGNoYWluZWQgdG9nZXRoZXIganVzdCBsaWtlIGFyaXRobWV0aWMgb3BlcmF0b3JzLiBUaGUgZXhwcmVzc2lvbnM6IGA2ICE9IDEwICYmIEZBTFNFICYmIDEgPj0gMmAgb3IgYFRSVUUgIDUgPCA5LjMgIEZBTFNFYCBhcmUgcGVyZmVjdGx5IG5vcm1hbCB0byBzZWUuCgpBcyB5b3UgbWF5IHJlY2FsbCwgYXJpdGhtZXRpYyBoYXMgYW4gb3JkZXIgb2Ygb3BlcmF0aW9ucyBhbmQgc28gZG8gbG9naWNhbCBleHByZXNzaW9ucy4gQWxsIEFORCBvcGVyYXRvcnMgYXJlIGV2YWx1YXRlZCBiZWZvcmUgT1Igb3BlcmF0b3JzLiBMZXQncyBsb29rIGF0IGFuIGV4YW1wbGUgb2YgYW4gYW1iaWd1b3VzIGNhc2UuIFR5cGU6IDUgPiA4ICA2ICE9IDggJiYgNCA+IDMuOQoKYGBge3J9CjUgPiA4IHx8IDYgIT0gOCAmJiA0ID4gMy45CmBgYAoKTGV0J3Mgd2FsayB0aHJvdWdoIHRoZSBvcmRlciBvZiBvcGVyYXRpb25zIGluIHRoZSBhYm92ZSBjYXNlLiBGaXJzdCB0aGUgbGVmdCBhbmQgcmlnaHQgb3BlcmFuZHMgb2YgdGhlIEFORCBvcGVyYXRvciBhcmUgZXZhbHVhdGVkLiA2IGlzIG5vdCBlcXVhbCA4LCA0IGlzIGdyZWF0ZXIgdGhhbiAzLjksIHRoZXJlZm9yZSBib3RoIG9wZXJhbmRzIGFyZSBUUlVFIHNvIHRoZSByZXN1bHRpbmcgZXhwcmVzc2lvbiBgVFJVRSAmJiBUUlVFYCBldmFsdWF0ZXMgdG8gVFJVRS4gVGhlbiB0aGUgbGVmdCBvcGVyYW5kIG9mIHRoZSBPUiBvcGVyYXRvciBpcyBldmFsdWF0ZWQ6IDUgaXMgbm90IGdyZWF0ZXIgdGhhbiA4IHNvIHRoZSBlbnRpcmUgZXhwcmVzc2lvbiBpcyByZWR1Y2VkIHRvIEZBTFNFICBUUlVFLiBTaW5jZSB0aGUgcmlnaHQgb3BlcmFuZCBvZiB0aGlzIGV4cHJlc3Npb24gaXMgVFJVRSB0aGUgZW50aXJlIGV4cHJlc3Npb24gZXZhbHVhdGVzIHRvIFRSVUUuCgpOb3cgdGhhdCB5b3UncmUgZmFtaWxpYXIgd2l0aCBSJ3MgbG9naWNhbCBvcGVyYXRvcnMgeW91IGNhbiB0YWtlIGFkdmFudGFnZSBvZiBhIGZldyBmdW5jdGlvbnMgdGhhdCBSIHByb3ZpZGVzIGZvciBkZWFsaW5nIHdpdGggbG9naWNhbCBleHByZXNzaW9ucy4KClRoZSBmdW5jdGlvbiBpc1RSVUUoKSB0YWtlcyBvbmUgYXJndW1lbnQuIElmIHRoYXQgYXJndW1lbnQgZXZhbHVhdGVzIHRvIFRSVUUsIHRoZSBmdW5jdGlvbiB3aWxsIHJldHVybiBUUlVFLiBPdGhlcndpc2UsIHRoZSBmdW5jdGlvbiB3aWxsIHJldHVybiBGQUxTRS4gVHJ5IHVzaW5nIHRoaXMgZnVuY3Rpb24gYnkgdHlwaW5nOiBpc1RSVUUoNiA+IDQpCgpgYGB7cn0KaXNUUlVFKDYgPiA0KQpgYGAKClRoZSBmdW5jdGlvbiBpZGVudGljYWwoKSB3aWxsIHJldHVybiBUUlVFIGlmIHRoZSB0d28gUiBvYmplY3RzIHBhc3NlZCB0byBpdCBhcyBhcmd1bWVudHMgYXJlIGlkZW50aWNhbC4gVHJ5IG91dCB0aGUgaWRlbnRpY2FsKCkgZnVuY3Rpb24gYnkgdHlwaW5nOiBpZGVudGljYWwoJ3R3aW5zJywgJ3R3aW5zJykKCmBgYHtyfQppZGVudGljYWwoJ3R3aW5zJywgJ3R3aW5zJykKYGBgCgpZb3Ugc2hvdWxkIGFsc28gYmUgYXdhcmUgb2YgdGhlIHhvcigpIGZ1bmN0aW9uLCB3aGljaCB0YWtlcyB0d28gYXJndW1lbnRzLiBUaGUgeG9yKCkgZnVuY3Rpb24gc3RhbmRzIGZvciBleGNsdXNpdmUgT1IuIElmIG9uZSBhcmd1bWVudCBldmFsdWF0ZXMgdG8gVFJVRSBhbmQgb25lIGFyZ3VtZW50IGV2YWx1YXRlcyB0byBGQUxTRSwgdGhlbiB0aGlzIGZ1bmN0aW9uIHdpbGwgcmV0dXJuIFRSVUUsIG90aGVyd2lzZSBpdCB3aWxsIHJldHVybiBGQUxTRS4gVHJ5IG91dCB0aGUgeG9yKCkgZnVuY3Rpb24gYnkgdHlwaW5nOiB4b3IoNSA9PSA2LCAhRkFMU0UpCgpgYGB7cn0KeG9yKDUgPT0gNiwgIUZBTFNFKQpgYGAKCjUgPT0gNiBldmFsdWF0ZXMgdG8gRkFMU0UsICFGQUxTRSBldmFsdWF0ZXMgdG8gVFJVRSwgc28geG9yKEZBTFNFLCBUUlVFKSBldmFsdWF0ZXMgdG8gVFJVRS4gT24gdGhlIG90aGVyIGhhbmQgaWYgdGhlIGZpcnN0IGFyZ3VtZW50IHdhcyBjaGFuZ2VkIHRvIDUgPT0gNSBhbmQgdGhlIHNlY29uZCBhcmd1bWVudCB3YXMgdW5jaGFuZ2VkIHRoZW4gYm90aCBhcmd1bWVudHMgd291bGQgaGF2ZSBiZWVuIFRSVUUsIHNvIHhvcihUUlVFLCBUUlVFKSB3b3VsZCBoYXZlIGV2YWx1YXRlZCB0byBGQUxTRS4KCkZvciB0aGUgbmV4dCBmZXcgcXVlc3Rpb25zLCB3ZSdyZSBnb2luZyB0byBuZWVkIHRvIGNyZWF0ZSBhIHZlY3RvciBvZiBpbnRlZ2VycyBjYWxsZWQgaW50cy4gQ3JlYXRlIHRoaXMgdmVjdG9yIGJ5IHR5cGluZzogaW50cyA8LSBzYW1wbGUoMTApCgpgYGB7cn0KaW50cyA8LSBzYW1wbGUoMTApCmBgYAoKTm93IHNpbXBseSBkaXNwbGF5IHRoZSBjb250ZW50cyBvZiBpbnRzLgoKYGBge3J9CmludHMKYGBgCgpUaGUgdmVjdG9yIGBpbnRzYCBpcyBhIHJhbmRvbSBzYW1wbGluZyBvZiBpbnRlZ2VycyBmcm9tIDEgdG8gMTAgd2l0aG91dCByZXBsYWNlbWVudC4gTGV0J3Mgc2F5IHdlIHdhbnRlZCB0byBhc2sgc29tZSBsb2dpY2FsIHF1ZXN0aW9ucyBhYm91dCBjb250ZW50cyBvZiBpbnRzLiBJZiB3ZSB0eXBlIGludHMgPiA1LCB3ZSB3aWxsIGdldCBhIGxvZ2ljYWwgdmVjdG9yIGNvcnJlc3BvbmRpbmcgdG8gd2hldGhlciBlYWNoIGVsZW1lbnQgb2YgaW50cyBpcyBncmVhdGVyIHRoYW4gNS4gVHJ5IHR5cGluZzogaW50cyA+IDUKCmBgYHtyfQppbnRzID4gNQpgYGAKCldlIGNhbiB1c2UgdGhlIHJlc3VsdGluZyBsb2dpY2FsIHZlY3RvciB0byBhc2sgb3RoZXIgcXVlc3Rpb25zIGFib3V0IGludHMuIFRoZSB3aGljaCgpIGZ1bmN0aW9uIHRha2VzIGEgbG9naWNhbCB2ZWN0b3IgYXMgYW4gYXJndW1lbnQgYW5kIHJldHVybnMgdGhlIGluZGljZXMgb2YgdGhlIHZlY3RvciB0aGF0IGFyZSBUUlVFLiBGb3IgZXhhbXBsZSB3aGljaChjKFRSVUUsIEZBTFNFLCBUUlVFKSkgd291bGQgcmV0dXJuIHRoZSB2ZWN0b3IgYygxLCAzKS4KClVzZSB0aGUgd2hpY2goKSBmdW5jdGlvbiB0byBmaW5kIHRoZSBpbmRpY2VzIG9mIGludHMgdGhhdCBhcmUgZ3JlYXRlciB0aGFuIDcuCgpgYGB7cn0Kd2hpY2goaW50cyA+IDcpCmBgYAoKTGlrZSB0aGUgd2hpY2goKSBmdW5jdGlvbiwgdGhlIGZ1bmN0aW9ucyBhbnkoKSBhbmQgYWxsKCkgdGFrZSBsb2dpY2FsIHZlY3RvcnMgYXMgdGhlaXIgYXJndW1lbnQuIFRoZSBhbnkoKSBmdW5jdGlvbiB3aWxsIHJldHVybiBUUlVFIGlmIG9uZSBvciBtb3JlIG9mIHRoZSBlbGVtZW50cyBpbiB0aGUgbG9naWNhbCB2ZWN0b3IgaXMgVFJVRS4gVGhlIGFsbCgpIGZ1bmN0aW9uIHdpbGwgcmV0dXJuIFRSVUUgaWYgZXZlcnkgZWxlbWVudCBpbiB0aGUgbG9naWNhbCB2ZWN0b3IgaXMgVFJVRS4KClVzZSB0aGUgYW55KCkgZnVuY3Rpb24gdG8gc2VlIGlmIGFueSBvZiB0aGUgZWxlbWVudHMgb2YgaW50cyBhcmUgbGVzcyB0aGFuIHplcm8uCgpgYGB7cn0KYW55KGludHMgPCAwKQpgYGAKClVzZSB0aGUgYWxsKCkgZnVuY3Rpb24gdG8gc2VlIGlmIGFsbCBvZiB0aGUgZWxlbWVudHMgb2YgaW50cyBhcmUgZ3JlYXRlciB0aGFuIHplcm8uCgpgYGB7cn0KYWxsKGludHMgPiAwKQpgYGAKClRoYXQncyBhbGwgZm9yIHRoaXMgaW50cm9kdWN0aW9uIHRvIGxvZ2ljIGluIFIuIElmIHlvdSByZWFsbHkgd2FudCB0byBzZWUgd2hhdCB5b3UgY2FuIGRvIHdpdGggbG9naWMsIGNoZWNrIG91dCB0aGUgY29udHJvbCBmbG93IGxlc3NvbiE=</div>
 
 
 
