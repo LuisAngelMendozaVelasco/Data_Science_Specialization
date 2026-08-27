@@ -29,7 +29,7 @@ Because we originally read the data in as character (by specifying colClasses = 
 coerce the column to be numeric. You may get a warning about NAs being introduced but that is okay.
 
 ```{r}
-outcome <- read.csv("./data/outcome-of-care-measures.csv", colClasses="character")
+outcome <- read.csv("./data/outcome-of-care-measures.csv.gz", colClasses="character")
 head(outcome)
 ```
 
@@ -91,7 +91,7 @@ Error in best("NY", "hert attack") : invalid outcome
 ```{r}
 best <- function(state, outcome) {
     ## Read outcome data
-    data <- read.csv("./data/outcome-of-care-measures.csv", colClasses="character", check.names=FALSE)
+    data <- read.csv("./data/outcome-of-care-measures.csv.gz", colClasses="character", check.names=FALSE)
     
     ## Check that state and outcome are valid
     if (!state %in% unique(data[["State"]])) {
@@ -206,7 +206,7 @@ rankhospital("MN", "heart attack", 5000)
 ```{r}
 rankhospital <- function(state, outcome, num="best") {
     ## Read outcome data
-    data <- read.csv("./data/outcome-of-care-measures.csv", colClasses="character", check.names=FALSE)
+    data <- read.csv("./data/outcome-of-care-measures.csv.gz", colClasses="character", check.names=FALSE)
     
     ## Check that state and outcome are valid
     if (!state %in% unique(data[["State"]])) {
@@ -333,7 +333,7 @@ WY CHEYENNE VA MEDICAL CENTER WY
 ```{r}
 rankall <- function(outcome, num="best") {
     ## Read outcome data
-    data <- read.csv("./data/outcome-of-care-measures.csv", colClasses="character", check.names=FALSE)
+    data <- read.csv("./data/outcome-of-care-measures.csv.gz", colClasses="character", check.names=FALSE)
     
     ## Check that state and outcome are valid
     if (!outcome %in% c("heart attack", "heart failure", "pneumonia")) {

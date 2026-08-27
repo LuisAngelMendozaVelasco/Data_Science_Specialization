@@ -52,10 +52,18 @@ You must address the following questions and tasks in your exploratory analysis.
 
 1. Have total emissions from PM2.5 decreased in the United States from 1999 to 2008? Using the base plotting system, make a plot showing the total PM2.5 emission from all sources for each of the years 1999, 2002, 2005, and 2008.
 
+```{bash}
+if [ -e "/tmp/summarySCC_PM25.rds" ]; then
+    echo "summarySCC_PM25.rds already exists!"
+else
+    gdown 1dQXjUwiUJVk1RscwzeC4yH3I56nYSlpg -O /tmp/
+fi
+```
+
 ```{r}
 library(dplyr)
 
-NEI <- readRDS("./data/summarySCC_PM25.rds")
+NEI <- readRDS("/tmp/summarySCC_PM25.rds")
 
 # data tidying for plot
 total <- NEI %>% select(Emissions, year) %>%
@@ -80,7 +88,7 @@ grid()
 ```{r}
 library(dplyr)
 
-NEI <- readRDS("./data/summarySCC_PM25.rds")
+NEI <- readRDS("/tmp/summarySCC_PM25.rds")
 
 balt <- NEI %>% select(fips, Emissions, year) %>%
         filter(fips == '24510') %>%
@@ -105,7 +113,7 @@ grid()
 library(dplyr)
 library(ggplot2)
 
-NEI <- readRDS("./data/summarySCC_PM25.rds")
+NEI <- readRDS("/tmp/summarySCC_PM25.rds")
 
 balt_type <- NEI %>% select(type, fips, Emissions, year) %>%
             filter(fips == '24510')
@@ -122,7 +130,7 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 
-NEI <- readRDS("./data/summarySCC_PM25.rds")
+NEI <- readRDS("/tmp/summarySCC_PM25.rds")
 SCC <- readRDS("./data/Source_Classification_Code.rds")
 
 SCC_coal_comb <- SCC %>%
@@ -143,7 +151,7 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 
-NEI <- readRDS("./data/summarySCC_PM25.rds")
+NEI <- readRDS("/tmp/summarySCC_PM25.rds")
 SCC <- readRDS("./data/Source_Classification_Code.rds")
 
 vehicleSCC <- filter(SCC, str_detect(SCC.Level.Two, "[Vv]ehicle"))
@@ -163,7 +171,7 @@ library(dplyr)
 library(ggplot2)
 library(stringr)
 
-NEI <- readRDS("./data/summarySCC_PM25.rds")
+NEI <- readRDS("/tmp/summarySCC_PM25.rds")
 SCC <- readRDS("./data/Source_Classification_Code.rds")
 
 vehicleSCC <- filter(SCC, str_detect(SCC.Level.Two, "[Vv]ehicle"))

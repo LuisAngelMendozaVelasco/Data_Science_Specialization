@@ -13,12 +13,20 @@ We also hope to show you that "real-world" research isn't always neat and well-d
 
 We've loaded data from this study for you in a matrix called ssd.  Run the R command dim now to see its dimensions.
 
+```{bash}
+if [ -e "/tmp/samsungData.rda" ]; then
+    echo "samsungData.rda already exists!"
+else
+    gdown 1fYkfjhpp-odcosX0bNNvo7MyrrZKz_Uo -O /tmp/
+fi
+```
+
 ```{r}
 pathtofile <- function(fileName){
     mypath <- file.path(fileName)
 }
 
-load(pathtofile("./data/samsungData.rda"))
+load(pathtofile("/tmp/samsungData.rda"))
 ssd <- transform(samsungData, activity = factor(activity))
 ```
 
